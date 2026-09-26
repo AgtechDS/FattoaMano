@@ -22,3 +22,7 @@ privacy_requests.json
 # Operating System files
 .DS_Store
 Thumbs.db
+
+.vercel
+
+verify_vercel.py

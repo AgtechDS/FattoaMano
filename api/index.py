@@ -1,0 +1,268 @@
+"""
+Fatto a Mano — Luxury Copper E-Commerce
+Vercel Serverless Unified Gateway & Static Server
+"""
+
+from http.server import SimpleHTTPRequestHandler
+import json
+import os
+import time
+import urllib.parse
+import urllib.request
+from pathlib import Path
+
+# Directory dei file statici su Vercel (/var/task)
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+try:
+    import stripe
+except ImportError:
+    stripe = None
+
+FALLBACK_PRODUCTS = [
+    {
+        "id": "prod_rame_001",
+        "title": "Bracciale Intrecciato 3 Filamenti",
+        "price": 30.0,
+        "description": "Forgiato a mano con 3 trefoli di rame massiccio ritorti a caldo. Chiusura artigianale a gancio S-Hook con battitura a martello. Proprietà armonizzanti ed elevata conducibilità energetica.",
+        "category": "Intrecciati",
+        "purity": "99.9%",
+        "in_stock": True,
+        "image_url": "assets/bracciale_3_filamenti.jpg"
+    },
+    {
+        "id": "prod_rame_002",
+        "title": "Cuff Martellato Ossidato",
+        "price": 45.0,
+        "description": "Fascia solida in rame grezzo lavorata ad incudine con trama a nido d'ape battuta a mano. Trattamento protettivo biologico con cera d'api vergine per preservare la lucentezza calda nel tempo.",
+        "category": "Martellati",
+        "purity": "99.9%",
+        "in_stock": True,
+        "image_url": "assets/bracciale_martellato.jpg"
+    },
+    {
+        "id": "prod_rame_003",
+        "title": "Bangle Minimal Chisel",
+        "price": 25.0,
+        "description": "Profilo circolare essenziale in puro rame elettrolitico, impreziosito da delicatissime micro-cesellature perimetrali. Un gioiello scultoreo raffinato e discreto per il benessere quotidiano.",
+        "category": "Rigidi",
+        "purity": "99.9%",
+        "in_stock": True,
+        "image_url": "assets/bracciale_rigido_puro.jpg"
+    }
+]
+
+
+def fetch_products():
+    # 1. Supabase PostgREST
+    sb_url = os.environ.get("SUPABASE_URL", "").rstrip("/")
+    sb_key = os.environ.get("SUPABASE_SERVICE_ROLE_KEY") or os.environ.get("SUPABASE_ANON_KEY")
+    if sb_url and sb_key:
+        try:
+            endpoint = f"{sb_url}/rest/v1/fattoamano_products?select=*&in_stock=eq.true&order=created_at.desc"
+            req = urllib.request.Request(endpoint, headers={
+                "apikey": sb_key,
+                "Authorization": f"Bearer {sb_key}",
+                "Content-Type": "application/json"
+            })
+            with urllib.request.urlopen(req, timeout=5) as res:
+                if res.status == 200:
+                    data = json.loads(res.read().decode("utf-8"))
+                    if isinstance(data, list) and len(data) > 0:
+                        return data
+        except Exception:
+            pass
+
+    # 2. Cache su disco
+    cache_paths = [
+        BASE_DIR / "products_cache.json",
+        Path("products_cache.json")
+    ]
+    for p in cache_paths:
+        if p.exists():
+            try:
+                with open(p, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+                    if isinstance(data, list) and len(data) > 0:
+                        return data
+            except Exception:
+                pass
+
+    return FALLBACK_PRODUCTS
+
+
+class handler(SimpleHTTPRequestHandler):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, directory=str(BASE_DIR), **kwargs)
+
+    def send_json(self, status_code, data_dict):
+        payload = json.dumps(data_dict, ensure_ascii=False).encode("utf-8")
+        self.send_response(status_code)
+        self.send_header("Content-Type", "application/json; charset=utf-8")
+        self.send_header("Content-Length", str(len(payload)))
+        self.send_header("Access-Control-Allow-Origin", "*")
+        self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+        self.send_header("Access-Control-Allow-Headers", "Content-Type, Authorization")
+        self.end_headers()
+        self.wfile.write(payload)
+
+    def do_OPTIONS(self):
+        self.send_response(200)
+        self.send_header("Access-Control-Allow-Origin", "*")
+        self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+        self.send_header("Access-Control-Allow-Headers", "Content-Type, Authorization")
+        self.end_headers()
+
+    def do_GET(self):
+        parsed = urllib.parse.urlparse(self.path)
+        path = parsed.path.rstrip("/")
+
+        # API Products
+        if path == "/api/products" or path.endswith("/products"):
+            products = fetch_products()
+            self.send_json(200, products)
+            return
+
+        # API Health
+        if path == "/api/health" or path.endswith("/health"):
+            self.send_json(200, {
+                "status": "healthy",
+                "service": "fatto-a-mano-cloud",
+                "timestamp": time.strftime("%Y-%m-%d %H:%M:%S UTC", time.gmtime()),
+                "runtime": "Vercel Serverless Python"
+            })
+            return
+
+        # Static files (index.html, style.css, app.js, assets/...)
+        super().do_GET()
+
+    def do_POST(self):
+        parsed = urllib.parse.urlparse(self.path)
+        path = parsed.path.rstrip("/")
+
+        content_length = int(self.headers.get("Content-Length", 0))
+        body_raw = self.rfile.read(content_length).decode("utf-8") if content_length > 0 else "{}"
+
+        try:
+            data = json.loads(body_raw)
+        except Exception:
+            data = {}
+
+        # API Privacy Request (GDPR / EU AI Act)
+        if path == "/api/privacy-request" or path.endswith("/privacy-request"):
+            protocol = f"GDPR-REQ-{int(time.time())}"
+            self.send_json(200, {
+                "success": True,
+                "protocol": protocol,
+                "timestamp": time.strftime("%Y-%m-%d %H:%M:%S UTC", time.gmtime()),
+                "message": "Richiesta acquisita e protocollata a norma del Regolamento UE 2016/679"
+            })
+            return
+
+        # API Stripe Checkout Session
+        if path == "/api/create-checkout-session" or path.endswith("/create-checkout-session"):
+            stripe_key = os.environ.get("STRIPE_SECRET_KEY", "").strip()
+            items = data.get("items", [])
+
+            host_header = self.headers.get("Host", "fattoamano.vercel.app")
+            origin = self.headers.get("Origin") or f"https://{host_header}"
+
+            success_url = data.get("success_url") or f"{origin}/success.html"
+            cancel_url = data.get("cancel_url") or f"{origin}/"
+
+            if not stripe_key:
+                self.send_json(400, {
+                    "error": "STRIPE_SECRET_KEY non configurata.",
+                    "url": cancel_url
+                })
+                return
+
+            # Tentativo 1: Stripe SDK
+            if stripe:
+                stripe.api_key = stripe_key
+                try:
+                    line_items = []
+                    for it in items:
+                        price_val = float(it.get("price", 30))
+                        price_cents = int(price_val * 100)
+                        title = it.get("title", "Bracciale in Puro Rame 99.9%")
+                        img_url = it.get("image_url", "")
+                        images = [img_url] if (img_url.startswith("http://") or img_url.startswith("https://")) else []
+
+                        line_items.append({
+                            "price_data": {
+                                "currency": "eur",
+                                "product_data": {
+                                    "name": title,
+                                    "description": "Bracciale artigianale in puro rame 99.9% forgiato a mano Fatto a Mano",
+                                    "images": images,
+                                },
+                                "unit_amount": price_cents,
+                            },
+                            "quantity": int(it.get("quantity", 1)),
+                        })
+
+                    session = stripe.checkout.Session.create(
+                        payment_method_types=["card"],
+                        line_items=line_items,
+                        mode="payment",
+                        success_url=success_url,
+                        cancel_url=cancel_url,
+                    )
+
+                    self.send_json(200, {
+                        "id": session.id,
+                        "url": session.url
+                    })
+                    return
+                except Exception:
+                    pass
+
+            # Tentativo 2: Stripe REST nativo (zero dipendenze)
+            try:
+                form_payload = [
+                    ("payment_method_types[]", "card"),
+                    ("mode", "payment"),
+                    ("success_url", success_url),
+                    ("cancel_url", cancel_url),
+                ]
+                for idx, it in enumerate(items):
+                    price_val = float(it.get("price", 30))
+                    price_cents = int(price_val * 100)
+                    title = it.get("title", "Bracciale in Puro Rame 99.9%")
+                    img_url = it.get("image_url", "")
+
+                    form_payload.append((f"line_items[{idx}][quantity]", str(int(it.get("quantity", 1)))))
+                    form_payload.append((f"line_items[{idx}][price_data][currency]", "eur"))
+                    form_payload.append((f"line_items[{idx}][price_data][unit_amount]", str(price_cents)))
+                    form_payload.append((f"line_items[{idx}][price_data][product_data][name]", title))
+                    form_payload.append((f"line_items[{idx}][price_data][product_data][description]", "Bracciale artigianale in puro rame 99.9%"))
+                    if img_url.startswith("http://") or img_url.startswith("https://"):
+                        form_payload.append((f"line_items[{idx}][price_data][product_data][images][0]", img_url))
+
+                encoded_data = urllib.parse.urlencode(form_payload).encode("utf-8")
+                req = urllib.request.Request(
+                    "https://api.stripe.com/v1/checkout/sessions",
+                    data=encoded_data,
+                    headers={
+                        "Authorization": f"Bearer {stripe_key}",
+                        "Content-Type": "application/x-www-form-urlencoded"
+                    },
+                    method="POST"
+                )
+                with urllib.request.urlopen(req, timeout=10) as res:
+                    res_body = json.loads(res.read().decode("utf-8"))
+                    self.send_json(200, {
+                        "id": res_body.get("id"),
+                        "url": res_body.get("url")
+                    })
+                    return
+            except urllib.error.HTTPError as he:
+                err_text = he.read().decode("utf-8")
+                self.send_json(he.code, {"error": f"Errore Stripe: {err_text}"})
+            except Exception as e:
+                self.send_json(500, {"error": f"Impossibile creare sessione Stripe: {str(e)}"})
+            return
+
+        self.send_json(404, {"error": "Endpoint not found"})

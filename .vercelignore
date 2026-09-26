@@ -1,0 +1,10 @@
+# Ignore local server & tools from Vercel build
+server.py
+telegram-agos.py
+sync_stripe_products.py
+test_suite.py
+*.bat
+TASK_PLAN.md
+schema.sql
+.env
+.env.*

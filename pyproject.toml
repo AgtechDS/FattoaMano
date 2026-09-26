@@ -1,0 +1,13 @@
+[project]
+name = "fattoamano"
+version = "0.1.0"
+description = "Fatto a Mano luxury copper ecommerce"
+requires-python = ">=3.12"
+dependencies = [
+    "stripe>=8.0.0",
+    "supabase>=2.0.0",
+    "python-dotenv>=1.0.0"
+]
+
+[tool.vercel]
+entrypoint = "api.index:handler"
