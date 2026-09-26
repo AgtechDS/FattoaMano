@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ordine Confermato — Fatto a Mano</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    .success-container {
+      max-width: 640px;
+      margin: 6rem auto;
+      padding: 3rem 2rem;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-hover);
+      border-radius: var(--radius-lg);
+      text-align: center;
+      box-shadow: var(--shadow-lg);
+    }
+    .success-icon {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: rgba(200, 125, 85, 0.15);
+      border: 2px solid var(--copper-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.75rem;
+      color: var(--copper-light);
+      font-size: 2rem;
+      box-shadow: 0 0 30px var(--copper-glow);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="success-container">
+      <div class="success-icon">
+        <i class="fa-solid fa-check"></i>
+      </div>
+      <span class="hero-badge"><i class="fa-solid fa-gem"></i> Pagamento Completato con Successo</span>
+      <h1 style="font-family: var(--font-serif); font-size: 2.4rem; margin: 1rem 0;">L'Opera è Tua.</h1>
+      <p style="color: var(--text-secondary); line-height: 1.7; margin-bottom: 2rem;">
+        Il tuo pagamento sicuro su Stripe è andato a buon fine. Il mastro forgiatore preparerà il tuo bracciale in puro rame 99.9%, sigillato a cera d'api naturale e accompagnato dal Certificato Ufficiale di Autenticità.
+      </p>
+
+      <div style="background: rgba(255, 255, 255, 0.02); border: 1px dashed var(--border-subtle); border-radius: var(--radius-sm); padding: 1.25rem; margin-bottom: 2rem; text-align: left;">
+        <div style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.4rem;">SPEDIZIONE ASSICURATA</div>
+        <div style="font-size: 0.95rem; color: var(--text-primary);">Riceverai il tracking postale riservato via email appena il pacco lascerà l'atelier.</div>
+      </div>
+
+      <a href="index.html" class="btn-primary" style="text-decoration: none;">
+        <i class="fa-solid fa-arrow-left"></i> Torna alla Boutique
+      </a>
+    </div>
+  </div>
+
+  <script>
+    // Pulisce il carrello locale al completamento dell'acquisto
+    localStorage.removeItem('fattoamano_cart');
+  </script>
+</body>
+</html>

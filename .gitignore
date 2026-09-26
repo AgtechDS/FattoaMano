@@ -1,0 +1,24 @@
+# Environment secrets
+.env
+.env*.local
+.env.production
+.env.development
+
+# Python bytecode & cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Runtime generated data
+privacy_requests.json
+*.log
+*.sqlite
+*.db
+
+# Vercel deployment folder
+.vercel/
+
+# Operating System files
+.DS_Store
+Thumbs.db
