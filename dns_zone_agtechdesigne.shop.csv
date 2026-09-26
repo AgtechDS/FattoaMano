@@ -1,0 +1,14 @@
+agtechdesigne.shop.	900	IN	A	76.76.21.21
+agtechdesigne.shop.	900	IN	MX	10 mail.register.it.
+agtechdesigne.shop.	900	IN	NS	ns1.register.it.
+agtechdesigne.shop.	900	IN	NS	ns2.register.it.
+agtechdesigne.shop.	900	IN	SOA	ns1.register.it. hostmaster.register.it. 2026092601 10800 3600 604800 86400
+agtechdesigne.shop.	900	IN	TXT	"v=spf1 include:spf.webapps.net ~all"
+authsmtp.agtechdesigne.shop.	900	IN	CNAME	authsmtp.register.it.
+autoconfig.agtechdesigne.shop.	900	IN	CNAME	tb-it.securemail.pro.
+ftp.agtechdesigne.shop.	900	IN	CNAME	agtechdesigne.shop.
+pec.agtechdesigne.shop.	900	IN	MX	10 mx.pec-email.com.
+pec.agtechdesigne.shop.	900	IN	TXT	"v=spf1 include:spf.pec-email.com ~all"
+pop.agtechdesigne.shop.	900	IN	CNAME	mail.register.it.
+www.agtechdesigne.shop.	900	IN	CNAME	cname.vercel-dns.com.
+_autodiscover._tcp.agtechdesigne.shop.	900	IN	SRV	10 10 443 ms-it.securemail.pro.

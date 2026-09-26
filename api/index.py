@@ -207,6 +207,20 @@ class handler(SimpleHTTPRequestHandler):
                         payment_method_types=["card"],
                         line_items=line_items,
                         mode="payment",
+                        shipping_options=[
+                            {
+                                "shipping_rate_data": {
+                                    "type": "fixed_amount",
+                                    "fixed_amount": {"amount": 600, "currency": "eur"},
+                                    "display_name": "Spedizione Corriere Espresso (Tutta Italia)",
+                                    "delivery_estimate": {
+                                        "minimum": {"unit": "business_day", "value": 3},
+                                        "maximum": {"unit": "business_day", "value": 5},
+                                    },
+                                },
+                            }
+                        ],
+                        shipping_address_collection={"allowed_countries": ["IT"]},
                         success_url=success_url,
                         cancel_url=cancel_url,
                     )
@@ -224,6 +238,15 @@ class handler(SimpleHTTPRequestHandler):
                 form_payload = [
                     ("payment_method_types[]", "card"),
                     ("mode", "payment"),
+                    ("shipping_options[0][shipping_rate_data][type]", "fixed_amount"),
+                    ("shipping_options[0][shipping_rate_data][fixed_amount][amount]", "600"),
+                    ("shipping_options[0][shipping_rate_data][fixed_amount][currency]", "eur"),
+                    ("shipping_options[0][shipping_rate_data][display_name]", "Spedizione Corriere Espresso (Tutta Italia)"),
+                    ("shipping_options[0][shipping_rate_data][delivery_estimate][minimum][unit]", "business_day"),
+                    ("shipping_options[0][shipping_rate_data][delivery_estimate][minimum][value]", "3"),
+                    ("shipping_options[0][shipping_rate_data][delivery_estimate][maximum][unit]", "business_day"),
+                    ("shipping_options[0][shipping_rate_data][delivery_estimate][maximum][value]", "5"),
+                    ("shipping_address_collection[allowed_countries][0]", "IT"),
                     ("success_url", success_url),
                     ("cancel_url", cancel_url),
                 ]

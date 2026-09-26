@@ -10,7 +10,7 @@ const state = {
   cart: JSON.parse(localStorage.getItem('fattoamano_cart') || '[]'),
   activeFilter: 'all',
   activeModalProduct: null,
-  freeShippingThreshold: 60.0
+  shippingFee: 6.00
 };
 
 // DOM Elements
@@ -22,6 +22,8 @@ const closeCartBtn = document.getElementById('closeCartBtn');
 const cartCountBadge = document.getElementById('cartCountBadge');
 const cartItemsContainer = document.getElementById('cartItemsContainer');
 const cartSubtotalAmount = document.getElementById('cartSubtotalAmount');
+const cartShippingAmount = document.getElementById('cartShippingAmount');
+const cartTotalAmount = document.getElementById('cartTotalAmount');
 const shippingNoticeText = document.getElementById('shippingNoticeText');
 const shippingBarFill = document.getElementById('shippingBarFill');
 const stripeCheckoutBtn = document.getElementById('stripeCheckoutBtn');
@@ -186,22 +188,18 @@ function removeCartItem(productId) {
 function renderCart() {
   const totalItems = state.cart.reduce((sum, item) => sum + item.quantity, 0);
   const subtotal = state.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  const shipping = state.cart.length > 0 ? state.shippingFee : 0;
+  const total = subtotal + shipping;
 
-  // Update badge & subtotal
+  // Update badge & financial breakdown
   if (cartCountBadge) cartCountBadge.textContent = totalItems;
   if (cartSubtotalAmount) cartSubtotalAmount.textContent = `€${subtotal.toFixed(2)}`;
+  if (cartShippingAmount) cartShippingAmount.textContent = state.cart.length > 0 ? `€${shipping.toFixed(2)}` : '€0.00';
+  if (cartTotalAmount) cartTotalAmount.textContent = `€${total.toFixed(2)}`;
 
-  // Update Free Shipping Progress Bar
-  if (shippingBarFill && shippingNoticeText) {
-    if (subtotal >= state.freeShippingThreshold) {
-      shippingBarFill.style.width = '100%';
-      shippingNoticeText.innerHTML = `✨ <strong>Spedizione Assicurata Gratuita</strong> applicata!`;
-    } else {
-      const remaining = (state.freeShippingThreshold - subtotal).toFixed(2);
-      const percent = Math.min(100, Math.max(0, (subtotal / state.freeShippingThreshold) * 100));
-      shippingBarFill.style.width = `${percent}%`;
-      shippingNoticeText.innerHTML = `Mancano <strong>€${remaining}</strong> per la <em>Spedizione Assicurata Gratuita</em>`;
-    }
+  // Update Shipping Info Notice
+  if (shippingNoticeText) {
+    shippingNoticeText.innerHTML = `Spedizione <strong>€6,00 tutta Italia</strong> • Consegna in <strong>3/5 giorni lavorativi</strong>`;
   }
 
   // Render items in drawer
@@ -405,6 +403,7 @@ async function handleStripeCheckout() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         items: state.cart,
+        shipping_fee: state.shippingFee,
         success_url: window.location.origin + '/success.html',
         cancel_url: window.location.href
       })

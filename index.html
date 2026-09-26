@@ -15,6 +15,23 @@
 <body>
 
   <!-- ============================================================================
+       TOP ANNOUNCEMENT BAR (SPEDIZIONE)
+       ============================================================================ -->
+  <div class="top-announcement-bar">
+    <div class="container top-announcement-inner">
+      <div class="announcement-item">
+        <i class="fa-solid fa-truck-fast"></i>
+        <span>Spedizione <strong>€6 in tutta Italia</strong> (isole comprese) • Consegna in <strong>3/5 giorni lavorativi</strong></span>
+      </div>
+      <span class="announcement-separator">•</span>
+      <div class="announcement-item">
+        <i class="fa-solid fa-gem"></i>
+        <span>100% Puro Rame 99.9% Forgiato ad Incudine</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================================
        HEADER & NAVIGATION
        ============================================================================ -->
   <header class="site-header" id="siteHeader">
@@ -88,6 +105,11 @@
             <div class="number">0</div>
             <div class="label">Nichel o Leghe Chimiche</div>
           </div>
+        </div>
+
+        <div class="hero-shipping-pill">
+          <i class="fa-solid fa-truck-fast"></i>
+          <span>Spedizione <strong>€6,00 tutta Italia</strong> • Consegna tracciata <strong>3/5 giorni</strong></span>
         </div>
       </div>
 
@@ -265,6 +287,12 @@
           <h3 style="font-family: var(--font-serif); font-size: 1.35rem; margin-bottom: 0.5rem;">Cera Vergine Protettiva</h3>
           <p style="color: var(--text-secondary); font-size: 0.88rem; line-height: 1.6;">Ogni pezzo è sigillato con pura cera d'api naturale per una sensazione vellutata e per preservare il calore cromatico all'uscita dal laboratorio.</p>
         </div>
+
+        <div style="background: var(--bg-card); padding: 2rem; border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
+          <i class="fa-solid fa-truck-fast" style="font-size: 2rem; color: var(--copper-light); margin-bottom: 1.25rem;"></i>
+          <h3 style="font-family: var(--font-serif); font-size: 1.35rem; margin-bottom: 0.5rem;">Spedizione Tutta Italia €6</h3>
+          <p style="color: var(--text-secondary); font-size: 0.88rem; line-height: 1.6;">Tariffa fissa e trasparente di soli €6,00 per tutta Italia (isole comprese). Consegna espressa tracciata in 3/5 giorni con scrigno protettivo antiurto.</p>
+        </div>
       </div>
     </div>
   </section>
@@ -284,11 +312,11 @@
       </button>
     </div>
 
-    <!-- Free Shipping Progress -->
+    <!-- Shipping Info Box -->
     <div class="shipping-progress-box">
-      <span id="shippingNoticeText">Spedizione gratuita sopra i €60</span>
-      <div class="shipping-bar-track">
-        <div class="shipping-bar-fill" id="shippingBarFill" style="width: 0%;"></div>
+      <div style="display: flex; align-items: center; gap: 0.6rem;">
+        <i class="fa-solid fa-truck-fast" style="color: var(--copper-primary); font-size: 1rem;"></i>
+        <span id="shippingNoticeText">Spedizione <strong>€6,00 tutta Italia</strong> • Consegna <strong>3/5 giorni lavorativi</strong></span>
       </div>
     </div>
 
@@ -299,9 +327,20 @@
 
     <!-- Cart Footer & Stripe Checkout -->
     <div class="cart-drawer-footer">
-      <div class="cart-subtotal-row">
-        <span class="cart-subtotal-label">Subtotale Artigianale:</span>
-        <span class="cart-subtotal-amount" id="cartSubtotalAmount">€0.00</span>
+      <div class="cart-summary-breakdown">
+        <div class="cart-subtotal-row">
+          <span class="cart-subtotal-label">Subtotale Creazioni:</span>
+          <span class="cart-subtotal-amount" id="cartSubtotalAmount">€0.00</span>
+        </div>
+        <div class="cart-subtotal-row shipping-row">
+          <span class="cart-subtotal-label"><i class="fa-solid fa-truck"></i> Spedizione Italia (3/5 gg):</span>
+          <span class="cart-subtotal-amount" id="cartShippingAmount">€6.00</span>
+        </div>
+        <div class="cart-total-divider"></div>
+        <div class="cart-subtotal-row total-row">
+          <span class="cart-total-label">Totale Finale:</span>
+          <span class="cart-total-amount" id="cartTotalAmount">€6.00</span>
+        </div>
       </div>
 
       <button class="checkout-stripe-btn" id="stripeCheckoutBtn">
@@ -342,6 +381,12 @@
         <div class="certificate-box">
           <h5><i class="fa-solid fa-award"></i> Certificato di Autenticità Digitale</h5>
           <p id="modalSpecs">Lavorazione a mano su rame puro 99.9%. Trattamento protettivo naturale con cera d'api vergine.</p>
+        </div>
+
+        <!-- Shipping Reassurance Note -->
+        <div class="modal-shipping-pill">
+          <i class="fa-solid fa-truck-fast"></i>
+          <span>Spedizione <strong>€6,00 in tutta Italia</strong> (isole comprese) • Consegna in <strong>3/5 giorni lavorativi</strong></span>
         </div>
 
         <div style="margin-top: auto; display: flex; gap: 1rem;">

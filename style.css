@@ -1475,3 +1475,124 @@ body {
     max-width: 100%;
   }
 }
+
+/* ==============================================================================
+   SPEDIZIONE & ANNOUNCEMENT BAR (6 EU Tutta Italia 3/5 Giorni)
+   ============================================================================== */
+.top-announcement-bar {
+  background: linear-gradient(90deg, #101014 0%, #1a1512 50%, #101014 100%);
+  border-bottom: 1px solid rgba(200, 125, 85, 0.25);
+  padding: 0.55rem 1rem;
+  font-size: 0.78rem;
+  color: var(--text-primary);
+  text-align: center;
+  position: relative;
+  z-index: 101;
+}
+
+.top-announcement-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.top-announcement-inner .announcement-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  letter-spacing: 0.02em;
+}
+
+.top-announcement-inner .announcement-item i {
+  color: var(--copper-primary);
+  font-size: 0.85rem;
+}
+
+.top-announcement-inner .announcement-separator {
+  color: var(--copper-deep);
+  opacity: 0.6;
+}
+
+.hero-shipping-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 1.25rem;
+  background: rgba(200, 125, 85, 0.1);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-full);
+  padding: 0.45rem 1.15rem;
+  font-size: 0.82rem;
+  color: var(--copper-light);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.hero-shipping-pill i {
+  color: var(--copper-primary);
+  font-size: 0.95rem;
+}
+
+.cart-summary-breakdown {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  margin-bottom: 0.75rem;
+}
+
+.cart-subtotal-row.shipping-row {
+  opacity: 0.9;
+  font-size: 0.84rem;
+}
+
+.cart-subtotal-row.shipping-row .cart-subtotal-amount {
+  font-size: 1.15rem;
+  color: var(--copper-light);
+}
+
+.cart-total-divider {
+  height: 1px;
+  background: rgba(200, 125, 85, 0.25);
+  margin: 0.4rem 0;
+}
+
+.cart-subtotal-row.total-row {
+  margin-top: 0.2rem;
+}
+
+.cart-total-label {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--text-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.cart-total-amount {
+  font-family: var(--font-serif);
+  font-size: 1.85rem;
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 0 0 15px var(--copper-glow);
+}
+
+.modal-shipping-pill {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  background: rgba(200, 125, 85, 0.08);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 0.65rem 0.9rem;
+  font-size: 0.85rem;
+  color: var(--copper-light);
+  margin-top: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.modal-shipping-pill i {
+  color: var(--copper-primary);
+  font-size: 1rem;
+}
+
