@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>Nuovo Ordine Fatto a Mano</title>
+</head>
+<body style="margin: 0; padding: 0; background-color: #08080a; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #f5f5f7;">
+  
+  <div style="background-color: #08080a; padding: 24px 12px;">
+    <div style="max-width: 620px; margin: 0 auto; background: #121217; border: 1px solid rgba(200, 125, 85, 0.35); border-radius: 12px; overflow: hidden; box-shadow: 0 16px 40px rgba(0, 0, 0, 0.65);">
+      
+      <!-- Top Copper Accent Bar -->
+      <div style="background: linear-gradient(90deg, #c87d55, #e0946b, #c87d55); height: 5px;"></div>
+
+      <!-- Header Section -->
+      <div style="padding: 24px 28px 18px; border-bottom: 1px solid rgba(255, 255, 255, 0.08); background: radial-gradient(circle at top right, rgba(200, 125, 85, 0.12), transparent 70%);">
+        <table style="width: 100%; border-collapse: collapse;">
+          <tr>
+            <td style="vertical-align: middle;">
+              <span style="font-size: 22px; font-weight: 700; letter-spacing: 0.12em; color: #ffffff; text-transform: uppercase;">FATTO A MANO</span>
+              <div style="font-size: 11px; letter-spacing: 0.18em; color: #d9824c; text-transform: uppercase; margin-top: 3px;">Atelier del Rame Puro (99.9%)</div>
+            </td>
+            <td style="text-align: right; vertical-align: middle;">
+              <span style="background: rgba(200, 125, 85, 0.15); border: 1px solid #c87d55; color: #e0946b; font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.06em;">
+                📦 Nuovo Ordine
+              </span>
+            </td>
+          </tr>
+        </table>
+      </div>
+
+      <!-- Body Content -->
+      <div style="padding: 24px 28px;">
+
+        <!-- Order ID Banner -->
+        <div style="background: #181820; border-left: 3px solid #c87d55; padding: 12px 16px; border-radius: 4px; margin-bottom: 22px;">
+          <table style="width: 100%; border-collapse: collapse;">
+            <tr>
+              <td style="font-size: 13px; color: #a0a0ab;">Identificativo Ordine:</td>
+              <td style="text-align: right; font-size: 14px; font-weight: 700; color: #ffffff;">#{{order_id}}</td>
+            </tr>
+            <tr>
+              <td style="font-size: 12px; color: #70707a; padding-top: 4px;">Data & Ora:</td>
+              <td style="text-align: right; font-size: 12px; color: #a0a0ab; padding-top: 4px;">{{data_ordine}}</td>
+            </tr>
+          </table>
+        </div>
+
+        <!-- Shipping Destination Card (Dati di Consegna per il Corriere) -->
+        <div style="background: rgba(200, 125, 85, 0.05); border: 1px solid rgba(200, 125, 85, 0.25); border-radius: 8px; padding: 18px; margin-bottom: 24px;">
+          <div style="font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #d9824c; margin-bottom: 12px;">
+            🚚 Recapito & Spedizione Corriere Espresso
+          </div>
+          
+          <table style="width: 100%; border-collapse: collapse; font-size: 14px; line-height: 1.6;">
+            <tr>
+              <td style="width: 120px; color: #8e8e99; padding: 3px 0;">Destinatario:</td>
+              <td style="color: #ffffff; font-weight: 600; padding: 3px 0;">{{destinatario_nome}}</td>
+            </tr>
+            <tr>
+              <td style="color: #8e8e99; padding: 3px 0;">Indirizzo:</td>
+              <td style="color: #ffffff; padding: 3px 0;">{{indirizzo}}</td>
+            </tr>
+            <tr>
+              <td style="color: #8e8e99; padding: 3px 0;">CAP & Città:</td>
+              <td style="color: #ffffff; padding: 3px 0;">{{cap}} {{citta}} ({{provincia}})</td>
+            </tr>
+            <tr>
+              <td style="color: #8e8e99; padding: 3px 0;">Cellulare SMS:</td>
+              <td style="color: #d9824c; font-weight: 600; padding: 3px 0;">{{destinatario_telefono}}</td>
+            </tr>
+            <tr>
+              <td style="color: #8e8e99; padding: 3px 0;">Email Cliente:</td>
+              <td style="color: #ffffff; padding: 3px 0;">{{destinatario_email}}</td>
+            </tr>
+            <tr>
+              <td style="color: #8e8e99; padding: 3px 0; vertical-align: top;">Note Corriere:</td>
+              <td style="color: #e0946b; font-style: italic; padding: 3px 0;">{{note_consegna}}</td>
+            </tr>
+          </table>
+        </div>
+
+        <!-- Products Table -->
+        <div style="font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #a0a0ab; margin-bottom: 10px;">
+          💍 Creazioni Ordinate
+        </div>
+
+        <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+          <thead>
+            <tr style="border-bottom: 1px solid rgba(255, 255, 255, 0.1); font-size: 12px; color: #70707a; text-transform: uppercase;">
+              <th style="text-align: left; padding: 6px 0;">Articolo</th>
+              <th style="text-align: center; padding: 6px 0; width: 60px;">Q.tà</th>
+              <th style="text-align: right; padding: 6px 0; width: 80px;">Totale</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{#orders}}
+            <tr style="border-bottom: 1px solid rgba(255, 255, 255, 0.06); font-size: 14px;">
+              <td style="padding: 12px 0;">
+                <div style="font-weight: 600; color: #ffffff;">{{name}}</div>
+                <div style="font-size: 11px; color: #a0a0ab;">Rame Puro Elettrolitico 99.9%</div>
+              </td>
+              <td style="text-align: center; padding: 12px 0; color: #a0a0ab;">
+                {{units}}
+              </td>
+              <td style="text-align: right; padding: 12px 0; color: #d9824c; font-weight: 700;">
+                €{{price}}
+              </td>
+            </tr>
+            {{/orders}}
+          </tbody>
+        </table>
+
+        <!-- Totals Breakdown Table -->
+        <table style="width: 100%; border-collapse: collapse; margin-top: 14px; font-size: 14px;">
+          <tr>
+            <td style="padding: 5px 0; color: #8e8e99;">Subtotale Creazioni:</td>
+            <td style="padding: 5px 0; text-align: right; color: #ffffff;">€{{subtotal}}</td>
+          </tr>
+          <tr>
+            <td style="padding: 5px 0; color: #8e8e99;">Spedizione Corriere Espresso (3/5 gg):</td>
+            <td style="padding: 5px 0; text-align: right; color: #ffffff;">€{{cost.shipping}}</td>
+          </tr>
+          <tr>
+            <td style="padding: 14px 0 6px; border-top: 1px solid rgba(200, 125, 85, 0.35); font-size: 16px; font-weight: 700; color: #ffffff;">
+              Totale Ordine:
+            </td>
+            <td style="padding: 14px 0 6px; border-top: 1px solid rgba(200, 125, 85, 0.35); text-align: right; font-size: 20px; font-weight: 800; color: #d9824c;">
+              €{{cost.total}}
+            </td>
+          </tr>
+        </table>
+
+        <!-- Security & Payment Note -->
+        <div style="margin-top: 24px; padding: 12px 16px; background: #16161d; border-radius: 6px; border: 1px solid rgba(255, 255, 255, 0.05); font-size: 12px; color: #8e8e99; line-height: 1.5;">
+          🔒 Pagamento canalizzato tramite protocollo crittografato <strong>Stripe 256-bit</strong>. I dati di spedizione sono stati acquisiti in conformità al GDPR (Regolamento UE 2016/679).
+        </div>
+
+      </div>
+
+      <!-- Footer Section -->
+      <div style="padding: 16px 28px; background: #0b0b0e; border-top: 1px solid rgba(255, 255, 255, 0.06); text-align: center; font-size: 11px; color: #555560;">
+        Notifica automatica generata per <strong style="color: #888899;">agtechdesigne@gmail.com</strong> dal sistema e-commerce <strong>Fatto a Mano</strong> &bull; <a href="https://agtechdesigne.shop" style="color: #c87d55; text-decoration: none;" target="_blank">agtechdesigne.shop</a>
+      </div>
+
+    </div>
+  </div>
+
+</body>
+</html>

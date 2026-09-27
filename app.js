@@ -460,12 +460,9 @@ function closeCheckoutModal() {
 const EMAILJS_CONFIG = {
   serviceId: 'service_1m1tfyq',
   targetEmail: 'agtechdesigne@gmail.com',
-  // Se configurati in window o localStorage
+  publicKey: 'Ts44-OGlmsSUV73rR',
   get templateId() {
     return window.EMAILJS_TEMPLATE_ID || localStorage.getItem('fattoamano_emailjs_template_id') || 'template_fattoamano';
-  },
-  get publicKey() {
-    return window.EMAILJS_PUBLIC_KEY || localStorage.getItem('fattoamano_emailjs_public_key') || '';
   }
 };
 
@@ -474,25 +471,64 @@ async function sendShippingEmailNotification(shippingInfo, cartItems, totalAmoun
     `• ${item.title} (x${item.quantity}) - €${(item.price * item.quantity).toFixed(2)}`
   ).join('\n');
 
+  const ordersArray = cartItems.map(item => ({
+    name: item.title,
+    units: item.quantity,
+    price: (item.price * item.quantity).toFixed(2),
+    image_url: item.image_url ? (item.image_url.startsWith('http') ? item.image_url : (window.location.origin + '/' + item.image_url.replace(/^\//, ''))) : ''
+  }));
+
+  const orderId = 'FAM-' + Date.now().toString().slice(-6);
+  const subtotalVal = (totalAmount - state.shippingFee).toFixed(2);
+  const totalVal = totalAmount.toFixed(2);
+
   const templateParams = {
+    // Destinatari
     to_email: EMAILJS_CONFIG.targetEmail,
+    email: shippingInfo.email,
+    
+    // Ordine
+    order_id: orderId,
+    data_ordine: new Date().toLocaleString('it-IT', { timeZone: 'Europe/Rome' }),
+    
+    // Dati di Recapito e Spedizione
     destinatario_nome: shippingInfo.fullName,
+    customer_name: shippingInfo.fullName,
     destinatario_email: shippingInfo.email,
+    customer_email: shippingInfo.email,
     destinatario_telefono: shippingInfo.phone,
+    customer_phone: shippingInfo.phone,
     indirizzo: shippingInfo.address,
     cap: shippingInfo.cap,
     citta: shippingInfo.city,
     provincia: shippingInfo.province,
-    note_consegna: shippingInfo.notes || 'Nessuna nota aggiuntiva',
+    note_consegna: shippingInfo.notes || 'Nessuna istruzione particolare',
+    shipping_notes: shippingInfo.notes || 'Nessuna istruzione particolare',
+    
+    // Lista articoli (sia testo che array Mustache)
+    orders: ordersArray,
     articoli_ordine: itemsText,
-    totale_ordine: `€${totalAmount.toFixed(2)}`,
-    spese_spedizione: `€${state.shippingFee.toFixed(2)}`,
-    data_ordine: new Date().toLocaleString('it-IT')
+    
+    // Costi
+    subtotal: subtotalVal,
+    spese_spedizione: '6.00',
+    totale_ordine: totalVal,
+    cost: {
+      shipping: '6.00',
+      tax: '0.00',
+      total: totalVal
+    },
+    'cost.shipping': '6.00',
+    'cost.tax': '0.00',
+    'cost.total': totalVal
   };
 
   try {
     const pubKey = EMAILJS_CONFIG.publicKey;
     if (window.emailjs && pubKey) {
+      try {
+        window.emailjs.init(pubKey);
+      } catch (e) {}
       await window.emailjs.send(EMAILJS_CONFIG.serviceId, EMAILJS_CONFIG.templateId, templateParams, pubKey);
       console.log('[EmailJS] Notifica email inviata con successo ad agtechdesigne@gmail.com');
       return true;
