@@ -6,8 +6,13 @@
   <title>Fatto a Mano — Gioielleria Artigianale in Puro Rame 99.9%</title>
   <meta name="description" content="Esclusiva boutique orafa di bracciali forgiati a mano in 99.9% rame puro. Design unico, proprietà energetiche e biologiche, lavorazione artigianale Made in Italy conforme a GDPR e EU AI Act.">
   
+  <!-- Anti-cache headers -->
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+
   <!-- Favicon & Stylesheet -->
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=20260927-03">
   
   <!-- Font Awesome for luxury micro-icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -343,7 +348,7 @@
         </div>
       </div>
 
-      <button class="checkout-stripe-btn" id="stripeCheckoutBtn">
+      <button class="checkout-stripe-btn" id="stripeCheckoutBtn" onclick="openCheckoutModal()">
         <i class="fa-brands fa-stripe" style="font-size: 1.4rem;"></i>
         <span>Procedi al Checkout Sicuro</span>
       </button>
@@ -403,7 +408,7 @@
        ============================================================================ -->
   <div class="modal-backdrop" id="checkoutModalBackdrop">
     <div class="modal-container checkout-modal-container" id="checkoutModal">
-      <button class="modal-close-btn" id="closeCheckoutModalBtn" aria-label="Chiudi Spedizione">
+      <button class="modal-close-btn" id="closeCheckoutModalBtn" aria-label="Chiudi Spedizione" onclick="closeCheckoutModal()">
         <i class="fa-solid fa-xmark"></i>
       </button>
 
@@ -662,6 +667,6 @@
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 
   <!-- Modular Application Logic -->
-  <script src="app.js"></script>
+  <script src="app.js?v=20260927-03"></script>
 </body>
 </html>

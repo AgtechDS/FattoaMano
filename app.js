@@ -413,43 +413,48 @@ function openCheckoutModal() {
   const shipping = state.shippingFee;
   const total = subtotal + shipping;
 
-  if (modalSummaryItemsCount) {
-    modalSummaryItemsCount.textContent = `${totalItems} ${totalItems === 1 ? 'creazione' : 'creazioni'}`;
-  }
-  if (modalSummarySubtotal) {
-    modalSummarySubtotal.textContent = `€${subtotal.toFixed(2)}`;
-  }
-  if (modalSummaryTotal) {
-    modalSummaryTotal.textContent = `€${total.toFixed(2)}`;
-  }
-  if (submitPayBtnText) {
-    submitPayBtnText.textContent = `Procedi al Pagamento su Stripe (€${total.toFixed(2)})`;
-  }
+  const countEl = document.getElementById('modalSummaryItemsCount');
+  if (countEl) countEl.textContent = `${totalItems} ${totalItems === 1 ? 'creazione' : 'creazioni'}`;
+
+  const subtotalEl = document.getElementById('modalSummarySubtotal');
+  if (subtotalEl) subtotalEl.textContent = `€${subtotal.toFixed(2)}`;
+
+  const totalEl = document.getElementById('modalSummaryTotal');
+  if (totalEl) totalEl.textContent = `€${total.toFixed(2)}`;
+
+  const btnTextEl = document.getElementById('submitPayBtnText');
+  if (btnTextEl) btnTextEl.textContent = `Procedi al Pagamento su Stripe (€${total.toFixed(2)})`;
 
   // Precompila i dati da acquisti precedenti salvati in locale
   try {
     const saved = JSON.parse(localStorage.getItem('fattoamano_shipping_info') || '{}');
-    if (saved.fullName) document.getElementById('shipFullName').value = saved.fullName;
-    if (saved.email) document.getElementById('shipEmail').value = saved.email;
-    if (saved.phone) document.getElementById('shipPhone').value = saved.phone;
-    if (saved.address) document.getElementById('shipAddress').value = saved.address;
-    if (saved.cap) document.getElementById('shipCap').value = saved.cap;
-    if (saved.city) document.getElementById('shipCity').value = saved.city;
-    if (saved.province) document.getElementById('shipProvince').value = saved.province;
-    if (saved.notes) document.getElementById('shipNotes').value = saved.notes;
+    if (saved.fullName && document.getElementById('shipFullName')) document.getElementById('shipFullName').value = saved.fullName;
+    if (saved.email && document.getElementById('shipEmail')) document.getElementById('shipEmail').value = saved.email;
+    if (saved.phone && document.getElementById('shipPhone')) document.getElementById('shipPhone').value = saved.phone;
+    if (saved.address && document.getElementById('shipAddress')) document.getElementById('shipAddress').value = saved.address;
+    if (saved.cap && document.getElementById('shipCap')) document.getElementById('shipCap').value = saved.cap;
+    if (saved.city && document.getElementById('shipCity')) document.getElementById('shipCity').value = saved.city;
+    if (saved.province && document.getElementById('shipProvince')) document.getElementById('shipProvince').value = saved.province;
+    if (saved.notes && document.getElementById('shipNotes')) document.getElementById('shipNotes').value = saved.notes;
   } catch (err) {
     console.warn('Errore lettura shipping info da local storage', err);
   }
 
-  if (checkoutModalBackdrop) {
-    checkoutModalBackdrop.classList.add('open');
+  const modalEl = document.getElementById('checkoutModalBackdrop');
+  if (modalEl) {
+    modalEl.classList.add('open');
+    modalEl.style.display = 'flex';
     document.body.style.overflow = 'hidden';
+  } else {
+    console.error('Elemento checkoutModalBackdrop non trovato nel DOM');
   }
 }
 
 function closeCheckoutModal() {
-  if (checkoutModalBackdrop) {
-    checkoutModalBackdrop.classList.remove('open');
+  const modalEl = document.getElementById('checkoutModalBackdrop');
+  if (modalEl) {
+    modalEl.classList.remove('open');
+    modalEl.style.display = 'none';
     document.body.style.overflow = '';
   }
 }
@@ -752,3 +757,12 @@ function setupEventListeners() {
     }
   });
 }
+
+// Global functions exposed to window for inline onclick handlers
+window.openCheckoutModal = openCheckoutModal;
+window.closeCheckoutModal = closeCheckoutModal;
+window.handleShippingFormSubmit = handleShippingFormSubmit;
+window.openCart = openCart;
+window.closeCart = closeCart;
+window.addToCartById = addToCartById;
+

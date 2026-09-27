@@ -1600,6 +1600,16 @@ body {
 /* ==============================================================================
    CHECKOUT SHIPPING MODAL & LUXURY FORM
    ============================================================================== */
+#checkoutModalBackdrop {
+  z-index: 9999;
+}
+
+#checkoutModalBackdrop.open {
+  display: flex !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
 .checkout-modal-container {
   max-width: 660px;
   width: 95%;
