@@ -125,6 +125,36 @@ class TestFattoAManoSystem(unittest.TestCase):
         self.assertTrue(protocol.startswith("GDPR-REQ-"))
         print(f"\n[Test 7] Conformità GDPR, EU AI Act e File .env superata (Protocollo: {protocol})")
 
+    def test_08_shipping_precheckout_form(self):
+        """Verifica la presenza e conformità del form di pre-acquisto spedizione."""
+        html_path = WORKSPACE_DIR / "index.html"
+        html_content = html_path.read_text(encoding="utf-8")
+        
+        # Elementi del modal di spedizione
+        self.assertIn('id="checkoutModalBackdrop"', html_content)
+        self.assertIn('id="shippingCheckoutForm"', html_content)
+        self.assertIn('id="shipFullName"', html_content)
+        self.assertIn('id="shipEmail"', html_content)
+        self.assertIn('id="shipPhone"', html_content)
+        self.assertIn('id="shipAddress"', html_content)
+        self.assertIn('id="shipCap"', html_content)
+        self.assertIn('id="shipCity"', html_content)
+        self.assertIn('id="shipProvince"', html_content)
+        self.assertIn('id="submitShippingPayBtn"', html_content)
+
+        # Regole CSS e Logica JS
+        css_path = WORKSPACE_DIR / "style.css"
+        css_content = css_path.read_text(encoding="utf-8")
+        self.assertIn('.checkout-modal-container', css_content)
+        self.assertIn('.luxury-input', css_content)
+
+        js_path = WORKSPACE_DIR / "app.js"
+        js_content = js_path.read_text(encoding="utf-8")
+        self.assertIn('openCheckoutModal', js_content)
+        self.assertIn('handleShippingFormSubmit', js_content)
+        self.assertIn('fattoamano_shipping_info', js_content)
+        print("\n[Test 8] Form Pre-Acquisto Spedizione (HTML, CSS, JS) superato al 100%")
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

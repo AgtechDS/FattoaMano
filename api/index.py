@@ -178,6 +178,18 @@ class handler(SimpleHTTPRequestHandler):
                 })
                 return
 
+            shipping_info = data.get("shipping_info", {})
+            customer_email = shipping_info.get("email", "").strip() or None
+            shipping_metadata = {
+                "cliente_nome": str(shipping_info.get("fullName", ""))[:100],
+                "telefono": str(shipping_info.get("phone", ""))[:50],
+                "indirizzo": str(shipping_info.get("address", ""))[:150],
+                "cap": str(shipping_info.get("cap", ""))[:10],
+                "citta": str(shipping_info.get("city", ""))[:60],
+                "provincia": str(shipping_info.get("province", ""))[:10],
+                "note_consegna": str(shipping_info.get("notes", ""))[:200]
+            }
+
             # Tentativo 1: Stripe SDK
             if stripe:
                 stripe.api_key = stripe_key
@@ -203,11 +215,11 @@ class handler(SimpleHTTPRequestHandler):
                             "quantity": int(it.get("quantity", 1)),
                         })
 
-                    session = stripe.checkout.Session.create(
-                        payment_method_types=["card"],
-                        line_items=line_items,
-                        mode="payment",
-                        shipping_options=[
+                    session_params = {
+                        "payment_method_types": ["card"],
+                        "line_items": line_items,
+                        "mode": "payment",
+                        "shipping_options": [
                             {
                                 "shipping_rate_data": {
                                     "type": "fixed_amount",
@@ -220,10 +232,16 @@ class handler(SimpleHTTPRequestHandler):
                                 },
                             }
                         ],
-                        shipping_address_collection={"allowed_countries": ["IT"]},
-                        success_url=success_url,
-                        cancel_url=cancel_url,
-                    )
+                        "shipping_address_collection": {"allowed_countries": ["IT"]},
+                        "metadata": {k: v for k, v in shipping_metadata.items() if v},
+                        "success_url": success_url,
+                        "cancel_url": cancel_url,
+                    }
+
+                    if customer_email:
+                        session_params["customer_email"] = customer_email
+
+                    session = stripe.checkout.Session.create(**session_params)
 
                     self.send_json(200, {
                         "id": session.id,
@@ -250,6 +268,13 @@ class handler(SimpleHTTPRequestHandler):
                     ("success_url", success_url),
                     ("cancel_url", cancel_url),
                 ]
+
+                if customer_email:
+                    form_payload.append(("customer_email", customer_email))
+
+                for mk, mv in shipping_metadata.items():
+                    if mv:
+                        form_payload.append((f"metadata[{mk}]", mv))
                 for idx, it in enumerate(items):
                     price_val = float(it.get("price", 30))
                     price_cents = int(price_val * 100)

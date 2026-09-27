@@ -399,6 +399,111 @@
   </div>
 
   <!-- ============================================================================
+       PRE-ACQUISTO CHECKOUT & SPEDIZIONE MODAL (#checkoutModalBackdrop)
+       ============================================================================ -->
+  <div class="modal-backdrop" id="checkoutModalBackdrop">
+    <div class="modal-container checkout-modal-container" id="checkoutModal">
+      <button class="modal-close-btn" id="closeCheckoutModalBtn" aria-label="Chiudi Spedizione">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <!-- Modal Header -->
+      <div class="checkout-modal-header">
+        <span class="hero-badge"><i class="fa-solid fa-truck-fast"></i> Consegna Espressa 3/5 Giorni Lavorativi</span>
+        <h3 class="checkout-modal-title">Dati di Spedizione & Consegna</h3>
+        <p class="checkout-modal-subtitle">Compila l'indirizzo per il recapito assicurato del tuo bracciale forgiato a mano prima di accedere al circuito di pagamento Stripe.</p>
+      </div>
+
+      <!-- Live Order Mini-Summary Banner -->
+      <div class="checkout-order-summary">
+        <div class="summary-line">
+          <span>Articoli nello Scrigno:</span>
+          <strong id="modalSummaryItemsCount">0 pezzi</strong>
+        </div>
+        <div class="summary-line">
+          <span>Subtotale Creazioni:</span>
+          <span id="modalSummarySubtotal">€0.00</span>
+        </div>
+        <div class="summary-line highlight-shipping">
+          <span><i class="fa-solid fa-truck"></i> Spedizione Corriere Espresso (Tutta Italia):</span>
+          <span>€6.00</span>
+        </div>
+        <div class="summary-divider"></div>
+        <div class="summary-line total-line">
+          <span>Totale Ordine (Spedizione Inclusa):</span>
+          <strong id="modalSummaryTotal">€6.00</strong>
+        </div>
+      </div>
+
+      <!-- Shipping Form -->
+      <form id="shippingCheckoutForm" onsubmit="handleShippingFormSubmit(event)">
+        <div class="checkout-form-grid">
+          <!-- Nome e Cognome -->
+          <div class="form-group span-2">
+            <label for="shipFullName"><i class="fa-solid fa-user"></i> Nome e Cognome Destinatario *</label>
+            <input type="text" id="shipFullName" class="luxury-input" required placeholder="Es. Marco Rossi" autocomplete="name">
+          </div>
+
+          <!-- Email -->
+          <div class="form-group">
+            <label for="shipEmail"><i class="fa-solid fa-envelope"></i> Email (per ricevuta e tracking) *</label>
+            <input type="email" id="shipEmail" class="luxury-input" required placeholder="mario.rossi@example.com" autocomplete="email">
+          </div>
+
+          <!-- Telefono -->
+          <div class="form-group">
+            <label for="shipPhone"><i class="fa-solid fa-phone"></i> Cellulare (avviso SMS corriere) *</label>
+            <input type="tel" id="shipPhone" class="luxury-input" required placeholder="+39 333 1234567" autocomplete="tel">
+          </div>
+
+          <!-- Indirizzo e Numero Civico -->
+          <div class="form-group span-2">
+            <label for="shipAddress"><i class="fa-solid fa-location-dot"></i> Indirizzo di Consegna e N. Civico *</label>
+            <input type="text" id="shipAddress" class="luxury-input" required placeholder="Es. Via dei Tornabuoni 12" autocomplete="street-address">
+          </div>
+
+          <!-- CAP -->
+          <div class="form-group">
+            <label for="shipCap"><i class="fa-solid fa-map-pin"></i> CAP (Codice Postale) *</label>
+            <input type="text" id="shipCap" class="luxury-input" required pattern="[0-9]{5}" maxlength="5" placeholder="50123" autocomplete="postal-code">
+          </div>
+
+          <!-- Città -->
+          <div class="form-group">
+            <label for="shipCity"><i class="fa-solid fa-city"></i> Città / Comune *</label>
+            <input type="text" id="shipCity" class="luxury-input" required placeholder="Es. Firenze" autocomplete="address-level2">
+          </div>
+
+          <!-- Provincia -->
+          <div class="form-group">
+            <label for="shipProvince"><i class="fa-solid fa-map"></i> Provincia (Sigla) *</label>
+            <input type="text" id="shipProvince" class="luxury-input" required maxlength="4" style="text-transform: uppercase;" placeholder="FI" autocomplete="address-level1">
+          </div>
+
+          <!-- Note per la consegna -->
+          <div class="form-group span-2">
+            <label for="shipNotes"><i class="fa-solid fa-comment-dots"></i> Istruzioni o Note per il Corriere (Facoltativo)</label>
+            <input type="text" id="shipNotes" class="luxury-input" placeholder="Es. Scala B, interno 4, citofono Rossi...">
+          </div>
+        </div>
+
+        <!-- Privacy & Security Notice -->
+        <div class="checkout-security-notice">
+          <i class="fa-solid fa-lock" style="color: var(--copper-primary); font-size: 1.1rem; flex-shrink: 0;"></i>
+          <span>I recapiti sono protetti ai sensi del GDPR (UE 2016/679). Cliccando su procedi verrai reindirizzato sui server crittografati a 256-bit di <strong>Stripe</strong> per effettuare il pagamento in totale sicurezza.</span>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="checkout-stripe-btn" id="submitShippingPayBtn">
+          <i class="fa-brands fa-stripe" style="font-size: 1.4rem;"></i>
+          <span id="submitPayBtnText">Procedi al Pagamento su Stripe (€6.00)</span>
+          <i class="fa-solid fa-arrow-right" style="font-size: 0.9rem;"></i>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ============================================================================
        PRIVACY & EU AI ACT COMPLIANCE MODAL (#privacyModalBackdrop)
        ============================================================================ -->
   <div class="modal-backdrop" id="privacyModalBackdrop">

@@ -37,6 +37,16 @@ const cookieBanner = document.getElementById('cookieBanner');
 const acceptCookiesBtn = document.getElementById('acceptCookiesBtn');
 const openPrivacyBannerBtn = document.getElementById('openPrivacyBannerBtn');
 
+// Pre-checkout Shipping Modal DOM Elements
+const checkoutModalBackdrop = document.getElementById('checkoutModalBackdrop');
+const closeCheckoutModalBtn = document.getElementById('closeCheckoutModalBtn');
+const shippingCheckoutForm = document.getElementById('shippingCheckoutForm');
+const modalSummaryItemsCount = document.getElementById('modalSummaryItemsCount');
+const modalSummarySubtotal = document.getElementById('modalSummarySubtotal');
+const modalSummaryTotal = document.getElementById('modalSummaryTotal');
+const submitShippingPayBtn = document.getElementById('submitShippingPayBtn');
+const submitPayBtnText = document.getElementById('submitPayBtnText');
+
 // ==============================================================================
 // INITIALIZATION & DATA FETCHING
 // ==============================================================================
@@ -386,16 +396,104 @@ function openCookieSettings() {
 }
 
 // ==============================================================================
-// STRIPE CHECKOUT INTEGRATION
+// PRE-CHECKOUT SHIPPING MODAL & STRIPE INTEGRATION
 // ==============================================================================
-async function handleStripeCheckout() {
+function openCheckoutModal() {
   if (state.cart.length === 0) {
-    showToast('Aggiungi almeno un bracciale per procedere');
+    showToast('Aggiungi almeno un bracciale allo scrigno per procedere');
     return;
   }
 
-  stripeCheckoutBtn.disabled = true;
-  stripeCheckoutBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Connessione a Stripe...`;
+  // Chiudi drawer carrello laterale per focalizzare sul form di consegna
+  closeCart();
+
+  // Calcolo riepilogo finanziario
+  const totalItems = state.cart.reduce((sum, item) => sum + item.quantity, 0);
+  const subtotal = state.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  const shipping = state.shippingFee;
+  const total = subtotal + shipping;
+
+  if (modalSummaryItemsCount) {
+    modalSummaryItemsCount.textContent = `${totalItems} ${totalItems === 1 ? 'creazione' : 'creazioni'}`;
+  }
+  if (modalSummarySubtotal) {
+    modalSummarySubtotal.textContent = `€${subtotal.toFixed(2)}`;
+  }
+  if (modalSummaryTotal) {
+    modalSummaryTotal.textContent = `€${total.toFixed(2)}`;
+  }
+  if (submitPayBtnText) {
+    submitPayBtnText.textContent = `Procedi al Pagamento su Stripe (€${total.toFixed(2)})`;
+  }
+
+  // Precompila i dati da acquisti precedenti salvati in locale
+  try {
+    const saved = JSON.parse(localStorage.getItem('fattoamano_shipping_info') || '{}');
+    if (saved.fullName) document.getElementById('shipFullName').value = saved.fullName;
+    if (saved.email) document.getElementById('shipEmail').value = saved.email;
+    if (saved.phone) document.getElementById('shipPhone').value = saved.phone;
+    if (saved.address) document.getElementById('shipAddress').value = saved.address;
+    if (saved.cap) document.getElementById('shipCap').value = saved.cap;
+    if (saved.city) document.getElementById('shipCity').value = saved.city;
+    if (saved.province) document.getElementById('shipProvince').value = saved.province;
+    if (saved.notes) document.getElementById('shipNotes').value = saved.notes;
+  } catch (err) {
+    console.warn('Errore lettura shipping info da local storage', err);
+  }
+
+  if (checkoutModalBackdrop) {
+    checkoutModalBackdrop.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+}
+
+function closeCheckoutModal() {
+  if (checkoutModalBackdrop) {
+    checkoutModalBackdrop.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+}
+
+async function handleShippingFormSubmit(event) {
+  if (event) event.preventDefault();
+
+  if (state.cart.length === 0) {
+    showToast('Aggiungi almeno un bracciale per procedere');
+    closeCheckoutModal();
+    return;
+  }
+
+  const fullName = document.getElementById('shipFullName').value.trim();
+  const email = document.getElementById('shipEmail').value.trim();
+  const phone = document.getElementById('shipPhone').value.trim();
+  const address = document.getElementById('shipAddress').value.trim();
+  const cap = document.getElementById('shipCap').value.trim();
+  const city = document.getElementById('shipCity').value.trim();
+  const province = document.getElementById('shipProvince').value.trim().toUpperCase();
+  const notes = document.getElementById('shipNotes') ? document.getElementById('shipNotes').value.trim() : '';
+
+  // Validazione CAP a 5 cifre
+  if (!/^[0-9]{5}$/.test(cap)) {
+    alert('[ATTENZIONE]\nInserisci un CAP italiano valido di 5 cifre numeriche (es. 50123).');
+    const capInput = document.getElementById('shipCap');
+    if (capInput) capInput.focus();
+    return;
+  }
+
+  // Persistenza delle preferenze di spedizione
+  const shippingInfo = { fullName, email, phone, address, cap, city, province, notes };
+  localStorage.setItem('fattoamano_shipping_info', JSON.stringify(shippingInfo));
+
+  const subtotal = state.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  const total = subtotal + state.shippingFee;
+
+  if (submitShippingPayBtn) {
+    submitShippingPayBtn.disabled = true;
+    submitShippingPayBtn.innerHTML = `
+      <i class="fa-solid fa-spinner fa-spin"></i>
+      <span>Reindirizzamento su Stripe Checkout (€${total.toFixed(2)})...</span>
+    `;
+  }
 
   try {
     const response = await fetch('/api/create-checkout-session', {
@@ -404,6 +502,7 @@ async function handleStripeCheckout() {
       body: JSON.stringify({
         items: state.cart,
         shipping_fee: state.shippingFee,
+        shipping_info: shippingInfo,
         success_url: window.location.origin + '/success.html',
         cancel_url: window.location.href
       })
@@ -412,7 +511,7 @@ async function handleStripeCheckout() {
     const data = await response.json().catch(() => ({}));
     
     if (response.ok && data.url) {
-      showToast('Reindirizzamento su Stripe Checkout in corso...');
+      showToast('Dati registrati. Connessione a Stripe in corso...');
       window.location.href = data.url;
       return;
     }
@@ -432,11 +531,14 @@ async function handleStripeCheckout() {
     console.warn('Errore chiamata Stripe Checkout:', err);
     showStripeModalInfo();
   } finally {
-    stripeCheckoutBtn.disabled = false;
-    stripeCheckoutBtn.innerHTML = `
-      <i class="fa-brands fa-stripe" style="font-size: 1.4rem;"></i>
-      <span>Procedi al Checkout Sicuro</span>
-    `;
+    if (submitShippingPayBtn) {
+      submitShippingPayBtn.disabled = false;
+      submitShippingPayBtn.innerHTML = `
+        <i class="fa-brands fa-stripe" style="font-size: 1.4rem;"></i>
+        <span id="submitPayBtnText">Procedi al Pagamento su Stripe (€${total.toFixed(2)})</span>
+        <i class="fa-solid fa-arrow-right" style="font-size: 0.9rem;"></i>
+      `;
+    }
   }
 }
 
@@ -506,12 +608,24 @@ function setupEventListeners() {
       closeCart();
       closeProductModal();
       closePrivacyModal();
+      closeCheckoutModal();
     }
   });
 
-  // Stripe Checkout button
+  // Pre-checkout Shipping Modal triggers
   if (stripeCheckoutBtn) {
-    stripeCheckoutBtn.addEventListener('click', handleStripeCheckout);
+    stripeCheckoutBtn.addEventListener('click', openCheckoutModal);
+  }
+  if (closeCheckoutModalBtn) {
+    closeCheckoutModalBtn.addEventListener('click', closeCheckoutModal);
+  }
+  if (checkoutModalBackdrop) {
+    checkoutModalBackdrop.addEventListener('click', (e) => {
+      if (e.target === checkoutModalBackdrop) closeCheckoutModal();
+    });
+  }
+  if (shippingCheckoutForm) {
+    shippingCheckoutForm.addEventListener('submit', handleShippingFormSubmit);
   }
 
   // Category Filter Pills
