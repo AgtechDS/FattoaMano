@@ -459,11 +459,9 @@ function closeCheckoutModal() {
 // ==============================================================================
 const EMAILJS_CONFIG = {
   serviceId: 'service_1m1tfyq',
+  templateId: 'template_i4boqs9',
   targetEmail: 'agtechdesigne@gmail.com',
-  publicKey: 'Ts44-OGlmsSUV73rR',
-  get templateId() {
-    return window.EMAILJS_TEMPLATE_ID || localStorage.getItem('fattoamano_emailjs_template_id') || 'template_fattoamano';
-  }
+  publicKey: 'Ts44-OGlmsSUV73rR'
 };
 
 async function sendShippingEmailNotification(shippingInfo, cartItems, totalAmount) {
