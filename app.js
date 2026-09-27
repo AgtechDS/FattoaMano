@@ -454,6 +454,67 @@ function closeCheckoutModal() {
   }
 }
 
+// ==============================================================================
+// EMAILJS NOTIFICATION DISPATCHER (service_1m1tfyq -> agtechdesigne@gmail.com)
+// ==============================================================================
+const EMAILJS_CONFIG = {
+  serviceId: 'service_1m1tfyq',
+  targetEmail: 'agtechdesigne@gmail.com',
+  // Se configurati in window o localStorage
+  get templateId() {
+    return window.EMAILJS_TEMPLATE_ID || localStorage.getItem('fattoamano_emailjs_template_id') || 'template_fattoamano';
+  },
+  get publicKey() {
+    return window.EMAILJS_PUBLIC_KEY || localStorage.getItem('fattoamano_emailjs_public_key') || '';
+  }
+};
+
+async function sendShippingEmailNotification(shippingInfo, cartItems, totalAmount) {
+  const itemsText = cartItems.map(item => 
+    `• ${item.title} (x${item.quantity}) - €${(item.price * item.quantity).toFixed(2)}`
+  ).join('\n');
+
+  const templateParams = {
+    to_email: EMAILJS_CONFIG.targetEmail,
+    destinatario_nome: shippingInfo.fullName,
+    destinatario_email: shippingInfo.email,
+    destinatario_telefono: shippingInfo.phone,
+    indirizzo: shippingInfo.address,
+    cap: shippingInfo.cap,
+    citta: shippingInfo.city,
+    provincia: shippingInfo.province,
+    note_consegna: shippingInfo.notes || 'Nessuna nota aggiuntiva',
+    articoli_ordine: itemsText,
+    totale_ordine: `€${totalAmount.toFixed(2)}`,
+    spese_spedizione: `€${state.shippingFee.toFixed(2)}`,
+    data_ordine: new Date().toLocaleString('it-IT')
+  };
+
+  try {
+    const pubKey = EMAILJS_CONFIG.publicKey;
+    if (window.emailjs && pubKey) {
+      await window.emailjs.send(EMAILJS_CONFIG.serviceId, EMAILJS_CONFIG.templateId, templateParams, pubKey);
+      console.log('[EmailJS] Notifica email inviata con successo ad agtechdesigne@gmail.com');
+      return true;
+    } else if (pubKey) {
+      const res = await fetch('https://api.emailjs.com/api/v1.0/email/send', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          service_id: EMAILJS_CONFIG.serviceId,
+          template_id: EMAILJS_CONFIG.templateId,
+          user_id: pubKey,
+          template_params: templateParams
+        })
+      });
+      return res.ok;
+    }
+  } catch (err) {
+    console.warn('[EmailJS Notification Log]:', err);
+    return false;
+  }
+}
+
 async function handleShippingFormSubmit(event) {
   if (event) event.preventDefault();
 
@@ -487,6 +548,11 @@ async function handleShippingFormSubmit(event) {
   const subtotal = state.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
   const total = subtotal + state.shippingFee;
 
+  // Invio asincrono notifica email di spedizione ad agtechdesigne@gmail.com tramite EmailJS (service_1m1tfyq)
+  sendShippingEmailNotification(shippingInfo, [...state.cart], total).catch(err => {
+    console.warn('[EmailJS Async Dispatch Notice]:', err);
+  });
+
   if (submitShippingPayBtn) {
     submitShippingPayBtn.disabled = true;
     submitShippingPayBtn.innerHTML = `
@@ -503,6 +569,7 @@ async function handleShippingFormSubmit(event) {
         items: state.cart,
         shipping_fee: state.shippingFee,
         shipping_info: shippingInfo,
+        emailjs_service_id: EMAILJS_CONFIG.serviceId,
         success_url: window.location.origin + '/success.html',
         cancel_url: window.location.href
       })

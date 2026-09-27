@@ -155,6 +155,24 @@ class TestFattoAManoSystem(unittest.TestCase):
         self.assertIn('fattoamano_shipping_info', js_content)
         print("\n[Test 8] Form Pre-Acquisto Spedizione (HTML, CSS, JS) superato al 100%")
 
+    def test_09_emailjs_integration(self):
+        """Verifica la configurazione del servizio EmailJS per notifica spedizione."""
+        html_path = WORKSPACE_DIR / "index.html"
+        html_content = html_path.read_text(encoding="utf-8")
+        self.assertIn("email.min.js", html_content, "SDK EmailJS mancante in index.html")
+
+        js_path = WORKSPACE_DIR / "app.js"
+        js_content = js_path.read_text(encoding="utf-8")
+        self.assertIn("service_1m1tfyq", js_content)
+        self.assertIn("agtechdesigne@gmail.com", js_content)
+        self.assertIn("sendShippingEmailNotification", js_content)
+
+        env_path = WORKSPACE_DIR / ".env"
+        env_content = env_path.read_text(encoding="utf-8")
+        self.assertIn("EMAILJS_SERVICE_ID=service_1m1tfyq", env_content)
+        self.assertIn("EMAILJS_TO_EMAIL=agtechdesigne@gmail.com", env_content)
+        print("\n[Test 9] Integrazione EmailJS (service_1m1tfyq -> agtechdesigne@gmail.com) verificata con successo")
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
