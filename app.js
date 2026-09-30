@@ -204,17 +204,19 @@ function renderProducts() {
   if (!productsGrid) return;
   productsGrid.innerHTML = '';
 
+  // ESCLUSIONE FOTO DOPPIE: I bracciali in pronta consegna hanno la loro sezione dedicata in alto.
+  // Nel catalogo boutique mostriamo SOLO i manufatti forgiati su misura.
+  const customProducts = (state.products || []).filter(p => p.pronta_consegna !== true);
+
   const filtered = state.activeFilter === 'all' 
-    ? state.products 
-    : (state.activeFilter === 'pronta_consegna'
-        ? state.products.filter(p => p.pronta_consegna === true)
-        : state.products.filter(p => p.category === state.activeFilter));
+    ? customProducts 
+    : customProducts.filter(p => p.category === state.activeFilter);
 
   if (filtered.length === 0) {
     productsGrid.innerHTML = `
       <div style="grid-column: 1/-1; text-align: center; padding: 4rem 1rem; color: var(--text-muted);">
         <i class="fa-solid fa-fire" style="font-size: 2rem; color: var(--copper-primary); margin-bottom: 1rem;"></i>
-        <p>Nessuna opera trovata per questa categoria.</p>
+        <p>Nessuna opera su misura trovata per questa categoria.</p>
       </div>
     `;
     return;
@@ -885,6 +887,13 @@ function setupEventListeners() {
   if (categoryFilters) {
     categoryFilters.querySelectorAll('.filter-btn').forEach(btn => {
       btn.addEventListener('click', () => {
+        if (btn.dataset.filter === 'pronta_consegna') {
+          const prontaSection = document.getElementById('prontaconsegna');
+          if (prontaSection && prontaSection.style.display !== 'none') {
+            prontaSection.scrollIntoView({ behavior: 'smooth' });
+          }
+          return;
+        }
         categoryFilters.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         state.activeFilter = btn.dataset.filter;
