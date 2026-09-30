@@ -19,6 +19,25 @@ try:
 except ImportError:
     stripe = None
 
+import sys
+sys.path.append(str(Path(__file__).resolve().parent))
+try:
+    import api.admin_auth as api_admin_auth
+    import api.admin_settings as api_admin_settings
+    import api.admin_products as api_admin_products
+    import api.admin_orders as api_admin_orders
+except ImportError:
+    try:
+        import admin_auth as api_admin_auth
+        import admin_settings as api_admin_settings
+        import admin_products as api_admin_products
+        import admin_orders as api_admin_orders
+    except ImportError:
+        api_admin_auth = None
+        api_admin_settings = None
+        api_admin_products = None
+        api_admin_orders = None
+
 FALLBACK_PRODUCTS = [
     {
         "id": "prod_rame_001",
@@ -102,15 +121,21 @@ class handler(SimpleHTTPRequestHandler):
         self.send_header("Content-Type", "application/json; charset=utf-8")
         self.send_header("Content-Length", str(len(payload)))
         self.send_header("Access-Control-Allow-Origin", "*")
-        self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+        self.send_header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
         self.send_header("Access-Control-Allow-Headers", "Content-Type, Authorization")
         self.end_headers()
         self.wfile.write(payload)
 
+    def get_client_ip(self) -> str:
+        forwarded = self.headers.get("x-forwarded-for") or self.headers.get("X-Forwarded-For")
+        if forwarded:
+            return forwarded.split(",")[0].strip()
+        return self.client_address[0] if hasattr(self, "client_address") and self.client_address else "127.0.0.1"
+
     def do_OPTIONS(self):
         self.send_response(200)
         self.send_header("Access-Control-Allow-Origin", "*")
-        self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+        self.send_header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
         self.send_header("Access-Control-Allow-Headers", "Content-Type, Authorization")
         self.end_headers()
 
@@ -118,28 +143,88 @@ class handler(SimpleHTTPRequestHandler):
         parsed = urllib.parse.urlparse(self.path)
         path = parsed.path.rstrip("/")
 
-        # API Products
+        # 1. Routing Static Admin Assets
+        if path in ("/admin", "/admin/", "/admin.html"):
+            for candidate in [BASE_DIR / "admin.html", Path("admin.html")]:
+                if candidate.exists():
+                    raw = candidate.read_bytes()
+                    self.send_response(200)
+                    self.send_header("Content-Type", "text/html; charset=utf-8")
+                    self.send_header("Content-Length", str(len(raw)))
+                    self.end_headers()
+                    self.wfile.write(raw)
+                    return
+
+        if path.startswith("/admin.js"):
+            for candidate in [BASE_DIR / "admin.js", Path("admin.js")]:
+                if candidate.exists():
+                    raw = candidate.read_bytes()
+                    self.send_response(200)
+                    self.send_header("Content-Type", "application/javascript; charset=utf-8")
+                    self.send_header("Content-Length", str(len(raw)))
+                    self.end_headers()
+                    self.wfile.write(raw)
+                    return
+
+        if path.startswith("/admin.css"):
+            for candidate in [BASE_DIR / "admin.css", Path("admin.css")]:
+                if candidate.exists():
+                    raw = candidate.read_bytes()
+                    self.send_response(200)
+                    self.send_header("Content-Type", "text/css; charset=utf-8")
+                    self.send_header("Content-Length", str(len(raw)))
+                    self.end_headers()
+                    self.wfile.write(raw)
+                    return
+
+        # 2. Admin APIs GET
+        if path == "/api/admin_auth" or path.endswith("/admin_auth"):
+            if api_admin_auth:
+                return api_admin_auth.handler.do_GET(self)
+        if path == "/api/admin_settings" or path.endswith("/admin_settings"):
+            if api_admin_settings:
+                return api_admin_settings.handler.do_GET(self)
+        if path == "/api/admin_products" or path.endswith("/admin_products"):
+            if api_admin_products:
+                return api_admin_products.handler.do_GET(self)
+        if path == "/api/admin_orders" or path.endswith("/admin_orders"):
+            if api_admin_orders:
+                return api_admin_orders.handler.do_GET(self)
+
+        # 3. Public API Products
         if path == "/api/products" or path.endswith("/products"):
             products = fetch_products()
             self.send_json(200, products)
             return
 
-        # API Health
+        # 4. API Health
         if path == "/api/health" or path.endswith("/health"):
             self.send_json(200, {
                 "status": "healthy",
                 "service": "fatto-a-mano-cloud",
+                "admin_configured": bool(os.environ.get("ADMIN_ACCESS_CODE")),
                 "timestamp": time.strftime("%Y-%m-%d %H:%M:%S UTC", time.gmtime()),
                 "runtime": "Vercel Serverless Python"
             })
             return
 
-        # Static files (index.html, style.css, app.js, assets/...)
+        # Static files fallback
         super().do_GET()
 
     def do_POST(self):
         parsed = urllib.parse.urlparse(self.path)
         path = parsed.path.rstrip("/")
+
+        # Admin APIs POST
+        if path == "/api/admin_auth" or path.endswith("/admin_auth"):
+            if api_admin_auth:
+                return api_admin_auth.handler.do_POST(self)
+        if path == "/api/admin_settings" or path.endswith("/admin_settings"):
+            if api_admin_settings:
+                return api_admin_settings.handler.do_POST(self)
+        if path == "/api/admin_products" or path.endswith("/admin_products"):
+            if api_admin_products:
+                return api_admin_products.handler.do_POST(self)
 
         content_length = int(self.headers.get("Content-Length", 0))
         body_raw = self.rfile.read(content_length).decode("utf-8") if content_length > 0 else "{}"
@@ -314,3 +399,26 @@ class handler(SimpleHTTPRequestHandler):
             return
 
         self.send_json(404, {"error": "Endpoint not found"})
+
+    def do_PUT(self):
+        parsed = urllib.parse.urlparse(self.path)
+        path = parsed.path.rstrip("/")
+        if path == "/api/admin_settings" or path.endswith("/admin_settings"):
+            if api_admin_settings:
+                return api_admin_settings.handler.do_PUT(self)
+        if path == "/api/admin_products" or path.endswith("/admin_products"):
+            if api_admin_products:
+                return api_admin_products.handler.do_PUT(self)
+        if path == "/api/admin_orders" or path.endswith("/admin_orders"):
+            if api_admin_orders:
+                return api_admin_orders.handler.do_PUT(self)
+        self.send_json(404, {"error": "Endpoint not found"})
+
+    def do_DELETE(self):
+        parsed = urllib.parse.urlparse(self.path)
+        path = parsed.path.rstrip("/")
+        if path == "/api/admin_products" or path.endswith("/admin_products"):
+            if api_admin_products:
+                return api_admin_products.handler.do_DELETE(self)
+        self.send_json(404, {"error": "Endpoint not found"})
+
