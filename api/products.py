@@ -6,6 +6,20 @@ from pathlib import Path
 
 FALLBACK_PRODUCTS = [
     {
+        "id": "prod_pronta_intrecciato",
+        "title": "Bracciale Intrecciato in Pronta Consegna",
+        "price": 30.0,
+        "currency": "EUR",
+        "description": "Pezzo unico già forgiato ad incudine e rifinito in atelier, disponibile per spedizione immediata.",
+        "category": "Intrecciati",
+        "purity": "99.9% Rame Puro",
+        "in_stock": True,
+        "pronta_consegna": True,
+        "stock_qty": 1,
+        "shipping_note": "Disponibile in bottega • Spedizione espressa tracciata 3-5 giorni lavorativi",
+        "image_url": "assets/prontaconsegna/bracciale_intrecciato_pronta.jpg"
+    },
+    {
         "id": "prod_rame_001",
         "title": "Bracciale Intrecciato 3 Filamenti",
         "price": 30.0,
@@ -14,10 +28,10 @@ FALLBACK_PRODUCTS = [
         "category": "Intrecciati",
         "purity": "99.9% Rame Puro",
         "in_stock": True,
-        "pronta_consegna": True,
+        "pronta_consegna": False,
         "stock_qty": 2,
-        "shipping_note": "Disponibile in bottega • Spedizione espressa tracciata 3-5 giorni lavorativi",
-        "image_url": "assets/bracciale_3_filamenti.jpg"
+        "shipping_note": "Forgiato su misura • Consegna tracciata 3-5 giorni lavorativi",
+        "image_url": "assets/Intrecciati/bracciale_3_filamenti.jpg"
     },
     {
         "id": "prod_rame_002",
@@ -28,10 +42,10 @@ FALLBACK_PRODUCTS = [
         "category": "Martellati",
         "purity": "99.9% Rame Puro",
         "in_stock": True,
-        "pronta_consegna": True,
+        "pronta_consegna": False,
         "stock_qty": 1,
-        "shipping_note": "Pezzo unico forgiato • Spedizione espressa tracciata 3-5 giorni lavorativi",
-        "image_url": "assets/bracciale_martellato.jpg"
+        "shipping_note": "Forgiato su misura • Consegna tracciata 3-5 giorni lavorativi",
+        "image_url": "assets/Martellati ossidati/bracciale_martellato.jpg"
     },
     {
         "id": "prod_rame_003",
@@ -42,10 +56,10 @@ FALLBACK_PRODUCTS = [
         "category": "Rigidi",
         "purity": "99.9% Rame Puro",
         "in_stock": True,
-        "pronta_consegna": True,
+        "pronta_consegna": False,
         "stock_qty": 3,
-        "shipping_note": "Disponibile in bottega • Spedizione espressa tracciata 3-5 giorni lavorativi",
-        "image_url": "assets/bracciale_rigido_puro.jpg"
+        "shipping_note": "Forgiato su misura • Consegna tracciata 3-5 giorni lavorativi",
+        "image_url": "assets/rigidi/bracciale_rigido_puro.jpg"
     }
 ]
 

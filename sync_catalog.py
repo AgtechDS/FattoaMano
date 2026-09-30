@@ -3,15 +3,18 @@
 ==============================================================================
 FATTO A MANO — AUTOMATED CATALOG FOLDER SYNC & CLOUD DEPLOYER
 ==============================================================================
-Consente all'artigiano di copiare/incollare immagini nelle cartelle:
-  - assets/Intrecciati/
-  - assets/Martellati ossidati/ (o assets/Martellati/)
-  - assets/rigidi/ (o assets/Rigidi/)
-  - assets/ProntaConsegna/ (o sottocartelle 'prontaconsegna')
+Scansiona ESCLUSIVAMENTE le 4 cartelle designate:
+  1. assets/Intrecciati/             (Categoria: Intrecciati, no pronta consegna)
+  2. assets/Martellati ossidati/     (Categoria: Martellati, no pronta consegna)
+  3. assets/rigidi/                  (Categoria: Rigidi, no pronta consegna)
+  4. assets/prontaconsegna/          (Pronta Consegna: TRUE)
 
-Il tool scansiona automaticamente le foto, genera le schede prodotto,
-le carica su Supabase Storage e Database, aggiorna la cache e pubblica
-il sito live su Vercel via GitHub in 1 solo comando!
+Regole Rigorose:
+  - Cuff Martellato Ossidato, Bangle Minimal Chisel, Bracciale Intrecciato 3 Filamenti: NO pronta consegna.
+  - Se la cartella 'prontaconsegna' non contiene immagini, la sezione banner pronta consegna viene nascosta sul frontend.
+  - Carica le immagini su Supabase Storage e Database.
+  - Aggiorna products_cache.json.
+  - Esegue commit e push automatico su GitHub per aggiornare Vercel in tempo reale.
 ==============================================================================
 """
 
@@ -22,7 +25,7 @@ import re
 import argparse
 import subprocess
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional
 from dotenv import load_dotenv
 
 # UTF-8 Console per Windows
@@ -47,16 +50,66 @@ SUPABASE_KEY = os.getenv("SUPABASE_SERVICE_ROLE_KEY", os.getenv("SUPABASE_ANON_K
 try:
     from supabase import create_client
     supabase_client = create_client(SUPABASE_URL, SUPABASE_KEY) if (SUPABASE_URL and SUPABASE_KEY) else None
-except Exception as e:
+except Exception:
     supabase_client = None
 
-# File di sistema/asset da escludere dalla scansione prodotti
-SYSTEM_EXCLUDED_FILES = {
-    "favicon.ico", "favicon.svg", "favicon-16x16.png", "favicon-32x32.png", 
-    "apple-touch-icon.png", "photo_5_2026-09-27_20-01-48.jpg"
-}
+# Le 4 cartelle autorizzate
+ALLOWED_FOLDERS = [
+    ASSETS_DIR / "Intrecciati",
+    ASSETS_DIR / "Martellati ossidati",
+    ASSETS_DIR / "rigidi",
+    ASSETS_DIR / "prontaconsegna"
+]
 
 VALID_IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".webp"}
+
+KNOWN_PRODUCTS_SPECS = {
+    "bracciale_3_filamenti.jpg": {
+        "id": "prod_rame_001",
+        "title": "Bracciale Intrecciato 3 Filamenti",
+        "price": 30.00,
+        "description": "Forgiato a mano con 3 trefoli di rame massiccio ritorti a caldo. Chiusura artigianale a gancio S-Hook con battitura a martello. Proprietà armonizzanti ed elevata conducibilità energetica.",
+        "details": "Forgiatura su misura • 3 filamenti ritorti • Finitura naturale lucidata a mano",
+        "category": "Intrecciati",
+        "pronta_consegna": False
+    },
+    "bracciale_martellato.jpg": {
+        "id": "prod_rame_002",
+        "title": "Cuff Martellato Ossidato",
+        "price": 45.00,
+        "description": "Fascia solida in rame grezzo lavorata ad incudine con trama a nido d'ape battuta a mano. Trattamento protettivo biologico con cera d'api vergine per preservare la lucentezza calda nel tempo.",
+        "details": "Larghezza 18 mm • Spessore 2.5 mm • Bordo smussato a specchio • Unisex",
+        "category": "Martellati",
+        "pronta_consegna": False
+    },
+    "bracciale_rigido_puro.jpg": {
+        "id": "prod_rame_003",
+        "title": "Bangle Minimal Chisel",
+        "price": 25.00,
+        "description": "Profilo circolare essenziale in puro rame elettrolitico, impreziosito da delicatissime micro-cesellature perimetrali. Un gioiello scultoreo raffinato e discreto per il benessere quotidiano.",
+        "details": "Spessore 4 mm • Forgiatura su misura anatomica • Lustro satinato caldo",
+        "category": "Rigidi",
+        "pronta_consegna": False
+    },
+    "bracciale_intrecciato_cuff_bottega.jpg": {
+        "id": "prod_intr_cuff_bottega",
+        "title": "Bracciale Cuff Intrecciato Bottega",
+        "price": 30.00,
+        "description": "Bracciale cuff aperto con trefoli ritorti a caldo e terminali sagomati a mano ad incudine. Calibrato al millimetro su misura anatomica del polso.",
+        "details": "Trefoli ritorti a caldo • Terminali battuti • Rame puro 99.9%",
+        "category": "Intrecciati",
+        "pronta_consegna": False
+    },
+    "bracciale_intrecciato_pronta.jpg": {
+        "id": "prod_pronta_intrecciato",
+        "title": "Bracciale Intrecciato in Pronta Consegna",
+        "price": 30.00,
+        "description": "Pezzo unico già forgiato ad incudine e rifinito in atelier, disponibile per spedizione immediata (senza i consueti tempi di attesa per la forgiatura su misura).",
+        "details": "Disponibilità immediata in bottega • Spedizione espressa tracciata",
+        "category": "Intrecciati",
+        "pronta_consegna": True
+    }
+}
 
 DEFAULT_CATEGORY_TEMPLATES = {
     "Intrecciati": {
@@ -84,7 +137,7 @@ DEFAULT_CATEGORY_TEMPLATES = {
 
 
 def clean_title_from_stem(stem: str, category: str) -> str:
-    """Trasforma un nome file tipo 'bracciale_intrecciato_cuff' in un titolo elegante."""
+    """Trasforma un nome file in un titolo elegante per la gioielleria."""
     clean = re.sub(r'[\-_]+', ' ', stem)
     clean = re.sub(r'\b(photo|\d{4,})\b', '', clean, flags=re.IGNORECASE)
     words = [w.capitalize() for w in clean.split() if w]
@@ -95,32 +148,36 @@ def clean_title_from_stem(stem: str, category: str) -> str:
 
 
 def detect_product_info(img_path: Path) -> Dict:
-    """Analizza il path dell'immagine per dedurre categoria, pronta_consegna e metadati."""
-    rel_path = img_path.relative_to(WORKSPACE_DIR)
-    rel_parts = [p.lower() for p in rel_path.parts]
-    filename_lower = img_path.name.lower()
+    """Analizza l'immagine esclusivamente in base alla cartella in cui risiede."""
+    folder_name = img_path.parent.name.lower()
+    filename = img_path.name
+    filename_lower = filename.lower()
     
-    # 1. Deduci Categoria
-    category = "Intrecciati"
-    for part in rel_parts:
-        if "martellat" in part:
+    # 1. Deduci Categoria e Pronta Consegna
+    if "prontaconsegna" in folder_name or folder_name == "prontaconsegna":
+        is_pronta = True
+        if "martellat" in filename_lower:
             category = "Martellati"
-            break
-        elif "rigid" in part:
+        elif "rigid" in filename_lower:
             category = "Rigidi"
-            break
-        elif "intrecc" in part:
+        else:
             category = "Intrecciati"
-            break
+    elif "martellat" in folder_name:
+        category = "Martellati"
+        is_pronta = False
+    elif "rigid" in folder_name:
+        category = "Rigidi"
+        is_pronta = False
+    else:
+        category = "Intrecciati"
+        is_pronta = False
 
-    # 2. Deduci Pronta Consegna
-    is_pronta = False
-    if any("pronta" in part for part in rel_parts) or "pronta" in filename_lower:
-        is_pronta = True
-    elif img_path.name in ["bracciale_3_filamenti.jpg", "bracciale_martellato.jpg", "bracciale_rigido_puro.jpg"]:
-        is_pronta = True
+    # Regola esplicita: Cuff Martellato Ossidato, Bangle Minimal Chisel, Bracciale Intrecciato 3 Filamenti NO pronta consegna
+    if filename in ["bracciale_3_filamenti.jpg", "bracciale_martellato.jpg", "bracciale_rigido_puro.jpg"]:
+        is_pronta = False
 
-    # 3. Controlla eventuale sidecar .json o .txt (opzionale)
+    # Controllo specifiche note o sidecar
+    spec = KNOWN_PRODUCTS_SPECS.get(filename, {})
     sidecar_json = img_path.with_suffix('.json')
     meta_override = {}
     if sidecar_json.exists():
@@ -134,22 +191,26 @@ def detect_product_info(img_path: Path) -> Dict:
     stem = img_path.stem
     derived_title = clean_title_from_stem(stem, category)
 
-    # Identificativo univoco stabile
     clean_stem = re.sub(r'[^a-zA-Z0-9_]', '_', stem.lower()).strip('_')
-    prod_id = meta_override.get("id") or f"prod_{category.lower()[:4]}_{clean_stem}"
+    prod_id = meta_override.get("id") or spec.get("id") or f"prod_{category.lower()[:4]}_{clean_stem}"
 
-    title = meta_override.get("title", derived_title if derived_title else tmpl["title"])
-    price = float(meta_override.get("price", tmpl["price"]))
-    description = meta_override.get("description", tmpl["description"])
-    details = meta_override.get("details", tmpl["details"])
-    stock_qty = int(meta_override.get("stock_qty", tmpl["stock_qty"]))
+    title = meta_override.get("title") or spec.get("title") or (derived_title if derived_title else tmpl["title"])
+    price = float(meta_override.get("price") or spec.get("price") or tmpl["price"])
+    description = meta_override.get("description") or spec.get("description") or tmpl["description"]
+    details = meta_override.get("details") or spec.get("details") or tmpl["details"]
+    stock_qty = int(meta_override.get("stock_qty") or tmpl["stock_qty"])
     purity = meta_override.get("purity", "99.9% Rame Puro")
     
+    # Pronta consegna finale
     if "pronta_consegna" in meta_override:
         is_pronta = bool(meta_override["pronta_consegna"])
+    elif "pronta_consegna" in spec:
+        is_pronta = bool(spec["pronta_consegna"])
 
-    # Path web relativo (per Next.js/Vercel)
+    rel_path = img_path.relative_to(WORKSPACE_DIR)
     web_image_url = str(rel_path).replace("\\", "/")
+
+    shipping_note = "Disponibile in bottega • Spedizione espressa tracciata 3-5 giorni lavorativi" if is_pronta else "Forgiato su misura • Consegna tracciata 3-5 giorni lavorativi"
 
     return {
         "id": prod_id,
@@ -165,7 +226,7 @@ def detect_product_info(img_path: Path) -> Dict:
         "in_stock": True,
         "pronta_consegna": is_pronta,
         "stock_qty": stock_qty,
-        "shipping_note": "Disponibile in bottega • Spedizione espressa tracciata 3-5 giorni lavorativi" if is_pronta else "Forgiato su misura • Consegna tracciata 3-5 giorni lavorativi"
+        "shipping_note": shipping_note
     }
 
 
@@ -186,83 +247,61 @@ def upload_to_supabase_storage(local_path: Path, filename: str) -> Optional[str]
         )
         url = supabase_client.storage.from_(bucket_name).get_public_url(filename)
         return url
-    except Exception as e:
-        # Fallback public URL
+    except Exception:
         return f"{SUPABASE_URL}/storage/v1/object/public/{bucket_name}/{filename}"
 
 
 def sync_catalog(auto_git: bool = True, force: bool = False):
     print("=" * 70)
-    print("  🔨 FATTO A MANO — AGGIORNAMENTO AUTOMATICO CATALOGO & SITO")
+    print("  🔨 FATTO A MANO — AGGIORNAMENTO AUTOMATICO CATALOGO")
     print("=" * 70)
     
-    # 1. Carica la cache attuale per preservare id o customizzazioni
-    existing_catalog = []
-    existing_by_path = {}
-    if CACHE_FILE.exists():
-        try:
-            with open(CACHE_FILE, "r", encoding="utf-8") as f:
-                existing_catalog = json.load(f)
-                for item in existing_catalog:
-                    existing_by_path[item.get("image_url")] = item
-        except Exception as e:
-            print(f"[Avviso]: Errore lettura cache: {e}")
+    # Verifica che le 4 cartelle esistano
+    for folder in ALLOWED_FOLDERS:
+        folder.mkdir(parents=True, exist_ok=True)
 
-    # 2. Trova tutte le immagini nelle cartelle
+    # 1. Scansiona SOLO le 4 cartelle specificate
     found_images: List[Path] = []
-    for ext in VALID_IMAGE_EXTENSIONS:
-        found_images.extend(ASSETS_DIR.rglob(f"*{ext}"))
-        found_images.extend(ASSETS_DIR.rglob(f"*{ext.upper()}"))
+    for folder in ALLOWED_FOLDERS:
+        for ext in VALID_IMAGE_EXTENSIONS:
+            found_images.extend(folder.glob(f"*{ext}"))
+            found_images.extend(folder.glob(f"*{ext.upper()}"))
 
-    # Rimuovi duplicati e file esclusi
+    # Rimuovi eventuali duplicati
     filtered_images = []
     seen = set()
-    for img in found_images:
+    for img in sorted(found_images):
         resolved = img.resolve()
-        if resolved in seen:
-            continue
-        seen.add(resolved)
-        if img.name in SYSTEM_EXCLUDED_FILES:
-            continue
-        filtered_images.append(img)
+        if resolved not in seen:
+            seen.add(resolved)
+            filtered_images.append(img)
 
-    print(f"📸 Trovate {len(filtered_images)} immagini prodotto in {ASSETS_DIR.name}/")
+    print(f"📸 Trovate {len(filtered_images)} immagini nelle 4 cartelle ufficiali:")
+    for folder in ALLOWED_FOLDERS:
+        imgs = [i.name for i in folder.glob("*.*") if i.suffix.lower() in VALID_IMAGE_EXTENSIONS]
+        print(f"   • assets/{folder.name}/ -> {len(imgs)} immagini {imgs}")
 
     synced_products = []
     for img_path in sorted(filtered_images):
         prod = detect_product_info(img_path)
-        web_path = prod["image_url"]
 
-        # Se già esisteva nella cache, preserva id stabile e titolo se personalizzato
-        if web_path in existing_by_path:
-            old = existing_by_path[web_path]
-            prod["id"] = old.get("id", prod["id"])
-            if old.get("title") and not old.get("title").startswith("Bracciale"):
-                prod["title"] = old.get("title")
-            if "price" in old:
-                prod["price"] = old.get("price")
-            if "pronta_consegna" in old:
-                prod["pronta_consegna"] = old.get("pronta_consegna")
-
-        # 3. Carica su Supabase Storage
+        # Carica su Supabase Storage
         remote_filename = f"{prod['id']}_{img_path.name}"
         remote_url = upload_to_supabase_storage(img_path, remote_filename)
         prod["remote_url"] = remote_url
 
-        # Mostra anteprima riga
-        badge = " [⚡ PRONTA CONSEGNA]" if prod["pronta_consegna"] else ""
+        badge = " [⚡ PRONTA CONSEGNA]" if prod["pronta_consegna"] else " [Su Misura]"
         print(f"  ✓ [{prod['category']:12}] {prod['title']} - €{prod['price']:.2f}{badge}")
         
-        # Elimina local_path prima di salvare in json
         prod_for_json = {k: v for k, v in prod.items() if k != "local_path"}
         synced_products.append(prod_for_json)
 
-    # 4. Aggiorna products_cache.json
+    # 2. Aggiorna products_cache.json
     with open(CACHE_FILE, "w", encoding="utf-8") as f:
         json.dump(synced_products, f, indent=2, ensure_ascii=False)
     print(f"\n💾 Aggiornato {CACHE_FILE.name} con {len(synced_products)} prodotti.")
 
-    # 5. Sincronizza tabella Supabase
+    # 3. Sincronizza tabella Supabase
     if supabase_client:
         print("\n☁️ Sincronizzazione tabella Supabase 'fattoamano_products'...")
         success_db = 0
@@ -289,7 +328,12 @@ def sync_catalog(auto_git: bool = True, force: bool = False):
                 print(f"  [DB Warning per {p['id']}]: {e}")
         print(f"  ✓ Sincronizzati {success_db}/{len(synced_products)} prodotti su Supabase DB.")
 
-    # 6. Git Push automatico per deploy istantaneo su Vercel
+    pronta_count = len([p for p in synced_products if p.get("pronta_consegna") is True])
+    print(f"\n⚡ Totale creazioni in Pronta Consegna disponibili: {pronta_count}")
+    if pronta_count == 0:
+        print("   (La sezione banner Pronta Consegna sarà nascosta automaticamente dal frontend)")
+
+    # 4. Git Push automatico per deploy istantaneo su Vercel
     if auto_git:
         print("\n🚀 Avvio deploy automatico su GitHub & Vercel...")
         try:
@@ -303,7 +347,7 @@ def sync_catalog(auto_git: bool = True, force: bool = False):
             )
             if status_res.stdout.strip():
                 subprocess.run(
-                    ["git", "commit", "-m", "Auto-sync catalogo Fatto a Mano: aggiornamento creazioni e pronta consegna"],
+                    ["git", "commit", "-m", "Auto-sync catalogo: aggiornamento cartelle e logica pronta consegna"],
                     cwd=WORKSPACE_DIR,
                     check=True
                 )

@@ -27,7 +27,8 @@ const cartShippingAmount = document.getElementById('cartShippingAmount');
 const cartTotalAmount = document.getElementById('cartTotalAmount');
 const shippingNoticeText = document.getElementById('shippingNoticeText');
 const shippingBarFill = document.getElementById('shippingBarFill');
-const stripeCheckoutBtn = document.getElementById('stripeCheckoutBtn');
+const cartShippingBtn = document.getElementById('cartShippingBtn') || document.getElementById('stripeCheckoutBtn');
+const stripeCheckoutBtn = cartShippingBtn;
 const categoryFilters = document.getElementById('categoryFilters');
 const productModalBackdrop = document.getElementById('productModalBackdrop');
 const closeModalBtn = document.getElementById('closeModalBtn');
@@ -89,15 +90,6 @@ async function loadProducts() {
     ];
   }
 
-  // Ensure pronta_consegna flag is correctly set on ready pieces
-  if (Array.isArray(state.products)) {
-    state.products.forEach(p => {
-      if (['prod_rame_001', 'prod_rame_002', 'prod_rame_003'].includes(p.id) && p.pronta_consegna === undefined) {
-        p.pronta_consegna = true;
-      }
-    });
-  }
-
   renderProntaConsegna();
   renderProducts();
 }
@@ -106,20 +98,38 @@ async function loadProducts() {
 // PRONTA CONSEGNA RENDERING & QUICK BUY
 // ==============================================================================
 function renderProntaConsegna() {
-  if (!prontaConsegnaGrid) return;
-  prontaConsegnaGrid.innerHTML = '';
+  const prontaSection = document.getElementById('prontaconsegna');
+  const prontaNavLinks = document.querySelectorAll('a[href="#prontaconsegna"]');
+  const prontaHeroCta = document.querySelector('.hero-cta-group a[href="#prontaconsegna"]');
+  const prontaFilterBtn = document.querySelector('button[data-filter="pronta_consegna"]');
 
-  const readyItems = state.products.filter(p => p.pronta_consegna === true);
+  const readyItems = (state.products || []).filter(p => p.pronta_consegna === true);
 
   if (readyItems.length === 0) {
-    prontaConsegnaGrid.innerHTML = `
-      <div style="grid-column: 1/-1; text-align: center; padding: 2.5rem 1rem; color: var(--text-muted); background: var(--bg-surface); border: 1px dashed var(--border-subtle); border-radius: 12px;">
-        <i class="fa-solid fa-fire-burner" style="font-size: 1.8rem; color: var(--copper-primary); margin-bottom: 0.75rem;"></i>
-        <p style="font-size: 1rem; color: var(--text-secondary);">Tutti i pezzi forgiati in bottega sono al momento riservati. Nuove creazioni in arrivo a breve.</p>
-      </div>
-    `;
+    // Regola: Se non vi sono immagini nella cartella pronta consegna, nascondi banner e riferimenti
+    if (prontaSection) prontaSection.style.display = 'none';
+    prontaNavLinks.forEach(link => {
+      const parentLi = link.closest('li');
+      if (parentLi) parentLi.style.display = 'none';
+      else link.style.display = 'none';
+    });
+    if (prontaHeroCta) prontaHeroCta.style.display = 'none';
+    if (prontaFilterBtn) prontaFilterBtn.style.display = 'none';
     return;
   }
+
+  // Se presenti, mostra sezione e controlli
+  if (prontaSection) prontaSection.style.display = 'block';
+  prontaNavLinks.forEach(link => {
+    const parentLi = link.closest('li');
+    if (parentLi) parentLi.style.display = '';
+    else link.style.display = '';
+  });
+  if (prontaHeroCta) prontaHeroCta.style.display = '';
+  if (prontaFilterBtn) prontaFilterBtn.style.display = '';
+
+  if (!prontaConsegnaGrid) return;
+  prontaConsegnaGrid.innerHTML = '';
 
   readyItems.forEach(product => {
     const card = document.createElement('article');

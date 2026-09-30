@@ -18,7 +18,7 @@
   <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
 
   <!-- Favicon & Stylesheet -->
-  <link rel="stylesheet" href="style.css?v=20261001-01">
+  <link rel="stylesheet" href="style.css?v=20261001-02">
   
   <!-- Font Awesome for luxury micro-icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -388,14 +388,16 @@
         </div>
       </div>
 
-      <button class="checkout-stripe-btn" id="stripeCheckoutBtn" onclick="openCheckoutModal()">
-        <i class="fa-brands fa-stripe" style="font-size: 1.4rem;"></i>
-        <span>Procedi al Checkout Sicuro</span>
+      <!-- Step 1 nel carrello: Inserimento Dati Spedizione prima del pagamento -->
+      <button class="cart-shipping-step-btn" id="cartShippingBtn" onclick="openCheckoutModal()">
+        <i class="fa-solid fa-truck-fast"></i>
+        <span>Dati Spedizione</span>
+        <i class="fa-solid fa-arrow-right" style="margin-left: auto;"></i>
       </button>
 
       <div class="stripe-badge-notice">
-        <i class="fa-solid fa-lock" style="color: var(--copper-light);"></i>
-        <span>Pagamento protetto con crittografia Stripe 256-bit</span>
+        <i class="fa-solid fa-clipboard-check" style="color: var(--copper-light);"></i>
+        <span>Fase 1: Dati recapito e misura polso • Fase 2: Checkout Stripe</span>
       </div>
     </div>
   </aside>
@@ -729,6 +731,6 @@
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 
   <!-- Modular Application Logic -->
-  <script src="app.js?v=20261001-01"></script>
+  <script src="app.js?v=20261001-02"></script>
 </body>
 </html>
