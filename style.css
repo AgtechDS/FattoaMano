@@ -625,7 +625,20 @@ body {
   font-weight: 600;
   padding: 0.15rem 0.5rem;
   border-radius: var(--radius-full);
-  margin-left: 0.5rem;
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+.pill-purity-inline {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-subtle);
+  color: var(--copper-light);
+  font-size: 0.65rem;
+  font-weight: 600;
+  padding: 0.15rem 0.5rem;
+  border-radius: var(--radius-full);
   text-transform: none;
   letter-spacing: normal;
 }

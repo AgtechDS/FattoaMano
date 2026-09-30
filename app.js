@@ -139,11 +139,13 @@ function renderProntaConsegna() {
     card.innerHTML = `
       <div class="pronta-card-media" onclick="openProductModal('${product.id}')">
         <img src="${product.image_url}" alt="${product.title}" loading="lazy">
-        <span class="badge-pronta-live"><i class="fa-solid fa-bolt"></i> Disponibilità Immediata</span>
-        <span class="badge-purity-corner">${product.purity || '99.9% Rame Puro'}</span>
       </div>
 
       <div class="pronta-card-body">
+        <div class="pronta-meta-row" style="display: flex; gap: 0.5rem; margin-bottom: 0.75rem; flex-wrap: wrap;">
+          <span class="pill-pronta-inline" style="margin-left: 0;"><i class="fa-solid fa-bolt"></i> Disponibilità Immediata</span>
+          <span class="pill-purity-inline">${product.purity || '99.9% Rame Puro'}</span>
+        </div>
         <div class="pronta-availability">
           <span class="dot-live"></span>
           <span>${product.stock_qty ? `${product.stock_qty} pezzo in bottega` : 'Pezzo unico forgiato'}</span>
@@ -240,16 +242,15 @@ function renderProducts() {
     card.innerHTML = `
       <div class="card-media" onclick="openProductModal('${product.id}')">
         <img src="${product.image_url}" alt="${product.title}" loading="lazy">
-        <span class="badge-purity"><i class="fa-solid fa-award"></i> ${product.purity || '99.9% Rame Puro'}</span>
-        ${prontaBadgeHtml}
         <button class="quick-view-btn" aria-label="Visualizza dettagli" onclick="event.stopPropagation(); openProductModal('${product.id}')">
           <i class="fa-solid fa-magnifying-glass-plus"></i>
         </button>
       </div>
 
       <div class="card-content">
-        <div class="card-category">
+        <div class="card-category" style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
           <span>${product.category || 'Creazione Artigianale'}</span>
+          <span class="pill-purity-inline">${product.purity || '99.9% Rame'}</span>
           ${product.pronta_consegna ? '<span class="pill-pronta-inline"><i class="fa-solid fa-bolt"></i> Disponibile Subito</span>' : ''}
         </div>
         <h3 class="card-title" onclick="openProductModal('${product.id}')" style="cursor: pointer;">${product.title}</h3>
