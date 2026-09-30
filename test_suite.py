@@ -137,10 +137,12 @@ class TestFattoAManoSystem(unittest.TestCase):
         self.assertIn('id="shipEmail"', html_content)
         self.assertIn('id="shipPhone"', html_content)
         self.assertIn('id="shipAddress"', html_content)
+        self.assertIn('id="shipWristCm"', html_content)
         self.assertIn('id="shipCap"', html_content)
         self.assertIn('id="shipCity"', html_content)
         self.assertIn('id="shipProvince"', html_content)
         self.assertIn('id="submitShippingPayBtn"', html_content)
+        self.assertIn('favicon.svg', html_content)
 
         # Regole CSS e Logica JS
         css_path = WORKSPACE_DIR / "style.css"
@@ -152,8 +154,9 @@ class TestFattoAManoSystem(unittest.TestCase):
         js_content = js_path.read_text(encoding="utf-8")
         self.assertIn('openCheckoutModal', js_content)
         self.assertIn('handleShippingFormSubmit', js_content)
+        self.assertIn('shipWristCm', js_content)
         self.assertIn('fattoamano_shipping_info', js_content)
-        print("\n[Test 8] Form Pre-Acquisto Spedizione (HTML, CSS, JS) superato al 100%")
+        print("\n[Test 8] Form Pre-Acquisto Spedizione (con Misura Polso e Favicon) superato al 100%")
 
     def test_09_emailjs_integration(self):
         """Verifica la configurazione del servizio EmailJS per notifica spedizione."""
@@ -173,6 +176,50 @@ class TestFattoAManoSystem(unittest.TestCase):
         self.assertIn("EMAILJS_TO_EMAIL=agtechdesigne@gmail.com", env_content)
         print("\n[Test 9] Integrazione EmailJS (service_1m1tfyq -> agtechdesigne@gmail.com) verificata con successo")
 
+    def test_10_pronta_consegna_and_order_dispatch(self):
+        """Verifica la sezione Pronta Consegna e il dispatcher ordini locale."""
+        html_path = WORKSPACE_DIR / "index.html"
+        html_content = html_path.read_text(encoding="utf-8")
+        self.assertIn('id="prontaconsegna"', html_content)
+        self.assertIn('id="prontaConsegnaGrid"', html_content)
+        self.assertIn('data-filter="pronta_consegna"', html_content)
+
+        js_path = WORKSPACE_DIR / "app.js"
+        js_content = js_path.read_text(encoding="utf-8")
+        self.assertIn('renderProntaConsegna', js_content)
+        self.assertIn('quickBuyById', js_content)
+        self.assertIn('/api/send-order-notification', js_content)
+
+        cache_path = WORKSPACE_DIR / "products_cache.json"
+        with open(cache_path, "r", encoding="utf-8") as f:
+            prods = json.load(f)
+        ready_prods = [p for p in prods if p.get("pronta_consegna") is True]
+        self.assertGreaterEqual(len(ready_prods), 1, "Almeno un prodotto deve essere contrassegnato come pronta consegna")
+
+        # Test dispatcher ordini server
+        test_payload = {
+            "order_id": "TEST-UNITTEST-100",
+            "shipping_info": {
+                "fullName": "Test Verifica Pronta Consegna",
+                "email": "agtechdesigne@gmail.com",
+                "phone": "+39 333 1122334",
+                "address": "Via Bottega 1",
+                "cap": "50123",
+                "city": "Firenze",
+                "province": "FI",
+                "notes": "Test automatico suite"
+            },
+            "items": [{"title": "Bracciale Rame Puro", "price": 30.0, "quantity": 1}],
+            "subtotal": 30.0,
+            "shipping_fee": 6.0,
+            "total": 36.0
+        }
+        res = server.log_and_dispatch_order(test_payload)
+        self.assertTrue(res["success"])
+        self.assertEqual(res["order_id"], "TEST-UNITTEST-100")
+        print("\n[Test 10] Sezione Pronta Consegna & Order Dispatcher verificati con successo al 100%")
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
+

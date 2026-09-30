@@ -13,6 +13,7 @@
     "stripe_product_id": null,
     "stripe_price_id": null,
     "in_stock": true,
+    "pronta_consegna": false,
     "created_at": "2026-09-26T12:49:04Z"
   },
   {
@@ -29,6 +30,7 @@
     "stripe_product_id": null,
     "stripe_price_id": null,
     "in_stock": true,
+    "pronta_consegna": false,
     "created_at": "2026-09-26T12:48:09Z"
   },
   {
@@ -40,10 +42,13 @@
     "image_url": "assets/bracciale_3_filamenti.jpg",
     "purity": "99.9% Rame Puro",
     "category": "Intrecciati",
-    "details": "Diametro regolabile 17-21 cm • 3 filamenti ritorti • Finitura naturale lucidata a mano",
+    "details": "Forgiatura su misura • 3 filamenti ritorti • Finitura naturale lucidata a mano",
     "stripe_product_id": null,
     "stripe_price_id": null,
     "in_stock": true,
+    "pronta_consegna": true,
+    "stock_qty": 2,
+    "shipping_note": "Disponibile in bottega • Spedizione espressa tracciata 3-5 giorni lavorativi",
     "created_at": "2026-09-26T14:30:00Z"
   },
   {
@@ -59,6 +64,9 @@
     "stripe_product_id": null,
     "stripe_price_id": null,
     "in_stock": true,
+    "pronta_consegna": true,
+    "stock_qty": 1,
+    "shipping_note": "Pezzo unico forgiato • Spedizione espressa tracciata 3-5 giorni lavorativi",
     "created_at": "2026-09-26T14:31:00Z"
   },
   {
@@ -70,10 +78,13 @@
     "image_url": "assets/bracciale_rigido_puro.jpg",
     "purity": "99.9% Rame Puro",
     "category": "Rigidi",
-    "details": "Spessore 4 mm • Circonferenza standard 19 cm • Lustro satinato caldo",
+    "details": "Spessore 4 mm • Forgiatura su misura anatomica • Lustro satinato caldo",
     "stripe_product_id": null,
     "stripe_price_id": null,
     "in_stock": true,
+    "pronta_consegna": true,
+    "stock_qty": 3,
+    "shipping_note": "Disponibile in bottega • Spedizione espressa tracciata 3-5 giorni lavorativi",
     "created_at": "2026-09-26T14:32:00Z"
   }
 ]

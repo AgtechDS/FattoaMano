@@ -11,8 +11,14 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
 
+  <!-- Luxury Atelier Favicons -->
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+
   <!-- Favicon & Stylesheet -->
-  <link rel="stylesheet" href="style.css?v=20260927-03">
+  <link rel="stylesheet" href="style.css?v=20260927-04">
   
   <!-- Font Awesome for luxury micro-icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -53,6 +59,7 @@
 
       <nav>
         <ul class="nav-links">
+          <li><a href="#prontaconsegna" class="nav-link"><i class="fa-solid fa-bolt" style="color: var(--copper-light); font-size: 0.75rem; margin-right: 4px;"></i>Pronta Consegna</a></li>
           <li><a href="#collezione" class="nav-link active">Collezione</a></li>
           <li><a href="#filosofia" class="nav-link">La Forgiatura</a></li>
           <li><a href="#proprieta" class="nav-link">Proprietà del Rame</a></li>
@@ -87,13 +94,13 @@
           Ogni bracciale nasce da lingotti di rame elettrolitico purissimo al 99.9%, battuto ad incudine e ritorto senza leghe tossiche o saldature industriali. Una scultura viva da indossare a contatto con la pelle.
         </p>
         <div class="hero-cta-group">
-          <a href="#collezione" class="btn-primary">
-            <span>Esplora i Bracciali</span>
-            <i class="fa-solid fa-arrow-right"></i>
+          <a href="#prontaconsegna" class="btn-primary">
+            <i class="fa-solid fa-bolt"></i>
+            <span>Scopri i Pezzi Pronti</span>
           </a>
-          <a href="#proprieta" class="btn-secondary">
-            <i class="fa-solid fa-atom"></i>
-            <span>Scopri le Proprietà</span>
+          <a href="#collezione" class="btn-secondary">
+            <span>Intera Collezione</span>
+            <i class="fa-solid fa-arrow-right"></i>
           </a>
         </div>
 
@@ -114,7 +121,7 @@
 
         <div class="hero-shipping-pill">
           <i class="fa-solid fa-truck-fast"></i>
-          <span>Spedizione <strong>€6,00 tutta Italia</strong> • Consegna tracciata <strong>3/5 giorni</strong></span>
+          <span>Spedizione <strong>€6,00 tutta Italia</strong> • Consegna tracciata <strong>3/5 giorni lavorativi</strong></span>
         </div>
       </div>
 
@@ -136,6 +143,38 @@
   </section>
 
   <!-- ============================================================================
+       SEZIONE PRONTA CONSEGNA (DISPONIBILITÀ IMMEDIATA IN BOTTEGA)
+       ============================================================================ -->
+  <section class="pronta-consegna-section" id="prontaconsegna">
+    <div class="container">
+      <div class="pronta-head-wrap">
+        <div class="pronta-header-title">
+          <div class="pronta-kicker">
+            <span class="pulse-dot"></span>
+            <span>Disponibilità Immediata in Bottega</span>
+          </div>
+          <h2 class="pronta-title">Creazioni in Pronta Consegna</h2>
+          <p class="pronta-subtitle">
+            Pezzi unici forgiati a mano e già rifiniti in atelier, pronti per l'imballo protetto e la spedizione immediata (senza i consueti tempi di lavorazione su misura).
+          </p>
+        </div>
+        <div class="pronta-shipping-badge">
+          <i class="fa-solid fa-truck-fast"></i>
+          <div>
+            <strong>Spedizione Espressa Tracciata</strong>
+            <span>Consegna in 3-5 giorni lavorativi con Corriere</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Grid creazioni in pronta consegna -->
+      <div class="pronta-consegna-grid" id="prontaConsegnaGrid">
+        <!-- Rendered dynamically by app.js -->
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================================
        SHOWROOM / PRODUCT CATALOG SECTION
        ============================================================================ -->
   <section class="showroom-section" id="collezione">
@@ -147,6 +186,7 @@
         </div>
         <div class="filter-pills" id="categoryFilters">
           <button class="filter-btn active" data-filter="all">Tutte le Opere</button>
+          <button class="filter-btn" data-filter="pronta_consegna"><i class="fa-solid fa-bolt" style="color: var(--copper-light); margin-right: 4px;"></i>Pronta Consegna</button>
           <button class="filter-btn" data-filter="Intrecciati">Intrecciati</button>
           <button class="filter-btn" data-filter="Martellati">Martellati</button>
           <button class="filter-btn" data-filter="Rigidi">Rigidi</button>
@@ -459,6 +499,28 @@
           <div class="form-group">
             <label for="shipPhone"><i class="fa-solid fa-phone"></i> Cellulare (avviso SMS corriere) *</label>
             <input type="tel" id="shipPhone" class="luxury-input" required placeholder="+39 333 1234567" autocomplete="tel">
+          </div>
+
+          <!-- Misura Circonferenza Polso (cm) per Forgiatura -->
+          <div class="form-group span-2" style="background: rgba(200, 125, 85, 0.08); border: 1px solid rgba(200, 125, 85, 0.35); border-radius: var(--radius-md); padding: 1rem 1.15rem;">
+            <label for="shipWristCm" style="color: var(--copper-light); font-weight: 600; display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
+              <span><i class="fa-solid fa-ruler-horizontal"></i> Misura del Polso (cm) per Forgiatura Personalizzata *</span>
+              <span style="font-size: 0.72rem; color: #38a169; text-transform: uppercase; letter-spacing: 0.06em;"><i class="fa-solid fa-check"></i> Calibratura Anatomica</span>
+            </label>
+            <select id="shipWristCm" class="luxury-input" required style="width: 100%; cursor: pointer;">
+              <option value="" disabled selected>Seleziona la misura in cm del tuo polso...</option>
+              <option value="15 cm">15 cm (Polso molto sottile / Small)</option>
+              <option value="16 cm">16 cm (Polso sottile / Small-Medium)</option>
+              <option value="17 cm">17 cm (Polso standard donna / Medium)</option>
+              <option value="18 cm">18 cm (Polso standard uomo / Medium-Large)</option>
+              <option value="19 cm">19 cm (Polso robusto / Large)</option>
+              <option value="20 cm">20 cm (Polso forte / XL)</option>
+              <option value="21 cm">21 cm (Polso molto forte / XXL)</option>
+              <option value="Su Misura">Altra misura speciale (indicala nelle note in basso)</option>
+            </select>
+            <p style="font-size: 0.76rem; color: var(--text-secondary); margin-top: 0.5rem; line-height: 1.4;">
+              <i class="fa-solid fa-circle-info" style="color: var(--copper-primary);"></i> Misura la circonferenza del polso aderente con un metro da sarta o uno spago. Il maestro ramaio calibrerà il bracciale sulla tua esatta anatomia.
+            </p>
           </div>
 
           <!-- Indirizzo e Numero Civico -->

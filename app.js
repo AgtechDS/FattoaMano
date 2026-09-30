@@ -15,6 +15,7 @@ const state = {
 
 // DOM Elements
 const productsGrid = document.getElementById('productsGrid');
+const prontaConsegnaGrid = document.getElementById('prontaConsegnaGrid');
 const cartDrawer = document.getElementById('cartDrawer');
 const cartBackdrop = document.getElementById('cartBackdrop');
 const openCartBtn = document.getElementById('openCartBtn');
@@ -85,7 +86,93 @@ async function loadProducts() {
     ];
   }
 
+  renderProntaConsegna();
   renderProducts();
+}
+
+// ==============================================================================
+// PRONTA CONSEGNA RENDERING & QUICK BUY
+// ==============================================================================
+function renderProntaConsegna() {
+  if (!prontaConsegnaGrid) return;
+  prontaConsegnaGrid.innerHTML = '';
+
+  const readyItems = state.products.filter(p => p.pronta_consegna === true);
+
+  if (readyItems.length === 0) {
+    prontaConsegnaGrid.innerHTML = `
+      <div style="grid-column: 1/-1; text-align: center; padding: 2.5rem 1rem; color: var(--text-muted); background: var(--bg-surface); border: 1px dashed var(--border-subtle); border-radius: 12px;">
+        <i class="fa-solid fa-fire-burner" style="font-size: 1.8rem; color: var(--copper-primary); margin-bottom: 0.75rem;"></i>
+        <p style="font-size: 1rem; color: var(--text-secondary);">Tutti i pezzi forgiati in bottega sono al momento riservati. Nuove creazioni in arrivo a breve.</p>
+      </div>
+    `;
+    return;
+  }
+
+  readyItems.forEach(product => {
+    const card = document.createElement('article');
+    card.className = 'pronta-card';
+    card.dataset.id = product.id;
+
+    card.innerHTML = `
+      <div class="pronta-card-media" onclick="openProductModal('${product.id}')">
+        <img src="${product.image_url}" alt="${product.title}" loading="lazy">
+        <span class="badge-pronta-live"><i class="fa-solid fa-bolt"></i> Disponibilità Immediata</span>
+        <span class="badge-purity-corner">${product.purity || '99.9% Rame Puro'}</span>
+      </div>
+
+      <div class="pronta-card-body">
+        <div class="pronta-availability">
+          <span class="dot-live"></span>
+          <span>${product.stock_qty ? `${product.stock_qty} pezzo in bottega` : 'Pezzo unico forgiato'}</span>
+        </div>
+        <h3 class="pronta-card-title" onclick="openProductModal('${product.id}')">${product.title}</h3>
+        <p class="pronta-card-desc">${product.description || ''}</p>
+        
+        <div class="pronta-shipping-note">
+          <i class="fa-solid fa-truck-fast"></i>
+          <span>${product.shipping_note || 'Spedizione espressa tracciata 3-5 giorni lavorativi'}</span>
+        </div>
+
+        <div class="pronta-card-footer">
+          <div class="pronta-price-tag">
+            <span class="pronta-price-label">Prezzo Bottega</span>
+            <span class="pronta-price-value">€${Number(product.price).toFixed(2)}</span>
+          </div>
+          <div class="pronta-cta-actions">
+            <button class="btn-quick-buy" onclick="quickBuyById('${product.id}')" title="Acquista Subito">
+              <i class="fa-solid fa-bolt"></i>
+              <span>Acquista Subito</span>
+            </button>
+            <button class="btn-add-icon" onclick="addToCartById('${product.id}')" title="Aggiungi al Carrello" aria-label="Aggiungi al Carrello">
+              <i class="fa-solid fa-plus"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+
+    prontaConsegnaGrid.appendChild(card);
+  });
+}
+
+function quickBuyById(productId) {
+  const product = state.products.find(p => p.id === productId);
+  if (!product) return;
+
+  const existingIndex = state.cart.findIndex(item => item.id === productId);
+  if (existingIndex === -1) {
+    state.cart.push({
+      id: product.id,
+      title: product.title,
+      price: Number(product.price),
+      image_url: product.image_url,
+      stripe_price_id: product.stripe_price_id || null,
+      quantity: 1
+    });
+    saveCart();
+  }
+  openCheckoutModal();
 }
 
 // ==============================================================================
@@ -97,13 +184,15 @@ function renderProducts() {
 
   const filtered = state.activeFilter === 'all' 
     ? state.products 
-    : state.products.filter(p => p.category === state.activeFilter);
+    : (state.activeFilter === 'pronta_consegna'
+        ? state.products.filter(p => p.pronta_consegna === true)
+        : state.products.filter(p => p.category === state.activeFilter));
 
   if (filtered.length === 0) {
     productsGrid.innerHTML = `
       <div style="grid-column: 1/-1; text-align: center; padding: 4rem 1rem; color: var(--text-muted);">
         <i class="fa-solid fa-fire" style="font-size: 2rem; color: var(--copper-primary); margin-bottom: 1rem;"></i>
-        <p>Nessuna opera trovata per questa lavorazione.</p>
+        <p>Nessuna opera trovata per questa categoria.</p>
       </div>
     `;
     return;
@@ -114,10 +203,15 @@ function renderProducts() {
     card.className = 'product-card';
     card.dataset.id = product.id;
 
+    const prontaBadgeHtml = product.pronta_consegna 
+      ? `<span class="badge-pronta-tag"><i class="fa-solid fa-bolt"></i> Pronta Consegna</span>` 
+      : '';
+
     card.innerHTML = `
       <div class="card-media" onclick="openProductModal('${product.id}')">
         <img src="${product.image_url}" alt="${product.title}" loading="lazy">
         <span class="badge-purity"><i class="fa-solid fa-award"></i> ${product.purity || '99.9% Rame Puro'}</span>
+        ${prontaBadgeHtml}
         <button class="quick-view-btn" aria-label="Visualizza dettagli" onclick="event.stopPropagation(); openProductModal('${product.id}')">
           <i class="fa-solid fa-magnifying-glass-plus"></i>
         </button>
@@ -435,6 +529,7 @@ function openCheckoutModal() {
     if (saved.cap && document.getElementById('shipCap')) document.getElementById('shipCap').value = saved.cap;
     if (saved.city && document.getElementById('shipCity')) document.getElementById('shipCity').value = saved.city;
     if (saved.province && document.getElementById('shipProvince')) document.getElementById('shipProvince').value = saved.province;
+    if (saved.wristCm && document.getElementById('shipWristCm')) document.getElementById('shipWristCm').value = saved.wristCm;
     if (saved.notes && document.getElementById('shipNotes')) document.getElementById('shipNotes').value = saved.notes;
   } catch (err) {
     console.warn('Errore lettura shipping info da local storage', err);
@@ -501,6 +596,8 @@ async function sendShippingEmailNotification(shippingInfo, cartItems, totalAmoun
     customer_email: shippingInfo.email,
     destinatario_telefono: shippingInfo.phone,
     customer_phone: shippingInfo.phone,
+    misura_polso: shippingInfo.wristCm || 'Calibratura Standard',
+    wrist_cm: shippingInfo.wristCm || 'Calibratura Standard',
     indirizzo: shippingInfo.address,
     cap: shippingInfo.cap,
     citta: shippingInfo.city,
@@ -566,11 +663,20 @@ async function handleShippingFormSubmit(event) {
   const fullName = document.getElementById('shipFullName').value.trim();
   const email = document.getElementById('shipEmail').value.trim();
   const phone = document.getElementById('shipPhone').value.trim();
+  const wristCm = document.getElementById('shipWristCm') ? document.getElementById('shipWristCm').value.trim() : '';
   const address = document.getElementById('shipAddress').value.trim();
   const cap = document.getElementById('shipCap').value.trim();
   const city = document.getElementById('shipCity').value.trim();
   const province = document.getElementById('shipProvince').value.trim().toUpperCase();
   const notes = document.getElementById('shipNotes') ? document.getElementById('shipNotes').value.trim() : '';
+
+  // Validazione Misura Polso
+  if (!wristCm) {
+    alert('[ATTENZIONE]\nSeleziona la misura in cm del tuo polso per consentire al maestro la forgiatura calibrata.');
+    const wristEl = document.getElementById('shipWristCm');
+    if (wristEl) wristEl.focus();
+    return;
+  }
 
   // Validazione CAP a 5 cifre
   if (!/^[0-9]{5}$/.test(cap)) {
@@ -581,13 +687,32 @@ async function handleShippingFormSubmit(event) {
   }
 
   // Persistenza delle preferenze di spedizione
-  const shippingInfo = { fullName, email, phone, address, cap, city, province, notes };
+  const shippingInfo = { fullName, email, phone, wristCm, address, cap, city, province, notes };
   localStorage.setItem('fattoamano_shipping_info', JSON.stringify(shippingInfo));
 
   const subtotal = state.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
   const total = subtotal + state.shippingFee;
+  const orderId = 'FAM-' + Date.now().toString().slice(-6);
 
-  // Invio asincrono notifica email di spedizione ad agtechdesigne@gmail.com tramite EmailJS (service_1m1tfyq)
+  // 1. Notifica Server-Side garantita ad agtechdesigne@gmail.com (salvata in orders_audit.json e inviata via SMTP)
+  fetch('/api/send-order-notification', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      order_id: orderId,
+      shipping_info: shippingInfo,
+      items: [...state.cart],
+      subtotal: subtotal,
+      shipping_fee: state.shippingFee,
+      total: total
+    })
+  }).then(res => res.json()).then(data => {
+    console.log('[Server Order Dispatcher Notice]:', data);
+  }).catch(err => {
+    console.warn('[Server Order Dispatcher Error]:', err);
+  });
+
+  // 2. Invio asincrono notifica email di spedizione ad agtechdesigne@gmail.com tramite EmailJS (service_1m1tfyq)
   sendShippingEmailNotification(shippingInfo, [...state.cart], total).catch(err => {
     console.warn('[EmailJS Async Dispatch Notice]:', err);
   });

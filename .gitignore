@@ -12,6 +12,7 @@ __pycache__/
 
 # Runtime generated data
 privacy_requests.json
+orders_audit.json
 *.log
 *.sqlite
 *.db

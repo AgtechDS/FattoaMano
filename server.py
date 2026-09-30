@@ -14,6 +14,9 @@ import os
 import sys
 import json
 import time
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 from pathlib import Path
 from http.server import ThreadingHTTPServer, SimpleHTTPRequestHandler
 import urllib.parse
@@ -26,6 +29,12 @@ LOCAL_ENV = APP_DIR / ".env"
 ROOT_ENV = ROOT_DIR / ".env"
 CACHE_FILE = APP_DIR / "products_cache.json"
 PRIVACY_FILE = APP_DIR / "privacy_requests.json"
+ORDERS_AUDIT_FILE = APP_DIR / "orders_audit.json"
+
+if ROOT_ENV.exists():
+    load_dotenv(ROOT_ENV)
+if LOCAL_ENV.exists():
+    load_dotenv(LOCAL_ENV, override=True)
 
 try:
     import stripe
@@ -112,6 +121,173 @@ def log_privacy_request(data: dict) -> str:
     return protocol
 
 
+def log_and_dispatch_order(data: dict) -> dict:
+    """Registra l'ordine nel registro ordini locale e invia la notifica email ad agtechdesigne@gmail.com."""
+    order_id = data.get("order_id") or f"FAM-{int(time.time() * 1000) % 1000000:06d}"
+    shipping_info = data.get("shipping_info", {})
+    items = data.get("items", [])
+    total = float(data.get("total", 0.0))
+    subtotal = float(data.get("subtotal", total - 6.0 if total > 6.0 else total))
+    shipping_fee = float(data.get("shipping_fee", 6.0))
+
+    record = {
+        "order_id": order_id,
+        "timestamp": time.strftime("%Y-%m-%d %H:%M:%S UTC", time.gmtime()),
+        "customer": shipping_info,
+        "items": items,
+        "subtotal": subtotal,
+        "shipping_fee": shipping_fee,
+        "total": total,
+        "status": "NOTIFIED"
+    }
+
+    orders = []
+    if ORDERS_AUDIT_FILE.exists():
+        try:
+            with open(ORDERS_AUDIT_FILE, "r", encoding="utf-8") as f:
+                orders = json.load(f)
+        except Exception:
+            orders = []
+
+    orders.insert(0, record)
+    with open(ORDERS_AUDIT_FILE, "w", encoding="utf-8") as f:
+        json.dump(orders, f, indent=2, ensure_ascii=False)
+
+    # Verifica configurazione SMTP per invio email reale
+    smtp_host = os.getenv("SMTP_HOST", "smtp.gmail.com").strip()
+    smtp_port_val = os.getenv("SMTP_PORT", "587").strip()
+    smtp_port = int(smtp_port_val) if smtp_port_val.isdigit() else 587
+    smtp_user = os.getenv("SMTP_USER", "").strip()
+    smtp_pass = os.getenv("SMTP_PASS", "").strip()
+    target_email = os.getenv("ORDER_NOTIFICATION_EMAIL", "agtechdesigne@gmail.com").strip()
+
+    smtp_sent = False
+    notice = f"Ordine #{order_id} protocollato con successo in orders_audit.json"
+
+    if smtp_user and smtp_pass:
+        try:
+            subject = f"📦 [Nuovo Ordine Fatto a Mano] #{order_id} - €{total:.2f}"
+            msg = MIMEMultipart("alternative")
+            msg["Subject"] = subject
+            msg["From"] = smtp_user
+            msg["To"] = target_email
+
+            items_rows = "".join([
+                f"<tr><td style='padding:8px 0;border-bottom:1px solid #282832;'>{it.get('title', 'Bracciale Rame Puro')} (x{it.get('quantity', 1)})</td>"
+                f"<td style='padding:8px 0;text-align:right;border-bottom:1px solid #282832;'>€{float(it.get('price', 0))*int(it.get('quantity', 1)):.2f}</td></tr>"
+                for it in items
+            ])
+
+            html_content = f"""
+            <div style="background-color: #0a0a0c; color: #f5efe6; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; padding: 24px; border: 1px solid #c87d55; border-radius: 12px; max-width: 620px; margin: 0 auto;">
+              <div style="background: linear-gradient(90deg, #c87d55, #e0946b); height: 4px; margin-bottom: 20px; border-radius: 2px;"></div>
+              <h2 style="color: #ffffff; letter-spacing: 0.1em; text-transform: uppercase; margin: 0 0 6px 0;">FATTO A MANO — NUOVO ORDINE #{order_id}</h2>
+              <div style="font-size: 12px; color: #c87d55; text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 20px;">Atelier del Rame Puro 99.9%</div>
+              
+              <div style="background: #181820; padding: 18px; border-left: 3px solid #c87d55; border-radius: 6px; margin-bottom: 20px;">
+                <div style="font-size: 13px; font-weight: bold; color: #e69870; text-transform: uppercase; margin-bottom: 10px;">🚚 Recapito & Spedizione Corriere Espresso:</div>
+                <p style="margin: 4px 0; font-size: 14px;"><strong>Destinatario:</strong> {shipping_info.get('fullName', '')}</p>
+                <p style="margin: 4px 0; font-size: 14px;"><strong>Email Cliente:</strong> {shipping_info.get('email', '')}</p>
+                <p style="margin: 4px 0; font-size: 14px;"><strong>Cellulare:</strong> {shipping_info.get('phone', '')}</p>
+                <p style="margin: 4px 0; font-size: 14px; color: #e69870;"><strong>📏 Misura Polso Calibrata:</strong> <span style="background: rgba(200,125,85,0.25); border: 1px solid #c87d55; padding: 2px 8px; border-radius: 4px; font-weight: bold; color: #ffffff;">{shipping_info.get('wristCm', 'Calibratura Standard')}</span></p>
+                <p style="margin: 4px 0; font-size: 14px;"><strong>Indirizzo:</strong> {shipping_info.get('address', '')}, {shipping_info.get('cap', '')} {shipping_info.get('city', '')} ({shipping_info.get('province', '')})</p>
+                <p style="margin: 4px 0; font-size: 14px; font-style: italic; color: #aba8b6;"><strong>Note Corriere:</strong> {shipping_info.get('notes', 'Nessuna istruzione particolare')}</p>
+              </div>
+
+              <div style="font-size: 13px; font-weight: bold; color: #e69870; text-transform: uppercase; margin-bottom: 10px;">💍 Creazioni Ordinate:</div>
+              <table style="width: 100%; border-collapse: collapse; font-size: 14px; margin-bottom: 20px;">
+                {items_rows}
+                <tr>
+                  <td style="padding: 10px 0; color: #aba8b6;">Spedizione Corriere Espresso (3-5gg):</td>
+                  <td style="padding: 10px 0; text-align: right; color: #aba8b6;">€{shipping_fee:.2f}</td>
+                </tr>
+                <tr>
+                  <td style="padding: 12px 0; font-weight: bold; font-size: 16px; color: #e69870; border-top: 1px solid #c87d55;">TOTALE ORDINE:</td>
+                  <td style="padding: 12px 0; text-align: right; font-weight: bold; font-size: 18px; color: #ffffff; border-top: 1px solid #c87d55;">€{total:.2f}</td>
+                </tr>
+              </table>
+
+              <div style="font-size: 11px; color: #716f7c; text-align: center; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 14px;">
+                Conforme al Protocollo di Tracciabilità Bottega Fatto A Mano • Notifica destinata ad {target_email}
+              </div>
+            </div>
+            """
+            msg.attach(MIMEText(html_content, "html"))
+
+            with smtplib.SMTP(smtp_host, smtp_port, timeout=12) as s:
+                s.starttls()
+                s.login(smtp_user, smtp_pass)
+                s.send_message(msg)
+
+            smtp_sent = True
+            notice = f"Notifica inviata con successo via SMTP a {target_email}"
+            print(f"[Order Dispatcher] Email inviata con successo via SMTP a {target_email} per l'ordine #{order_id}")
+        except Exception as e:
+            notice = f"Errore invio SMTP ({e}), ordine regolarmente salvato in orders_audit.json"
+            print(f"[Order Dispatcher SMTP Error]: {e}")
+    else:
+        print(f"[Order Dispatcher] Ordine #{order_id} registrato in orders_audit.json (destinatario notifica: {target_email})")
+
+    # Tentativo invio automatico tramite EmailJS REST API
+    emailjs_service = os.getenv("EMAILJS_SERVICE_ID", "service_1m1tfyq").strip()
+    emailjs_template = os.getenv("EMAILJS_TEMPLATE_ID", "template_i4boqs9").strip()
+    emailjs_public = os.getenv("EMAILJS_PUBLIC_KEY", "Ts44-OGlmsSUV73rR").strip()
+    emailjs_private = os.getenv("EMAILJS_PRIVATE_KEY", "").strip()
+    emailjs_sent = False
+
+    if emailjs_service and emailjs_template and emailjs_public:
+        try:
+            payload_js = {
+                "service_id": emailjs_service,
+                "template_id": emailjs_template,
+                "user_id": emailjs_public,
+                "template_params": {
+                    "to_email": target_email,
+                    "email": shipping_info.get("email", target_email),
+                    "order_id": order_id,
+                    "data_ordine": time.strftime("%d/%m/%Y, %H:%M:%S", time.localtime()),
+                    "destinatario_nome": shipping_info.get("fullName", ""),
+                    "destinatario_email": shipping_info.get("email", ""),
+                    "destinatario_telefono": shipping_info.get("phone", ""),
+                    "indirizzo": shipping_info.get("address", ""),
+                    "cap": shipping_info.get("cap", ""),
+                    "citta": shipping_info.get("city", ""),
+                    "provincia": shipping_info.get("province", ""),
+                    "note_consegna": shipping_info.get("notes", "Nessuna istruzione particolare"),
+                    "subtotal": f"{subtotal:.2f}",
+                    "spese_spedizione": f"{shipping_fee:.2f}",
+                    "totale_ordine": f"{total:.2f}"
+                }
+            }
+            if emailjs_private:
+                payload_js["accessToken"] = emailjs_private
+
+            req = urllib.request.Request(
+                "https://api.emailjs.com/api/v1.0/email/send",
+                data=json.dumps(payload_js).encode("utf-8"),
+                headers={"Content-Type": "application/json", "User-Agent": "Mozilla/5.0"}
+            )
+            with urllib.request.urlopen(req, timeout=8) as r:
+                if r.status in (200, 201):
+                    emailjs_sent = True
+                    notice += " • Inviata via EmailJS"
+                    print(f"[EmailJS Server Dispatch] Notifica inviata con successo via EmailJS ad {target_email}")
+        except urllib.error.HTTPError as he:
+            err_txt = he.read().decode("utf-8", errors="ignore")
+            print(f"[EmailJS Server Dispatch Notice]: HTTP {he.code} ({err_txt.strip()})")
+        except Exception as ee:
+            print(f"[EmailJS Server Exception]: {ee}")
+
+    return {
+        "success": True,
+        "order_id": order_id,
+        "smtp_sent": smtp_sent,
+        "emailjs_sent": emailjs_sent,
+        "target_email": target_email,
+        "message": notice
+    }
+
+
 class FattoAManoHandler(SimpleHTTPRequestHandler):
     """Handler personalizzato per servire static files e endpoint API."""
 
@@ -173,6 +349,12 @@ class FattoAManoHandler(SimpleHTTPRequestHandler):
                 "message": "Richiesta acquisita e protocollata a norma del Regolamento UE 2016/679"
             }
             self.send_json(200, response_payload)
+            return
+
+        # Endpoint: Notifica Nuovo Ordine & Invio Email ad agtechdesigne@gmail.com
+        if parsed.path == "/api/send-order-notification":
+            result = log_and_dispatch_order(data)
+            self.send_json(200, result)
             return
 
         # Endpoint 2: Stripe Checkout Session
