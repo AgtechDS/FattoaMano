@@ -6,34 +6,46 @@ from pathlib import Path
 
 FALLBACK_PRODUCTS = [
     {
-        "id": "prod_1",
-        "title": "Bracciale Torsione Rame Puro 99.9%",
+        "id": "prod_rame_001",
+        "title": "Bracciale Intrecciato 3 Filamenti",
         "price": 30.0,
-        "description": "Forgiato a mano con tre filamenti intrecciati in puro rame 99.9%. Finitura lucidata a specchio e proprietà antibatteriche naturali.",
-        "category": "twisted",
-        "purity": "99.9%",
+        "currency": "EUR",
+        "description": "Forgiato a mano con 3 trefoli di rame massiccio ritorti a caldo. Chiusura artigianale a gancio S-Hook con battitura a martello. Proprietà armonizzanti ed elevata conducibilità energetica.",
+        "category": "Intrecciati",
+        "purity": "99.9% Rame Puro",
         "in_stock": True,
-        "image_url": "assets/copper_bracelet_twisted_1790426425823.jpg"
+        "pronta_consegna": True,
+        "stock_qty": 2,
+        "shipping_note": "Disponibile in bottega • Spedizione espressa tracciata 3-5 giorni lavorativi",
+        "image_url": "assets/bracciale_3_filamenti.jpg"
     },
     {
-        "id": "prod_2",
-        "title": "Cuff Rame Battuto a Martello",
+        "id": "prod_rame_002",
+        "title": "Cuff Martellato Ossidato",
         "price": 45.0,
-        "description": "Rigido e scultoreo, battuto a mano secondo l'antica tradizione orafa toscana. Una superficie sfaccettata che cattura la luce ad ogni movimento.",
-        "category": "cuff",
-        "purity": "99.9%",
+        "currency": "EUR",
+        "description": "Fascia solida in rame grezzo lavorata ad incudine con trama a nido d'ape battuta a mano. Trattamento protettivo biologico con cera d'api vergine per preservare la lucentezza calda nel tempo.",
+        "category": "Martellati",
+        "purity": "99.9% Rame Puro",
         "in_stock": True,
-        "image_url": "assets/copper_cuff_hammered_1790426443233.jpg"
+        "pronta_consegna": True,
+        "stock_qty": 1,
+        "shipping_note": "Pezzo unico forgiato • Spedizione espressa tracciata 3-5 giorni lavorativi",
+        "image_url": "assets/bracciale_martellato.jpg"
     },
     {
-        "id": "prod_3",
-        "title": "Bangle Rame Satinato Lineare",
-        "price": 38.0,
-        "description": "Design minimale ed ergonomico a profilo tondo continuo. Rame massiccio satinato per un'eleganza sobria e una perfetta conduttività energetica.",
-        "category": "bangle",
-        "purity": "99.9%",
+        "id": "prod_rame_003",
+        "title": "Bangle Minimal Chisel",
+        "price": 25.0,
+        "currency": "EUR",
+        "description": "Profilo circolare essenziale in puro rame elettrolitico, impreziosito da delicatissime micro-cesellature perimetrali. Un gioiello scultoreo raffinato e discreto per il benessere quotidiano.",
+        "category": "Rigidi",
+        "purity": "99.9% Rame Puro",
         "in_stock": True,
-        "image_url": "assets/copper_bangle_minimal_1790426465276.jpg"
+        "pronta_consegna": True,
+        "stock_qty": 3,
+        "shipping_note": "Disponibile in bottega • Spedizione espressa tracciata 3-5 giorni lavorativi",
+        "image_url": "assets/bracciale_rigido_puro.jpg"
     }
 ]
 

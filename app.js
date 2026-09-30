@@ -60,13 +60,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
 async function loadProducts() {
   try {
-    // Attempt 1: Fetch from local server API (which synchronizes with Supabase)
-    const response = await fetch('/api/products').catch(() => null);
+    // Attempt 1: Fetch from local server API (which synchronizes with Supabase) with cache buster
+    const response = await fetch('/api/products?t=' + Date.now()).catch(() => null);
     if (response && response.ok) {
       state.products = await response.json();
     } else {
-      // Attempt 2: Fallback to local products_cache.json
-      const fallbackRes = await fetch('products_cache.json');
+      // Attempt 2: Fallback to local products_cache.json with cache buster
+      const fallbackRes = await fetch('products_cache.json?t=' + Date.now());
       state.products = await fallbackRes.json();
     }
   } catch (err) {
@@ -81,9 +81,21 @@ async function loadProducts() {
         image_url: 'assets/bracciale_3_filamenti.jpg',
         purity: '99.9% Rame Puro',
         category: 'Intrecciati',
-        details: '3 filamenti rame puro 99.9%'
+        details: '3 filamenti rame puro 99.9%',
+        pronta_consegna: true,
+        stock_qty: 2,
+        shipping_note: 'Disponibile in bottega • Spedizione espressa tracciata 3-5 giorni lavorativi'
       }
     ];
+  }
+
+  // Ensure pronta_consegna flag is correctly set on ready pieces
+  if (Array.isArray(state.products)) {
+    state.products.forEach(p => {
+      if (['prod_rame_001', 'prod_rame_002', 'prod_rame_003'].includes(p.id) && p.pronta_consegna === undefined) {
+        p.pronta_consegna = true;
+      }
+    });
   }
 
   renderProntaConsegna();
