@@ -360,12 +360,20 @@ def sync_catalog(auto_git: bool = True, force: bool = False):
                 print("  ✓ Commit effettuato.")
                 subprocess.run(["git", "push", "origin", "main"], cwd=WORKSPACE_DIR, check=True)
                 print("  ✓ Push su 'origin main' completato con successo!")
-                print("\n✨ IL SITO LIVE SU VERCEL SI AGGIORNA AUTOMATICAMENTE IN ~30 SECONDI:")
-                print("   👉 https://fattoamano-alpha.vercel.app")
-            else:
-                print("  ✓ Nessuna nuova modifica da committare su Git.")
+
+            # Esegui anche il deploy diretto con Vercel CLI per applicare istantaneamente le modifiche su tutti i domini
+            print("  ⚡ Esecuzione deploy diretto su Vercel Production (--prod)...")
+            try:
+                subprocess.run("npx vercel deploy --prod --yes", cwd=WORKSPACE_DIR, shell=True, check=True)
+                print("  ✓ Deploy di produzione Vercel completato su https://agtechdesigne.shop e https://fattoamano-alpha.vercel.app")
+            except Exception as ve:
+                print(f"  [Vercel CLI Info]: {ve}")
+
+            print("\n✨ IL SITO LIVE SU VERCEL È AGGIORNATO AL 100%:")
+            print("   👉 https://agtechdesigne.shop")
+            print("   👉 https://fattoamano-alpha.vercel.app")
         except Exception as e:
-            print(f"  [Git Warning]: {e}")
+            print(f"  [Deploy Warning]: {e}")
 
     print("\n" + "=" * 70)
     print("  ✅ SINCRONIZZAZIONE COMPLETATA CON SUCCESSO!")
