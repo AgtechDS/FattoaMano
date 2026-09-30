@@ -108,6 +108,51 @@ KNOWN_PRODUCTS_SPECS = {
         "details": "Disponibilità immediata in bottega • Spedizione espressa tracciata",
         "category": "Intrecciati",
         "pronta_consegna": True
+    },
+    "photo_1_2026-10-01_01-24-59.jpg": {
+        "id": "prod_intr_corona_regale",
+        "title": "Bracciale Intrecciato Corona Regale",
+        "price": 35.00,
+        "description": "Scultura orafa in puro rame 99.9% a maglia intrecciata fitta. Forgiatura d'ispirazione regale con battitura ad incudine e finitura a specchio.",
+        "details": "Maglia intrecciata a rilievo • Rame puro 99.9% • Forgiato a caldo",
+        "category": "Intrecciati",
+        "pronta_consegna": False
+    },
+    "photo_2_2026-10-01_01-24-59.jpg": {
+        "id": "prod_intr_modello_2",
+        "title": "Bracciale Intrecciato Modello 2",
+        "price": 30.00,
+        "description": "Doppia spirale di rame ritorto battuto ad incudine, dotato di chiusura artigianale a uncino S-Hook sagomata e martellata a mano.",
+        "details": "Doppio trefolo battuto • Chiusura ad uncino forgiata • Rame puro 99.9%",
+        "category": "Intrecciati",
+        "pronta_consegna": False
+    },
+    "photo_3_2026-10-01_01-24-59.jpg": {
+        "id": "prod_intr_massiccio_spina",
+        "title": "Bracciale Intrecciato Spina Massiccia",
+        "price": 35.00,
+        "description": "Trama densa a spina di rame ad alta densità con chiusura artigianale battuta a freddo. Struttura corposa dal fascino primordiale e benefico.",
+        "details": "Treccioli massicci ad alta densità • Chiusura anatomica • Rame puro 99.9%",
+        "category": "Intrecciati",
+        "pronta_consegna": False
+    },
+    "photo_4_2026-10-01_01-24-59.jpg": {
+        "id": "prod_intr_trama_nobile",
+        "title": "Bracciale Intrecciato Trama Nobile",
+        "price": 35.00,
+        "description": "Fascia cuff multistrato con intreccio geometrico ad incudine e collare centrale di chiusura. Rifinito con cera d'api naturale per preservare la patina nobile.",
+        "details": "Fascia multistrato • Collare di giunzione cesellato • Rame puro 99.9%",
+        "category": "Intrecciati",
+        "pronta_consegna": False
+    },
+    "photo_5_2026-10-01_01-24-59.jpg": {
+        "id": "prod_intr_spiga_polso",
+        "title": "Bracciale a Spiga in Rame Vivo",
+        "price": 35.00,
+        "description": "Elegante fascia flessibile a spiga forgiata con trefoli sfaccettati alla fiamma. Massima aderenza anatomica e proprietà bio-energetiche a diretto contatto cutaneo.",
+        "details": "Trefoli sfaccettati a caldo • Aderenza anatomica continua • Rame puro 99.9%",
+        "category": "Intrecciati",
+        "pronta_consegna": False
     }
 }
 
@@ -138,8 +183,13 @@ DEFAULT_CATEGORY_TEMPLATES = {
 
 def clean_title_from_stem(stem: str, category: str) -> str:
     """Trasforma un nome file in un titolo elegante per la gioielleria."""
+    m = re.search(r'photo_?(\d+)', stem, re.IGNORECASE)
+    if m:
+        num = m.group(1)
+        return f"Bracciale {category} Creazione #{num}"
+    
     clean = re.sub(r'[\-_]+', ' ', stem)
-    clean = re.sub(r'\b(photo|\d{4,})\b', '', clean, flags=re.IGNORECASE)
+    clean = re.sub(r'\b(photo|img|\d{2,})\b', '', clean, flags=re.IGNORECASE)
     words = [w.capitalize() for w in clean.split() if w]
     candidate = " ".join(words).strip()
     if len(candidate) < 6:
