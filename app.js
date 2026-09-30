@@ -207,17 +207,14 @@ function renderProducts() {
   let filtered = [];
 
   if (state.activeFilter === 'all') {
-    // Mostra tutte le creazioni in atelier (sia pezzi su misura che pronta consegna)
-    filtered = state.products || [];
-  } else if (state.activeFilter === 'su_misura') {
-    // "Tutte le Opere su Misura": esclude rigorosamente i pezzi in pronta consegna
+    // "Tutte le Opere": esclude categoricamente i pezzi in pronta consegna (non compaiono nel filtro Tutte le Opere)
     filtered = (state.products || []).filter(p => p.pronta_consegna !== true);
   } else if (state.activeFilter === 'pronta_consegna') {
-    // Mostra solo le creazioni disponibili in pronta consegna
+    // Mostra solo le creazioni disponibili in pronta consegna nella griglia
     filtered = (state.products || []).filter(p => p.pronta_consegna === true);
   } else {
-    // Filtro categoria specifica (es. Intrecciati, Martellati, Rigidi):
-    // Mostra tutte le creazioni della categoria, inclusi i pezzi pronta consegna di quella categoria
+    // Filtro per categoria specifica (es. Intrecciati, Martellati, Rigidi):
+    // Mostra tutte le creazioni della categoria, inclusi i pezzi pronta consegna appartenenti a quella categoria
     filtered = (state.products || []).filter(p => p.category === state.activeFilter);
   }
 
