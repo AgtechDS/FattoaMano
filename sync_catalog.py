@@ -68,7 +68,7 @@ KNOWN_PRODUCTS_SPECS = {
         "id": "prod_rame_001",
         "title": "Bracciale Intrecciato 3 Filamenti",
         "price": 30.00,
-        "description": "Forgiato a mano con 3 trefoli di rame massiccio ritorti a caldo. Chiusura artigianale a gancio S-Hook con battitura a martello. Proprietà armonizzanti ed elevata conducibilità energetica.",
+        "description": "Forgiato a mano con 3 trefoli di rame massiccio ritorti a caldo. Chiusura fatta a mano a gancio S-Hook con battitura a martello. Proprietà armonizzanti ed elevata conducibilità energetica.",
         "details": "Forgiatura su misura • 3 filamenti ritorti • Finitura naturale lucidata a mano",
         "category": "Intrecciati",
         "pronta_consegna": False
@@ -122,7 +122,7 @@ KNOWN_PRODUCTS_SPECS = {
         "id": "prod_intr_modello_2",
         "title": "Bracciale Intrecciato Modello 2",
         "price": 30.00,
-        "description": "Doppia spirale di rame ritorto battuto ad incudine, dotato di chiusura artigianale a uncino S-Hook sagomata e martellata a mano.",
+        "description": "Doppia spirale di rame ritorto battuto ad incudine, dotato di chiusura fatta a mano a uncino S-Hook sagomata e martellata a mano.",
         "details": "Doppio trefolo battuto • Chiusura ad uncino forgiata • Rame puro 99.9%",
         "category": "Intrecciati",
         "pronta_consegna": False
@@ -131,7 +131,7 @@ KNOWN_PRODUCTS_SPECS = {
         "id": "prod_intr_massiccio_spina",
         "title": "Bracciale Intrecciato Spina Massiccia",
         "price": 35.00,
-        "description": "Trama densa a spina di rame ad alta densità con chiusura artigianale battuta a freddo. Struttura corposa dal fascino primordiale e benefico.",
+        "description": "Trama densa a spina di rame ad alta densità con chiusura fatta a mano battuta a freddo. Struttura corposa dal fascino primordiale e benefico.",
         "details": "Treccioli massicci ad alta densità • Chiusura anatomica • Rame puro 99.9%",
         "category": "Intrecciati",
         "pronta_consegna": False

@@ -24,7 +24,7 @@ FALLBACK_PRODUCTS = [
         "id": "prod_rame_001",
         "title": "Bracciale Intrecciato 3 Filamenti",
         "price": 30.0,
-        "description": "Forgiato a mano con 3 trefoli di rame massiccio ritorti a caldo. Chiusura artigianale a gancio S-Hook con battitura a martello. Proprietà armonizzanti ed elevata conducibilità energetica.",
+        "description": "Forgiato a mano con 3 trefoli di rame massiccio ritorti a caldo. Chiusura fatta a mano a gancio S-Hook con battitura a martello. Proprietà armonizzanti ed elevata conducibilità energetica.",
         "category": "Intrecciati",
         "purity": "99.9%",
         "in_stock": True,
@@ -207,7 +207,7 @@ class handler(SimpleHTTPRequestHandler):
                                 "currency": "eur",
                                 "product_data": {
                                     "name": title,
-                                    "description": "Bracciale artigianale in puro rame 99.9% forgiato a mano Fatto a Mano",
+                                    "description": "Bracciale fatto a mano in puro rame 99.9% Fatto a Mano",
                                     "images": images,
                                 },
                                 "unit_amount": price_cents,
@@ -285,7 +285,7 @@ class handler(SimpleHTTPRequestHandler):
                     form_payload.append((f"line_items[{idx}][price_data][currency]", "eur"))
                     form_payload.append((f"line_items[{idx}][price_data][unit_amount]", str(price_cents)))
                     form_payload.append((f"line_items[{idx}][price_data][product_data][name]", title))
-                    form_payload.append((f"line_items[{idx}][price_data][product_data][description]", "Bracciale artigianale in puro rame 99.9%"))
+                    form_payload.append((f"line_items[{idx}][price_data][product_data][description]", "Bracciale fatto a mano in puro rame 99.9%"))
                     if img_url.startswith("http://") or img_url.startswith("https://"):
                         form_payload.append((f"line_items[{idx}][price_data][product_data][images][0]", img_url))
 

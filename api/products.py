@@ -24,7 +24,7 @@ FALLBACK_PRODUCTS = [
         "title": "Bracciale Intrecciato 3 Filamenti",
         "price": 30.0,
         "currency": "EUR",
-        "description": "Forgiato a mano con 3 trefoli di rame massiccio ritorti a caldo. Chiusura artigianale a gancio S-Hook con battitura a martello. Proprietà armonizzanti ed elevata conducibilità energetica.",
+        "description": "Forgiato a mano con 3 trefoli di rame massiccio ritorti a caldo. Chiusura fatta a mano a gancio S-Hook con battitura a martello. Proprietà armonizzanti ed elevata conducibilità energetica.",
         "category": "Intrecciati",
         "purity": "99.9% Rame Puro",
         "in_stock": True,

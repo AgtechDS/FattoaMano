@@ -46,6 +46,13 @@ try:
 except ImportError:
     create_client = None
 
+# Import moduli Admin Dashboard
+sys.path.append(str(APP_DIR / "api"))
+import api.admin_auth as api_admin_auth
+import api.admin_settings as api_admin_settings
+import api.admin_products as api_admin_products
+import api.admin_orders as api_admin_orders
+
 
 def get_stripe_key() -> str:
     """Recupera la chiave segreta Stripe ricaricando .env se necessario."""
@@ -303,11 +310,41 @@ class FattoAManoHandler(SimpleHTTPRequestHandler):
         self.send_header("Content-Type", "application/json; charset=utf-8")
         self.send_header("Content-Length", str(len(payload)))
         self.send_header("Access-Control-Allow-Origin", "*")
+        self.send_header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+        self.send_header("Access-Control-Allow-Headers", "Content-Type, Authorization")
         self.end_headers()
         self.wfile.write(payload)
 
+    def get_client_ip(self) -> str:
+        forwarded = self.headers.get("x-forwarded-for") or self.headers.get("X-Forwarded-For")
+        if forwarded:
+            return forwarded.split(",")[0].strip()
+        return self.client_address[0] if hasattr(self, "client_address") and self.client_address else "127.0.0.1"
+
     def do_GET(self):
         parsed = urllib.parse.urlparse(self.path)
+
+        # Route /admin pulita verso admin.html
+        if parsed.path in ("/admin", "/admin/"):
+            self.path = "/admin.html"
+            return super().do_GET()
+
+        # Admin API endpoints
+        if parsed.path == "/api/admin_auth":
+            api_admin_auth.handler.do_GET(self)
+            return
+
+        if parsed.path == "/api/admin_settings":
+            api_admin_settings.handler.do_GET(self)
+            return
+
+        if parsed.path == "/api/admin_products":
+            api_admin_products.handler.do_GET(self)
+            return
+
+        if parsed.path == "/api/admin_orders":
+            api_admin_orders.handler.do_GET(self)
+            return
 
         if parsed.path == "/api/products":
             products = get_products()
@@ -331,6 +368,20 @@ class FattoAManoHandler(SimpleHTTPRequestHandler):
 
     def do_POST(self):
         parsed = urllib.parse.urlparse(self.path)
+
+        # Admin API POST
+        if parsed.path == "/api/admin_auth":
+            api_admin_auth.handler.do_POST(self)
+            return
+
+        if parsed.path == "/api/admin_settings":
+            api_admin_settings.handler.do_POST(self)
+            return
+
+        if parsed.path == "/api/admin_products":
+            api_admin_products.handler.do_POST(self)
+            return
+
         content_length = int(self.headers.get("Content-Length", 0))
         body_raw = self.rfile.read(content_length).decode("utf-8") if content_length > 0 else "{}"
         
@@ -397,7 +448,7 @@ class FattoAManoHandler(SimpleHTTPRequestHandler):
                                 "currency": "eur",
                                 "product_data": {
                                     "name": title,
-                                    "description": "Bracciale artigianale in puro rame 99.9% forgiato a mano Fatto a Mano",
+                                    "description": "Bracciale fatto a mano in puro rame 99.9% Fatto a Mano",
                                     "images": images,
                                 },
                                 "unit_amount": price_cents,
@@ -451,11 +502,39 @@ class FattoAManoHandler(SimpleHTTPRequestHandler):
         self.send_response(404)
         self.end_headers()
 
+    def do_PUT(self):
+        parsed = urllib.parse.urlparse(self.path)
+
+        if parsed.path == "/api/admin_settings":
+            api_admin_settings.handler.do_PUT(self)
+            return
+
+        if parsed.path == "/api/admin_products":
+            api_admin_products.handler.do_PUT(self)
+            return
+
+        if parsed.path == "/api/admin_orders":
+            api_admin_orders.handler.do_PUT(self)
+            return
+
+        self.send_response(404)
+        self.end_headers()
+
+    def do_DELETE(self):
+        parsed = urllib.parse.urlparse(self.path)
+
+        if parsed.path == "/api/admin_products":
+            api_admin_products.handler.do_DELETE(self)
+            return
+
+        self.send_response(404)
+        self.end_headers()
+
     def do_OPTIONS(self):
         self.send_response(200)
         self.send_header("Access-Control-Allow-Origin", "*")
-        self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
-        self.send_header("Access-Control-Allow-Headers", "Content-Type")
+        self.send_header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+        self.send_header("Access-Control-Allow-Headers", "Content-Type, Authorization")
         self.end_headers()
 
 
@@ -468,11 +547,12 @@ def run_server(port=None):
     httpd = ThreadingHTTPServer(server_address, FattoAManoHandler)
     stripe_key = get_stripe_key()
     print(f"\n=======================================================")
-    print(f"  FATTO A MANO — BOUTIQUE RAME PURO ATTIVA")
-    print(f"  URL Locale: http://localhost:{port}")
-    print(f"  API Health: http://localhost:{port}/api/health")
-    print(f"  API Products: http://localhost:{port}/api/products")
-    print(f"  API Privacy:  http://localhost:{port}/api/privacy-request")
+    print(f"  FATTO A MANO — CREAZIONI RAME PURO FATTO A MANO")
+    print(f"  URL Locale:     http://localhost:{port}")
+    print(f"  Dashboard Admin: http://localhost:{port}/admin")
+    print(f"  API Health:     http://localhost:{port}/api/health")
+    print(f"  API Products:   http://localhost:{port}/api/products")
+    print(f"  API Privacy:    http://localhost:{port}/api/privacy-request")
     print(f"  Stripe Live:  {'ATTIVO (' + stripe_key[:8] + '...)' if stripe_key else 'NON CONFIGURATO'}")
     print(f"=======================================================\n")
     try:

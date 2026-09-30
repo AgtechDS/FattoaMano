@@ -53,11 +53,58 @@ const submitPayBtnText = document.getElementById('submitPayBtnText');
 // INITIALIZATION & DATA FETCHING
 // ==============================================================================
 document.addEventListener('DOMContentLoaded', () => {
+  loadSiteSettings();
   loadProducts();
   setupEventListeners();
   renderCart();
   initCookieBanner();
 });
+
+async function loadSiteSettings() {
+  try {
+    let settings = null;
+    const res = await fetch('/api/admin_settings?t=' + Date.now()).catch(() => null);
+    if (res && res.ok) {
+      settings = await res.json();
+    } else {
+      const fb = await fetch('settings_cache.json?t=' + Date.now()).catch(() => null);
+      if (fb && fb.ok) settings = await fb.json();
+    }
+    if (!settings) return;
+
+    // 1. Top Announcement Bar
+    const topBar = document.getElementById('topAnnouncementBar');
+    const topText = document.getElementById('topAnnouncementText');
+    if (topBar) {
+      if (settings.announcement_active === false) {
+        topBar.style.display = 'none';
+      } else {
+        topBar.style.display = '';
+        if (settings.announcement_text && topText) {
+          topText.innerHTML = settings.announcement_text;
+        }
+      }
+    }
+
+    // 2. Pronta Consegna Banner
+    const kickerEl = document.getElementById('prontaKickerTitle');
+    const titleEl = document.getElementById('prontaMainTitle');
+    const subtitleEl = document.getElementById('prontaSubtitle');
+    if (settings.pronta_consegna_badge && kickerEl) kickerEl.textContent = settings.pronta_consegna_badge;
+    if (settings.pronta_consegna_banner_title && titleEl) titleEl.textContent = settings.pronta_consegna_banner_title;
+    if (settings.pronta_consegna_banner_subtitle && subtitleEl) subtitleEl.textContent = settings.pronta_consegna_banner_subtitle;
+
+    // 3. Spedizione configurata
+    if (typeof settings.shipping_cost === 'number') {
+      state.shippingFee = settings.shipping_cost;
+    }
+    if (typeof settings.free_shipping_threshold === 'number') {
+      state.freeShippingThreshold = settings.free_shipping_threshold;
+    }
+  } catch (err) {
+    console.debug('Settings fallback:', err);
+  }
+}
 
 async function loadProducts() {
   try {
@@ -249,7 +296,7 @@ function renderProducts() {
 
       <div class="card-content">
         <div class="card-category" style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
-          <span>${product.category || 'Creazione Artigianale'}</span>
+          <span>${product.category || 'Fatto a Mano'}</span>
           <span class="pill-purity-inline">${product.purity || '99.9% Rame'}</span>
           ${product.pronta_consegna ? '<span class="pill-pronta-inline"><i class="fa-solid fa-bolt"></i> Disponibile Subito</span>' : ''}
         </div>
@@ -412,7 +459,7 @@ function openProductModal(productId) {
   
   const specsEl = document.getElementById('modalSpecs');
   if (specsEl) {
-    specsEl.textContent = product.details || 'Forgiato a freddo e a caldo con rame elettrolitico purissimo al 99.9%. Chiusura sagomata artigianalmente e lucidatura con cera naturale.';
+    specsEl.textContent = product.details || 'Forgiato a freddo e a caldo con rame elettrolitico purissimo al 99.9%. Chiusura forgiata fatto a mano e lucidatura con cera naturale.';
   }
 
   const addBtn = document.getElementById('modalAddCartBtn');

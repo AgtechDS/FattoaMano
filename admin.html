@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard — Fatto a Mano Atelier</title>
+  
+  <!-- Anti-cache headers -->
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="admin.css?v=20261001-01">
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+
+  <!-- ============================================================================
+       1. AUTHENTICATION GATE (PROTECTED WITH ZERO HARDCODING)
+       ============================================================================ -->
+  <div class="auth-gate-wrapper" id="authGate">
+    <div class="auth-card">
+      <div class="auth-brand">
+        <div class="auth-logo-badge">
+          <i class="fa-solid fa-gem"></i>
+        </div>
+        <h2>Fatto a Mano</h2>
+        <p class="auth-sub">Atelier Orafo del Rame Puro 99.9%</p>
+      </div>
+
+      <div class="auth-shield">
+        <i class="fa-solid fa-lock"></i>
+        <h3>Area Riservata Gestione</h3>
+        <p>Inserisci il codice di sicurezza per sbloccare l'intero pannello amministrativo.</p>
+      </div>
+
+      <!-- Secure PIN Entry Form -->
+      <form id="pinAuthForm" onsubmit="handlePinSubmit(event)">
+        <div class="pin-display-group">
+          <input type="password" id="pinInput" maxlength="10" placeholder="••••" autocomplete="off" autofocus inputmode="numeric">
+        </div>
+
+        <div class="keypad-grid">
+          <button type="button" class="key-btn" onclick="appendPin('1')">1</button>
+          <button type="button" class="key-btn" onclick="appendPin('2')">2</button>
+          <button type="button" class="key-btn" onclick="appendPin('3')">3</button>
+          <button type="button" class="key-btn" onclick="appendPin('4')">4</button>
+          <button type="button" class="key-btn" onclick="appendPin('5')">5</button>
+          <button type="button" class="key-btn" onclick="appendPin('6')">6</button>
+          <button type="button" class="key-btn" onclick="appendPin('7')">7</button>
+          <button type="button" class="key-btn" onclick="appendPin('8')">8</button>
+          <button type="button" class="key-btn" onclick="appendPin('9')">9</button>
+          <button type="button" class="key-btn key-clear" onclick="clearPin()">C</button>
+          <button type="button" class="key-btn" onclick="appendPin('0')">0</button>
+          <button type="button" class="key-btn key-back" onclick="backspacePin()"><i class="fa-solid fa-delete-left"></i></button>
+        </div>
+
+        <div id="authErrorMessage" class="auth-error-msg" style="display: none;"></div>
+
+        <button type="submit" class="btn-admin-primary" id="btnUnlock">
+          <i class="fa-solid fa-shield-halved"></i> Sblocca Dashboard
+        </button>
+      </form>
+
+      <div class="auth-footer-note">
+        <i class="fa-solid fa-fingerprint"></i> Autenticazione crittografica conforme a standard MIT Zero-Trust.
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ============================================================================
+       2. ADMIN MASTER DASHBOARD (REVEALED ON VALID AUTH)
+       ============================================================================ -->
+  <div class="dashboard-wrapper" id="dashboardMain" style="display: none;">
+    
+    <!-- Top Navigation Header -->
+    <header class="admin-header">
+      <div class="admin-header-left">
+        <a href="index.html" class="admin-brand">
+          <i class="fa-solid fa-gem admin-logo-icon"></i>
+          <div>
+            <div class="admin-title">Fatto a Mano — Control Panel</div>
+            <div class="admin-subtitle">Master Atelier Management • MIT Grade</div>
+          </div>
+        </a>
+      </div>
+
+      <div class="admin-header-center">
+        <div class="status-indicator-pill">
+          <span class="status-dot green"></span>
+          <span>Supabase DB: <strong id="dbStatus">Connesso</strong></span>
+        </div>
+        <div class="status-indicator-pill">
+          <span class="status-dot green"></span>
+          <span>Storage: <strong id="storageStatus">Attivo</strong></span>
+        </div>
+        <div class="status-indicator-pill">
+          <span class="status-dot green"></span>
+          <span>Stripe Gateway: <strong id="stripeStatus">Live</strong></span>
+        </div>
+      </div>
+
+      <div class="admin-header-right">
+        <a href="index.html" target="_blank" class="btn-admin-secondary">
+          <i class="fa-solid fa-arrow-up-right-from-square"></i> Vedi Shop Live
+        </a>
+        <button class="btn-admin-danger" onclick="logoutAdmin()">
+          <i class="fa-solid fa-right-from-bracket"></i> Esci
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="admin-body">
+      <!-- Sidebar / Tab Selector -->
+      <aside class="admin-sidebar">
+        <nav class="admin-tabs-nav">
+          <button class="tab-btn active" data-tab="catalogTab" onclick="switchTab('catalogTab')">
+            <i class="fa-solid fa-boxes-stacked"></i>
+            <span>Catalogo & Foto</span>
+            <span class="tab-badge" id="catalogCountBadge">0</span>
+          </button>
+          <button class="tab-btn" data-tab="bannersTab" onclick="switchTab('bannersTab')">
+            <i class="fa-solid fa-bullhorn"></i>
+            <span>Banner & Avvisi</span>
+          </button>
+          <button class="tab-btn" data-tab="ordersTab" onclick="switchTab('ordersTab')">
+            <i class="fa-solid fa-truck-ramp-box"></i>
+            <span>Ordini & Spedizioni</span>
+            <span class="tab-badge" id="ordersCountBadge">0</span>
+          </button>
+          <button class="tab-btn" data-tab="systemTab" onclick="switchTab('systemTab')">
+            <i class="fa-solid fa-sliders"></i>
+            <span>Diagnostica & Sync</span>
+          </button>
+        </nav>
+
+        <div class="sidebar-footer">
+          <div class="operator-badge">
+            <i class="fa-solid fa-user-shield"></i>
+            <div>
+              <div class="operator-name">Sessione Master</div>
+              <div class="operator-role">Amministratore Verificato</div>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Content Area -->
+      <main class="admin-content">
+
+        <!-- ====================================================================
+             TAB 1: CATALOGO & FOTO PRODOTTI (FULL CRUD)
+             ==================================================================== -->
+        <section class="admin-tab-panel active" id="catalogTab">
+          <div class="panel-header">
+            <div>
+              <h2>Gestione Catalogo & Foto</h2>
+              <p>Aggiungi nuovi gioielli, modifica titoli, prezzi, foto e visibilità in pronta consegna.</p>
+            </div>
+            <div class="panel-actions">
+              <button class="btn-admin-primary" onclick="openProductModal()">
+                <i class="fa-solid fa-plus"></i> Nuova Opera in Rame
+              </button>
+            </div>
+          </div>
+
+          <!-- Quick Stats Row -->
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-icon"><i class="fa-solid fa-gem"></i></div>
+              <div class="stat-info">
+                <span class="stat-label">Opere Totali</span>
+                <span class="stat-val" id="statTotalProducts">0</span>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon"><i class="fa-solid fa-bolt" style="color: var(--copper-accent);"></i></div>
+              <div class="stat-info">
+                <span class="stat-label">In Pronta Consegna</span>
+                <span class="stat-val" id="statProntaCount">0</span>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon"><i class="fa-solid fa-hammer"></i></div>
+              <div class="stat-info">
+                <span class="stat-label">Su Misura</span>
+                <span class="stat-val" id="statSuMisuraCount">0</span>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon"><i class="fa-solid fa-tags"></i></div>
+              <div class="stat-info">
+                <span class="stat-label">Prezzo Medio</span>
+                <span class="stat-val" id="statAvgPrice">€0</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Filter & Search Bar -->
+          <div class="catalog-filter-bar">
+            <div class="search-box">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <input type="text" id="catalogSearchInput" placeholder="Cerca opera per nome, categoria o descrizione..." oninput="filterCatalogTable()">
+            </div>
+            <div class="filter-select-group">
+              <select id="catalogCategoryFilter" onchange="filterCatalogTable()">
+                <option value="all">Tutte le Categorie</option>
+                <option value="Intrecciati">Intrecciati</option>
+                <option value="Martellati">Martellati</option>
+                <option value="Rigidi">Rigidi</option>
+              </select>
+              <select id="catalogProntaFilter" onchange="filterCatalogTable()">
+                <option value="all">Tutti i Tipi</option>
+                <option value="pronta">Solo Pronta Consegna</option>
+                <option value="custom">Solo Su Misura</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Products Table -->
+          <div class="table-card">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th style="width: 70px;">Foto</th>
+                  <th>Opera / Titolo</th>
+                  <th>Categoria</th>
+                  <th>Prezzo</th>
+                  <th>Pronta Consegna</th>
+                  <th>Stato</th>
+                  <th style="text-align: right; width: 140px;">Azioni</th>
+                </tr>
+              </thead>
+              <tbody id="catalogTableBody">
+                <!-- Populated dynamically by admin.js -->
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+
+        <!-- ====================================================================
+             TAB 2: BANNER & AVVISI SITO
+             ==================================================================== -->
+        <section class="admin-tab-panel" id="bannersTab">
+          <div class="panel-header">
+            <div>
+              <h2>Controllo Banner & Avvisi Live</h2>
+              <p>Personalizza il banner superiore di spedizione, i titoli della sezione pronta consegna e le soglie carrello.</p>
+            </div>
+            <button class="btn-admin-primary" onclick="saveBannersSettings()">
+              <i class="fa-solid fa-floppy-disk"></i> Salva Modifiche Banner
+            </button>
+          </div>
+
+          <div class="settings-form-grid">
+            <!-- Box 1: Barra Superiore -->
+            <div class="form-card">
+              <div class="card-head">
+                <i class="fa-solid fa-bullhorn card-icon"></i>
+                <div>
+                  <h3>Barra di Annuncio Superiore (Ticker)</h3>
+                  <p>Visibile in cima a tutte le pagine del sito.</p>
+                </div>
+              </div>
+
+              <div class="form-field">
+                <label class="toggle-label">
+                  <input type="checkbox" id="settingAnnouncementActive" checked>
+                  <span class="toggle-slider"></span>
+                  <span class="toggle-text">Mostra Barra di Annuncio</span>
+                </label>
+              </div>
+
+              <div class="form-field">
+                <label for="settingAnnouncementText">Testo dell'Annuncio (Supporta tag HTML &lt;strong&gt;):</label>
+                <textarea id="settingAnnouncementText" rows="3" class="admin-textarea" placeholder="✦ Spedizione Gratuita in tutta Italia per ordini superiori a 80€ ✦ Rame Puro 99.9% Fatto a Mano"></textarea>
+              </div>
+            </div>
+
+            <!-- Box 2: Banner Pronta Consegna -->
+            <div class="form-card">
+              <div class="card-head">
+                <i class="fa-solid fa-bolt card-icon" style="color: var(--copper-accent);"></i>
+                <div>
+                  <h3>Header Sezione Pronta Consegna</h3>
+                  <p>Testi visibili nella sezione delle opere subito disponibili.</p>
+                </div>
+              </div>
+
+              <div class="form-field">
+                <label for="settingProntaBadge">Testo Kicker / Badge:</label>
+                <input type="text" id="settingProntaBadge" class="admin-input" placeholder="Disponibilità Immediata in Bottega">
+              </div>
+
+              <div class="form-field">
+                <label for="settingProntaTitle">Titolo Principale della Sezione:</label>
+                <input type="text" id="settingProntaTitle" class="admin-input" placeholder="Creazioni in Pronta Consegna">
+              </div>
+
+              <div class="form-field">
+                <label for="settingProntaSubtitle">Sottotitolo Descrittivo:</label>
+                <textarea id="settingProntaSubtitle" rows="3" class="admin-textarea" placeholder="Pezzi unici forgiati a mano e già rifiniti in atelier, pronti per l'imballo protetto e la spedizione immediata."></textarea>
+              </div>
+            </div>
+
+            <!-- Box 3: Regole Finanziarie e Spedizione -->
+            <div class="form-card">
+              <div class="card-head">
+                <i class="fa-solid fa-truck-fast card-icon"></i>
+                <div>
+                  <h3>Regole di Spedizione & Carrello</h3>
+                  <p>Costi applicati automaticamente al checkout.</p>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-field" style="flex: 1;">
+                  <label for="settingShippingCost">Costo Spedizione Corriere Standard (€):</label>
+                  <input type="number" step="0.5" id="settingShippingCost" class="admin-input" value="6.0">
+                </div>
+                <div class="form-field" style="flex: 1;">
+                  <label for="settingFreeShippingThreshold">Soglia Spedizione Gratuita (€):</label>
+                  <input type="number" step="5" id="settingFreeShippingThreshold" class="admin-input" value="80.0">
+                </div>
+              </div>
+            </div>
+
+            <!-- Box 4: Live Preview del Banner -->
+            <div class="form-card">
+              <div class="card-head">
+                <i class="fa-solid fa-eye card-icon"></i>
+                <div>
+                  <h3>Anteprima in Tempo Reale</h3>
+                  <p>Ecco come appare la barra superiore per i visitatori:</p>
+                </div>
+              </div>
+
+              <div class="live-preview-box">
+                <div class="top-announcement-bar-preview" id="previewAnnouncementBar">
+                  <i class="fa-solid fa-truck-fast"></i>
+                  <span id="previewAnnouncementText">Spedizione €6 in tutta Italia • Rame Puro 99.9% Fatto a Mano</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+
+        <!-- ====================================================================
+             TAB 3: ORDINI & SPEDIZIONI
+             ==================================================================== -->
+        <section class="admin-tab-panel" id="ordersTab">
+          <div class="panel-header">
+            <div>
+              <h2>Registro Ordini & Spedizioni</h2>
+              <p>Visualizza le richieste di acquisto, gli indirizzi di consegna dei clienti e aggiorna i tracking.</p>
+            </div>
+            <button class="btn-admin-secondary" onclick="loadAdminOrders()">
+              <i class="fa-solid fa-arrows-rotate"></i> Aggiorna Ordini
+            </button>
+          </div>
+
+          <div class="table-card">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>ID Ordine</th>
+                  <th>Data</th>
+                  <th>Cliente & Contatto</th>
+                  <th>Indirizzo Spedizione</th>
+                  <th>Articoli Ordinati</th>
+                  <th>Totale</th>
+                  <th>Stato / Note</th>
+                </tr>
+              </thead>
+              <tbody id="ordersTableBody">
+                <!-- Populated dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+
+        <!-- ====================================================================
+             TAB 4: DIAGNOSTICA & SINCRONIZZAZIONE
+             ==================================================================== -->
+        <section class="admin-tab-panel" id="systemTab">
+          <div class="panel-header">
+            <div>
+              <h2>Diagnostica Sistema & Sincronizzazione</h2>
+              <p>Stato in tempo reale delle connessioni cloud Supabase, bucket storage, Stripe e cache locale.</p>
+            </div>
+          </div>
+
+          <div class="diag-cards-grid">
+            <div class="diag-card">
+              <h3><i class="fa-solid fa-database" style="color: var(--copper-light);"></i> Supabase Database</h3>
+              <p>Tabella <code>fattoamano_products</code> e <code>fattoamano_settings</code> attive.</p>
+              <div class="diag-status" id="diagDbDetail">Verifica in corso...</div>
+            </div>
+
+            <div class="diag-card">
+              <h3><i class="fa-solid fa-cloud-arrow-up" style="color: var(--copper-light);"></i> Supabase Storage</h3>
+              <p>Bucket <code>fattoamano-products</code> per upload foto in alta definizione.</p>
+              <div class="diag-status" id="diagStorageDetail">Verifica in corso...</div>
+            </div>
+
+            <div class="diag-card">
+              <h3><i class="fa-solid fa-credit-card" style="color: var(--copper-light);"></i> Gateway Stripe</h3>
+              <p>API Checkout Session con webhook e notifica email.</p>
+              <div class="diag-status" id="diagStripeDetail">Verifica in corso...</div>
+            </div>
+          </div>
+
+          <div class="form-card" style="margin-top: 1.5rem;">
+            <h3>Azioni Rapide di Sistema</h3>
+            <p>Se hai aggiunto foto manualmente tramite la cartella locale, puoi avviare una scansione completa del catalogo.</p>
+            <div style="display: flex; gap: 1rem; margin-top: 1rem; flex-wrap: wrap;">
+              <button class="btn-admin-primary" onclick="rebuildLocalCache()">
+                <i class="fa-solid fa-rotate"></i> Ricarica e Sincronizza Catalogo Live
+              </button>
+            </div>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+
+  <!-- ============================================================================
+       3. MODAL: AGGIUNGI / MODIFICA PRODOTTO
+       ============================================================================ -->
+  <div class="admin-modal-backdrop" id="productModal" style="display: none;">
+    <div class="admin-modal-card">
+      <div class="modal-head">
+        <h3 id="productModalTitle"><i class="fa-solid fa-gem" style="color: var(--copper-light);"></i> Nuova Opera in Rame</h3>
+        <button class="modal-close-btn" onclick="closeProductModal()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <form id="productEditForm" onsubmit="handleProductFormSubmit(event)">
+        <input type="hidden" id="editProductId">
+
+        <div class="modal-body-grid">
+          <!-- Left: Photo Upload & Preview -->
+          <div class="photo-upload-section">
+            <label class="field-label">Foto dell'Opera *</label>
+            <div class="drop-zone" id="imageDropZone" onclick="document.getElementById('productImageFileInput').click()">
+              <input type="file" id="productImageFileInput" accept="image/jpeg,image/png,image/webp" style="display: none;" onchange="handleFileSelect(event)">
+              <div id="dropZoneContent">
+                <i class="fa-solid fa-cloud-arrow-up drop-icon"></i>
+                <div class="drop-title">Trascina o clicca per caricare</div>
+                <div class="drop-hint">JPG, PNG o WEBP (massimo 10MB)</div>
+              </div>
+              <img id="imagePreview" class="photo-preview-img" style="display: none;" alt="Anteprima">
+            </div>
+
+            <div class="form-field" style="margin-top: 0.75rem;">
+              <label for="editImageUrl" style="font-size: 0.75rem;">Oppure inserisci URL immagine esistente:</label>
+              <input type="text" id="editImageUrl" class="admin-input" placeholder="assets/... o https://...">
+            </div>
+          </div>
+
+          <!-- Right: Details Form -->
+          <div class="product-fields-section">
+            <div class="form-field">
+              <label for="editTitle">Titolo Opera *</label>
+              <input type="text" id="editTitle" class="admin-input" required placeholder="Es. Bracciale Intrecciato Rame Puro">
+            </div>
+
+            <div class="form-row">
+              <div class="form-field" style="flex: 1;">
+                <label for="editCategory">Categoria *</label>
+                <select id="editCategory" class="admin-select" required>
+                  <option value="Intrecciati">Intrecciati</option>
+                  <option value="Martellati">Martellati</option>
+                  <option value="Rigidi">Rigidi</option>
+                </select>
+              </div>
+
+              <div class="form-field" style="flex: 1;">
+                <label for="editPrice">Prezzo (€) *</label>
+                <input type="number" step="0.5" min="1" id="editPrice" class="admin-input" required placeholder="30.00">
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-field" style="flex: 1;">
+                <label class="toggle-label" style="margin-top: 1.5rem;">
+                  <input type="checkbox" id="editProntaConsegna">
+                  <span class="toggle-slider"></span>
+                  <span class="toggle-text"><i class="fa-solid fa-bolt" style="color: var(--copper-light);"></i> Pronta Consegna</span>
+                </label>
+              </div>
+
+              <div class="form-field" style="flex: 1;">
+                <label for="editStockQty">Quantità Stock:</label>
+                <input type="number" min="0" id="editStockQty" class="admin-input" value="1">
+              </div>
+            </div>
+
+            <div class="form-field">
+              <label for="editDescription">Descrizione Poetica dell'Opera:</label>
+              <textarea id="editDescription" rows="3" class="admin-textarea" placeholder="Forgiato a mano con puro rame 99.9% ad incudine..."></textarea>
+            </div>
+
+            <div class="form-field">
+              <label for="editDetails">Dettagli Tecnici (Specifiche Atelier):</label>
+              <input type="text" id="editDetails" class="admin-input" placeholder="Spessore 4 mm • Forgiatura su misura anatomica • Finitura naturale">
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn-admin-secondary" onclick="closeProductModal()">Annulla</button>
+          <button type="submit" class="btn-admin-primary" id="saveProductBtn">
+            <i class="fa-solid fa-cloud-arrow-up"></i> Salva su Supabase & Catalogo
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notification System -->
+  <div class="admin-toast-container" id="adminToastContainer"></div>
+
+  <!-- Scripts -->
+  <script src="admin.js?v=20261001-01"></script>
+</body>
+</html>

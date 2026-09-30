@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Fatto a Mano — Gioielleria Artigianale in Puro Rame 99.9%</title>
-  <meta name="description" content="Esclusiva boutique orafa di bracciali forgiati a mano in 99.9% rame puro. Design unico, proprietà energetiche e biologiche, lavorazione artigianale Made in Italy conforme a GDPR e EU AI Act.">
+  <title>Fatto a Mano — Creazioni in Puro Rame 99.9% Fatto a Mano</title>
+  <meta name="description" content="Esclusive creazioni di bracciali forgiati a mano in 99.9% rame puro. Design unico, proprietà energetiche e biologiche, lavorazione fatto a mano Made in Italy conforme a GDPR e EU AI Act.">
   
   <!-- Anti-cache headers -->
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -28,16 +28,16 @@
   <!-- ============================================================================
        TOP ANNOUNCEMENT BAR (SPEDIZIONE)
        ============================================================================ -->
-  <div class="top-announcement-bar">
-    <div class="container top-announcement-inner">
+  <div class="top-announcement-bar" id="topAnnouncementBar">
+    <div class="container top-announcement-inner" id="topAnnouncementInner">
       <div class="announcement-item">
         <i class="fa-solid fa-truck-fast"></i>
-        <span>Spedizione <strong>€6 in tutta Italia</strong> (isole comprese) • Consegna in <strong>3/5 giorni lavorativi</strong></span>
+        <span id="topAnnouncementText">Spedizione <strong>€6 in tutta Italia</strong> (isole comprese) • Consegna in <strong>3/5 giorni lavorativi</strong></span>
       </div>
       <span class="announcement-separator">•</span>
       <div class="announcement-item">
         <i class="fa-solid fa-gem"></i>
-        <span>100% Puro Rame 99.9% Forgiato ad Incudine</span>
+        <span>100% Puro Rame 99.9% Forgiato a Mano</span>
       </div>
     </div>
   </div>
@@ -151,10 +151,10 @@
         <div class="pronta-header-title">
           <div class="pronta-kicker">
             <span class="pulse-dot"></span>
-            <span>Disponibilità Immediata in Bottega</span>
+            <span id="prontaKickerTitle">Disponibilità Immediata in Bottega</span>
           </div>
-          <h2 class="pronta-title">Creazioni in Pronta Consegna</h2>
-          <p class="pronta-subtitle">
+          <h2 class="pronta-title" id="prontaMainTitle">Creazioni in Pronta Consegna</h2>
+          <p class="pronta-subtitle" id="prontaSubtitle">
             Pezzi unici forgiati a mano e già rifiniti in atelier, pronti per l'imballo protetto e la spedizione immediata (senza i consueti tempi di lavorazione su misura).
           </p>
         </div>
@@ -181,7 +181,7 @@
     <div class="container">
       <div class="section-head">
         <div class="section-head-title">
-          <h2>Boutique Creazioni in Rame</h2>
+          <h2>Creazioni Fatto a Mano in Rame</h2>
           <p>Manufatti unici forgiati a mano ad incudine, disponibili in pronta consegna o su misura.</p>
         </div>
         <div class="filter-pills" id="categoryFilters">
@@ -616,9 +616,9 @@
         </p>
         <ul>
           <li><strong>Classificazione di Rischio:</strong> I sistemi utilizzati rientrano nella categoria di <em>Rischio Minimo/Basso (Minimal Risk AI)</em> ai sensi dell'Articolo 50 del Regolamento UE 2024/1689.</li>
-          <li><strong>Scopo dell'Automazione:</strong> L'intelligenza artificiale viene impiegata esclusivamente a supporto dell'artigiano per l'analisi descrittiva delle foto inviate e la catalogazione assistita delle schede gioiello (estrazione prezzo, purezza e titolo).</li>
+          <li><strong>Scopo dell'Automazione:</strong> L'intelligenza artificiale viene impiegata esclusivamente a supporto della forgiatura fatto a mano per l'analisi descrittiva delle foto inviate e la catalogazione assistita delle schede gioiello (estrazione prezzo, purezza e titolo).</li>
           <li><strong>Zero Profilazione Comportamentale:</strong> È fatto divieto assoluto all'interno della piattaforma di implementare sistemi di classificazione sociale, biometrici, o algoritmi predittivi per profilare il consumatore a fini manipolativi.</li>
-          <li><strong>Supervisione Umana Rigorosa (Human-in-the-loop):</strong> Nessun ordine o spedizione viene deliberato in modo unicamente automatico: ogni manufatto viene verificato a mano dal maestro artigiano prima della chiusura dello scrigno e dell'affido al corriere.</li>
+          <li><strong>Supervisione Umana Rigorosa (Human-in-the-loop):</strong> Nessun ordine o spedizione viene deliberato in modo unicamente automatico: ogni manufatto viene verificato e fatto a mano prima della chiusura dello scrigno e dell'affido al corriere.</li>
         </ul>
       </div>
 
@@ -690,7 +690,7 @@
         <div class="footer-brand">
           <h4>Fatto a Mano</h4>
           <p>
-            Atelier orafo indipendente specializzato nella forgiatura del rame elettrolitico purissimo al 99.9%. Ciascun gioiello è realizzato artigianalmente ad incudine, senza leghe industriali né scorciatoie seriali.
+            Atelier orafo indipendente specializzato nella forgiatura del rame elettrolitico purissimo al 99.9%. Ciascun gioiello è fatto a mano ad incudine, senza leghe industriali né scorciatoie seriali.
           </p>
           <div style="display: flex; gap: 1rem; margin-top: 1.25rem;">
             <span style="font-size: 0.75rem; color: var(--copper-light); border: 1px solid var(--border-subtle); padding: 0.3rem 0.75rem; border-radius: var(--radius-full);">
@@ -700,7 +700,7 @@
         </div>
 
         <div class="footer-links">
-          <h5>Boutique & Artigianato</h5>
+          <h5>Fatto a Mano</h5>
           <ul>
             <li><a href="#collezione">Tutti i Bracciali</a></li>
             <li><a href="#filosofia">L'Arte della Battitura</a></li>
@@ -721,7 +721,7 @@
       </div>
 
       <div class="footer-bottom">
-        <div>&copy; 2026 Fatto a Mano — Atelier del Rame Puro. P.IVA & Tutti i diritti riservati.</div>
+        <div>&copy; 2026 Fatto a Mano — Atelier del Rame Puro. P.IVA & Tutti i diritti riservati. <a href="admin.html" style="color: var(--text-muted); font-size: 0.75rem; text-decoration: none; opacity: 0.6; margin-left: 0.75rem;" title="Accesso Riservato Gestione"><i class="fa-solid fa-lock"></i> Area Riservata</a></div>
         <div>Conforme al Regolamento UE 2016/679 (GDPR) e Regolamento UE 2024/1689 (EU AI Act).</div>
       </div>
     </div>
