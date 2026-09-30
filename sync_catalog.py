@@ -304,6 +304,12 @@ def sync_catalog(auto_git: bool = True, force: bool = False):
     # 3. Sincronizza tabella Supabase
     if supabase_client:
         print("\n☁️ Sincronizzazione tabella Supabase 'fattoamano_products'...")
+        active_ids = [p["id"] for p in synced_products]
+        try:
+            supabase_client.table("fattoamano_products").update({"in_stock": False}).not_.in_("id", active_ids).execute()
+        except Exception:
+            pass
+
         success_db = 0
         for p in synced_products:
             db_record = {
