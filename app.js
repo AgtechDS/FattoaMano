@@ -204,19 +204,28 @@ function renderProducts() {
   if (!productsGrid) return;
   productsGrid.innerHTML = '';
 
-  // ESCLUSIONE FOTO DOPPIE: I bracciali in pronta consegna hanno la loro sezione dedicata in alto.
-  // Nel catalogo boutique mostriamo SOLO i manufatti forgiati su misura.
-  const customProducts = (state.products || []).filter(p => p.pronta_consegna !== true);
+  let filtered = [];
 
-  const filtered = state.activeFilter === 'all' 
-    ? customProducts 
-    : customProducts.filter(p => p.category === state.activeFilter);
+  if (state.activeFilter === 'all') {
+    // Mostra tutte le creazioni in atelier (sia pezzi su misura che pronta consegna)
+    filtered = state.products || [];
+  } else if (state.activeFilter === 'su_misura') {
+    // "Tutte le Opere su Misura": esclude rigorosamente i pezzi in pronta consegna
+    filtered = (state.products || []).filter(p => p.pronta_consegna !== true);
+  } else if (state.activeFilter === 'pronta_consegna') {
+    // Mostra solo le creazioni disponibili in pronta consegna
+    filtered = (state.products || []).filter(p => p.pronta_consegna === true);
+  } else {
+    // Filtro categoria specifica (es. Intrecciati, Martellati, Rigidi):
+    // Mostra tutte le creazioni della categoria, inclusi i pezzi pronta consegna di quella categoria
+    filtered = (state.products || []).filter(p => p.category === state.activeFilter);
+  }
 
   if (filtered.length === 0) {
     productsGrid.innerHTML = `
       <div style="grid-column: 1/-1; text-align: center; padding: 4rem 1rem; color: var(--text-muted);">
         <i class="fa-solid fa-fire" style="font-size: 2rem; color: var(--copper-primary); margin-bottom: 1rem;"></i>
-        <p>Nessuna opera su misura trovata per questa categoria.</p>
+        <p>Nessun gioiello trovato per questa selezione.</p>
       </div>
     `;
     return;
@@ -224,7 +233,7 @@ function renderProducts() {
 
   filtered.forEach(product => {
     const card = document.createElement('article');
-    card.className = 'product-card';
+    card.className = 'product-card' + (product.pronta_consegna ? ' is-pronta-consegna' : '');
     card.dataset.id = product.id;
 
     const prontaBadgeHtml = product.pronta_consegna 
@@ -242,13 +251,16 @@ function renderProducts() {
       </div>
 
       <div class="card-content">
-        <div class="card-category">${product.category || 'Creazione Artigianale'}</div>
+        <div class="card-category">
+          <span>${product.category || 'Creazione Artigianale'}</span>
+          ${product.pronta_consegna ? '<span class="pill-pronta-inline"><i class="fa-solid fa-bolt"></i> Disponibile Subito</span>' : ''}
+        </div>
         <h3 class="card-title" onclick="openProductModal('${product.id}')" style="cursor: pointer;">${product.title}</h3>
         <p class="card-description">${product.description || ''}</p>
         
         <div class="card-footer">
           <div class="card-price-group">
-            <span class="card-price-label">Valore Unico</span>
+            <span class="card-price-label">${product.pronta_consegna ? 'Pronta Consegna' : 'Valore Unico'}</span>
             <span class="card-price">€${Number(product.price).toFixed(2)}</span>
           </div>
           <button class="btn-add-cart" onclick="addToCartById('${product.id}')">
@@ -887,13 +899,6 @@ function setupEventListeners() {
   if (categoryFilters) {
     categoryFilters.querySelectorAll('.filter-btn').forEach(btn => {
       btn.addEventListener('click', () => {
-        if (btn.dataset.filter === 'pronta_consegna') {
-          const prontaSection = document.getElementById('prontaconsegna');
-          if (prontaSection && prontaSection.style.display !== 'none') {
-            prontaSection.scrollIntoView({ behavior: 'smooth' });
-          }
-          return;
-        }
         categoryFilters.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         state.activeFilter = btn.dataset.filter;

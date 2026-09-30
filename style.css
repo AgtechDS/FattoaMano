@@ -595,6 +595,45 @@ body {
   box-shadow: 0 4px 12px rgba(0,0,0,0.4);
 }
 
+.badge-pronta-tag {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: var(--copper-gradient);
+  border: 1px solid rgba(255, 230, 215, 0.45);
+  color: #ffffff;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  padding: 0.28rem 0.65rem;
+  border-radius: var(--radius-full);
+  box-shadow: 0 4px 14px var(--copper-glow);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  z-index: 2;
+}
+
+.pill-pronta-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  background: rgba(200, 125, 85, 0.15);
+  border: 1px solid rgba(200, 125, 85, 0.35);
+  color: var(--copper-light);
+  font-size: 0.65rem;
+  font-weight: 600;
+  padding: 0.15rem 0.5rem;
+  border-radius: var(--radius-full);
+  margin-left: 0.5rem;
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+.product-card.is-pronta-consegna {
+  border-color: rgba(200, 125, 85, 0.28);
+}
+
 .quick-view-btn {
   position: absolute;
   bottom: 1rem;
