@@ -38,6 +38,15 @@ except ImportError:
         api_admin_products = None
         api_admin_orders = None
 
+try:
+    from admin_security import verify_session_token, extract_bearer_token
+except ImportError:
+    try:
+        from api.admin_security import verify_session_token, extract_bearer_token
+    except ImportError:
+        verify_session_token = lambda t: (False, None, "Security module not loaded")
+        extract_bearer_token = lambda h: None
+
 FALLBACK_PRODUCTS = [
     {
         "id": "prod_rame_001",
@@ -131,6 +140,11 @@ class handler(SimpleHTTPRequestHandler):
         if forwarded:
             return forwarded.split(",")[0].strip()
         return self.client_address[0] if hasattr(self, "client_address") and self.client_address else "127.0.0.1"
+
+    def check_auth(self) -> bool:
+        token = extract_bearer_token(self.headers)
+        is_valid, _, _ = verify_session_token(token)
+        return is_valid
 
     def do_OPTIONS(self):
         self.send_response(200)

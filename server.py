@@ -52,6 +52,7 @@ import api.admin_auth as api_admin_auth
 import api.admin_settings as api_admin_settings
 import api.admin_products as api_admin_products
 import api.admin_orders as api_admin_orders
+from api.admin_security import verify_session_token, extract_bearer_token
 
 
 def get_stripe_key() -> str:
@@ -320,6 +321,11 @@ class FattoAManoHandler(SimpleHTTPRequestHandler):
         if forwarded:
             return forwarded.split(",")[0].strip()
         return self.client_address[0] if hasattr(self, "client_address") and self.client_address else "127.0.0.1"
+
+    def check_auth(self) -> bool:
+        token = extract_bearer_token(self.headers)
+        is_valid, _, _ = verify_session_token(token)
+        return is_valid
 
     def do_GET(self):
         parsed = urllib.parse.urlparse(self.path)
