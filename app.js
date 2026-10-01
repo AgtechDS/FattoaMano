@@ -262,9 +262,11 @@ function renderProducts() {
     // Mostra solo le creazioni disponibili in pronta consegna nella griglia
     filtered = (state.products || []).filter(p => p.pronta_consegna === true);
   } else {
-    // Filtro per categoria specifica (es. Intrecciati, Martellati, Rigidi):
-    // Mostra tutte le creazioni della categoria, inclusi i pezzi pronta consegna appartenenti a quella categoria
-    filtered = (state.products || []).filter(p => p.category === state.activeFilter);
+    // Filtro per categoria tecnica (es. Intrecciati, Martellati, Rigidi):
+    // I pezzi pronta consegna sono esclusi — compaiono SOLO nella sezione dedicata Pronta Consegna
+    filtered = (state.products || []).filter(p =>
+      p.category === state.activeFilter && p.pronta_consegna !== true
+    );
   }
 
   if (filtered.length === 0) {
