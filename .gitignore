@@ -27,3 +27,5 @@ Thumbs.db
 .vercel
 
 verify_vercel.py
+verify_*.py
+
