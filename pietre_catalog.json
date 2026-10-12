@@ -10,7 +10,24 @@
     "chakra": "Gola (5° Chakra)",
     "immagine_remota": "https://store.didoni.com/media/prodotti/17acq003_2_1724082990_94.jpg",
     "file_locale": "acquamarina_s.jpg",
-    "immagine_locale": "assets/pietre/acquamarina_s.jpg"
+    "immagine_locale": "assets/pietre/acquamarina_s.jpg",
+    "compatibilita_bracciali": [
+      "prod_rame_001",
+      "prod_rame_002",
+      "prod_rame_003",
+      "prod_intr_cuff_bottega",
+      "prod_intr_corona_regale",
+      "prod_intr_modello_2",
+      "prod_intr_massiccio_spina",
+      "prod_intr_trama_nobile",
+      "prod_intr_spiga_polso",
+      "prod_pronta_intrecciato"
+    ],
+    "tecniche_compatibili": [
+      "Intrecciati",
+      "Martellati",
+      "Rigidi"
+    ]
   },
   {
     "id": "pietra_ametista",
@@ -23,7 +40,24 @@
     "chakra": "Terzo Occhio & Corona (6°-7° Chakra)",
     "immagine_remota": "https://store.didoni.com/media/prodotti/17ame001_2_1724147678_31.jpg",
     "file_locale": "ametista_s.jpg",
-    "immagine_locale": "assets/pietre/ametista_s.jpg"
+    "immagine_locale": "assets/pietre/ametista_s.jpg",
+    "compatibilita_bracciali": [
+      "prod_rame_001",
+      "prod_rame_002",
+      "prod_rame_003",
+      "prod_intr_cuff_bottega",
+      "prod_intr_corona_regale",
+      "prod_intr_modello_2",
+      "prod_intr_massiccio_spina",
+      "prod_intr_trama_nobile",
+      "prod_intr_spiga_polso",
+      "prod_pronta_intrecciato"
+    ],
+    "tecniche_compatibili": [
+      "Intrecciati",
+      "Martellati",
+      "Rigidi"
+    ]
   },
   {
     "id": "pietra_agata_blu",
@@ -36,7 +70,24 @@
     "chakra": "Gola (5° Chakra)",
     "immagine_remota": "https://store.didoni.com/media/prodotti/17aga008_2_1724082029_90.jpg",
     "file_locale": "agata_blu.jpg",
-    "immagine_locale": "assets/pietre/agata_blu.jpg"
+    "immagine_locale": "assets/pietre/agata_blu.jpg",
+    "compatibilita_bracciali": [
+      "prod_rame_001",
+      "prod_rame_002",
+      "prod_rame_003",
+      "prod_intr_cuff_bottega",
+      "prod_intr_corona_regale",
+      "prod_intr_modello_2",
+      "prod_intr_massiccio_spina",
+      "prod_intr_trama_nobile",
+      "prod_intr_spiga_polso",
+      "prod_pronta_intrecciato"
+    ],
+    "tecniche_compatibili": [
+      "Intrecciati",
+      "Martellati",
+      "Rigidi"
+    ]
   },
   {
     "id": "pietra_corniola",
@@ -49,7 +100,24 @@
     "chakra": "Sacrale & Radice (1°-2° Chakra)",
     "immagine_remota": "https://store.didoni.com/media/prodotti/17cor004_3_1658497901_634_1724147218_23.jpg",
     "file_locale": "corniola_s.jpg",
-    "immagine_locale": "assets/pietre/corniola_s.jpg"
+    "immagine_locale": "assets/pietre/corniola_s.jpg",
+    "compatibilita_bracciali": [
+      "prod_rame_001",
+      "prod_rame_002",
+      "prod_rame_003",
+      "prod_intr_cuff_bottega",
+      "prod_intr_corona_regale",
+      "prod_intr_modello_2",
+      "prod_intr_massiccio_spina",
+      "prod_intr_trama_nobile",
+      "prod_intr_spiga_polso",
+      "prod_pronta_intrecciato"
+    ],
+    "tecniche_compatibili": [
+      "Intrecciati",
+      "Martellati",
+      "Rigidi"
+    ]
   },
   {
     "id": "pietra_amazzonite",
@@ -62,7 +130,24 @@
     "chakra": "Cuore & Gola (4°-5° Chakra)",
     "immagine_remota": "https://store.didoni.com/media/prodotti/whatsapp-image-2024-12-19-at-15.10.49_1734617505_86.jpg",
     "file_locale": "amazzonite_sm.jpg",
-    "immagine_locale": "assets/pietre/amazzonite_sm.jpg"
+    "immagine_locale": "assets/pietre/amazzonite_sm.jpg",
+    "compatibilita_bracciali": [
+      "prod_rame_001",
+      "prod_rame_002",
+      "prod_rame_003",
+      "prod_intr_cuff_bottega",
+      "prod_intr_corona_regale",
+      "prod_intr_modello_2",
+      "prod_intr_massiccio_spina",
+      "prod_intr_trama_nobile",
+      "prod_intr_spiga_polso",
+      "prod_pronta_intrecciato"
+    ],
+    "tecniche_compatibili": [
+      "Intrecciati",
+      "Martellati",
+      "Rigidi"
+    ]
   },
   {
     "id": "pietra_agata_verde",
@@ -75,7 +160,24 @@
     "chakra": "Cuore (4° Chakra)",
     "immagine_remota": "https://store.didoni.com/media/prodotti/17aga007_2_1724082116_74.jpg",
     "file_locale": "agata_verde.jpg",
-    "immagine_locale": "assets/pietre/agata_verde.jpg"
+    "immagine_locale": "assets/pietre/agata_verde.jpg",
+    "compatibilita_bracciali": [
+      "prod_rame_001",
+      "prod_rame_002",
+      "prod_rame_003",
+      "prod_intr_cuff_bottega",
+      "prod_intr_corona_regale",
+      "prod_intr_modello_2",
+      "prod_intr_massiccio_spina",
+      "prod_intr_trama_nobile",
+      "prod_intr_spiga_polso",
+      "prod_pronta_intrecciato"
+    ],
+    "tecniche_compatibili": [
+      "Intrecciati",
+      "Martellati",
+      "Rigidi"
+    ]
   },
   {
     "id": "pietra_agata_muschiata",
@@ -88,7 +190,24 @@
     "chakra": "Cuore (4° Chakra)",
     "immagine_remota": "https://store.didoni.com/media/prodotti/17AGM1M1_1.jpg",
     "file_locale": "agata_muschiata.jpg",
-    "immagine_locale": "assets/pietre/agata_muschiata.jpg"
+    "immagine_locale": "assets/pietre/agata_muschiata.jpg",
+    "compatibilita_bracciali": [
+      "prod_rame_001",
+      "prod_rame_002",
+      "prod_rame_003",
+      "prod_intr_cuff_bottega",
+      "prod_intr_corona_regale",
+      "prod_intr_modello_2",
+      "prod_intr_massiccio_spina",
+      "prod_intr_trama_nobile",
+      "prod_intr_spiga_polso",
+      "prod_pronta_intrecciato"
+    ],
+    "tecniche_compatibili": [
+      "Intrecciati",
+      "Martellati",
+      "Rigidi"
+    ]
   },
   {
     "id": "pietra_adularia",
@@ -101,7 +220,18 @@
     "chakra": "Corona (7° Chakra)",
     "immagine_remota": "https://store.didoni.com/media/prodotti/01plu001_2_1689674306_112_1732994241_7.jpg",
     "file_locale": "adularia_grezza.jpg",
-    "immagine_locale": "assets/pietre/adularia_grezza.jpg"
+    "immagine_locale": "assets/pietre/adularia_grezza.jpg",
+    "compatibilita_bracciali": [
+      "prod_rame_001",
+      "prod_rame_002",
+      "prod_intr_cuff_bottega",
+      "prod_intr_corona_regale",
+      "prod_intr_massiccio_spina"
+    ],
+    "tecniche_compatibili": [
+      "Intrecciati",
+      "Martellati"
+    ]
   },
   {
     "id": "pietra_avventurina",
@@ -114,7 +244,18 @@
     "chakra": "Cuore (4° Chakra)",
     "immagine_remota": "https://store.didoni.com/media/prodotti/01avv001_2_1732998636_91.jpg",
     "file_locale": "avventurina_grezza.jpg",
-    "immagine_locale": "assets/pietre/avventurina_grezza.jpg"
+    "immagine_locale": "assets/pietre/avventurina_grezza.jpg",
+    "compatibilita_bracciali": [
+      "prod_rame_001",
+      "prod_rame_002",
+      "prod_intr_cuff_bottega",
+      "prod_intr_corona_regale",
+      "prod_intr_massiccio_spina"
+    ],
+    "tecniche_compatibili": [
+      "Intrecciati",
+      "Martellati"
+    ]
   },
   {
     "id": "pietra_ambra_baltica",
@@ -127,7 +268,24 @@
     "chakra": "Plesso Solare (3° Chakra)",
     "immagine_remota": "https://store.didoni.com/media/prodotti/17amb001_2_1724147431_21.jpg",
     "file_locale": "ambra_baltica_s.jpg",
-    "immagine_locale": "assets/pietre/ambra_baltica_s.jpg"
+    "immagine_locale": "assets/pietre/ambra_baltica_s.jpg",
+    "compatibilita_bracciali": [
+      "prod_rame_001",
+      "prod_rame_002",
+      "prod_rame_003",
+      "prod_intr_cuff_bottega",
+      "prod_intr_corona_regale",
+      "prod_intr_modello_2",
+      "prod_intr_massiccio_spina",
+      "prod_intr_trama_nobile",
+      "prod_intr_spiga_polso",
+      "prod_pronta_intrecciato"
+    ],
+    "tecniche_compatibili": [
+      "Intrecciati",
+      "Martellati",
+      "Rigidi"
+    ]
   },
   {
     "id": "pietra_ametista_chevron",
@@ -140,7 +298,24 @@
     "chakra": "Terzo Occhio (6° Chakra)",
     "immagine_remota": "https://store.didoni.com/media/prodotti/17ame006_1_1747837195_66.jpg",
     "file_locale": "ametista_chevron_xl.jpg",
-    "immagine_locale": "assets/pietre/ametista_chevron_xl.jpg"
+    "immagine_locale": "assets/pietre/ametista_chevron_xl.jpg",
+    "compatibilita_bracciali": [
+      "prod_rame_001",
+      "prod_rame_002",
+      "prod_rame_003",
+      "prod_intr_cuff_bottega",
+      "prod_intr_corona_regale",
+      "prod_intr_modello_2",
+      "prod_intr_massiccio_spina",
+      "prod_intr_trama_nobile",
+      "prod_intr_spiga_polso",
+      "prod_pronta_intrecciato"
+    ],
+    "tecniche_compatibili": [
+      "Intrecciati",
+      "Martellati",
+      "Rigidi"
+    ]
   },
   {
     "id": "pietra_blue_lace",
@@ -153,7 +328,24 @@
     "chakra": "Gola (5° Chakra)",
     "immagine_remota": "https://store.didoni.com/media/prodotti/25cdofor_1_1781528950_30.jpg",
     "file_locale": "blue_lace_forata.jpg",
-    "immagine_locale": "assets/pietre/blue_lace_forata.jpg"
+    "immagine_locale": "assets/pietre/blue_lace_forata.jpg",
+    "compatibilita_bracciali": [
+      "prod_rame_001",
+      "prod_rame_002",
+      "prod_rame_003",
+      "prod_intr_cuff_bottega",
+      "prod_intr_corona_regale",
+      "prod_intr_modello_2",
+      "prod_intr_massiccio_spina",
+      "prod_intr_trama_nobile",
+      "prod_intr_spiga_polso",
+      "prod_pronta_intrecciato"
+    ],
+    "tecniche_compatibili": [
+      "Intrecciati",
+      "Martellati",
+      "Rigidi"
+    ]
   },
   {
     "id": "pietra_ambra_grezza_ml",
@@ -166,7 +358,18 @@
     "chakra": "Plesso Solare (3° Chakra)",
     "immagine_remota": "https://store.didoni.com/media/prodotti/01amb001_2_1729244434_99.jpg",
     "file_locale": "ambra_grezza_ml.jpg",
-    "immagine_locale": "assets/pietre/ambra_grezza_ml.jpg"
+    "immagine_locale": "assets/pietre/ambra_grezza_ml.jpg",
+    "compatibilita_bracciali": [
+      "prod_rame_001",
+      "prod_rame_002",
+      "prod_intr_cuff_bottega",
+      "prod_intr_corona_regale",
+      "prod_intr_massiccio_spina"
+    ],
+    "tecniche_compatibili": [
+      "Intrecciati",
+      "Martellati"
+    ]
   },
   {
     "id": "pietra_cintamani",
@@ -179,7 +382,24 @@
     "chakra": "Plesso Solare & Radice",
     "immagine_remota": "https://store.didoni.com/media/prodotti/01agni001_2_1729244386_49.jpg",
     "file_locale": "cintamani_s.jpg",
-    "immagine_locale": "assets/pietre/cintamani_s.jpg"
+    "immagine_locale": "assets/pietre/cintamani_s.jpg",
+    "compatibilita_bracciali": [
+      "prod_rame_001",
+      "prod_rame_002",
+      "prod_rame_003",
+      "prod_intr_cuff_bottega",
+      "prod_intr_corona_regale",
+      "prod_intr_modello_2",
+      "prod_intr_massiccio_spina",
+      "prod_intr_trama_nobile",
+      "prod_intr_spiga_polso",
+      "prod_pronta_intrecciato"
+    ],
+    "tecniche_compatibili": [
+      "Intrecciati",
+      "Martellati",
+      "Rigidi"
+    ]
   },
   {
     "id": "pietra_serafinite",
@@ -192,6 +412,690 @@
     "chakra": "Cuore Spirituale & Corona",
     "immagine_remota": "https://store.didoni.com/media/prodotti/01SER006_1.jpg",
     "file_locale": "serafinite_grezza.jpg",
-    "immagine_locale": "assets/pietre/serafinite_grezza.jpg"
+    "immagine_locale": "assets/pietre/serafinite_grezza.jpg",
+    "compatibilita_bracciali": [
+      "prod_rame_001",
+      "prod_rame_002",
+      "prod_rame_003",
+      "prod_intr_cuff_bottega",
+      "prod_intr_corona_regale",
+      "prod_intr_modello_2",
+      "prod_intr_massiccio_spina",
+      "prod_intr_trama_nobile",
+      "prod_intr_spiga_polso",
+      "prod_pronta_intrecciato"
+    ],
+    "tecniche_compatibili": [
+      "Intrecciati",
+      "Martellati",
+      "Rigidi"
+    ]
+  },
+  {
+    "id": "pietra_quarzo_rosa",
+    "nome": "Quarzo Rosa dell'Amore",
+    "tipo": "Burattato levigato (2,5 - 3 cm)",
+    "prezzo_fornitore": 2.0,
+    "prezzo_vendita": 10.0,
+    "proprieta": "Gemma dell'Amore incondizionato e della dolcezza. Risana le ferite del cuore, scioglie le tensioni emotive, dona profonda autostima e armonizza le relazioni.",
+    "elemento": "Terra / Acqua",
+    "chakra": "Cuore (4° Chakra)",
+    "immagine_remota": "https://store.didoni.com/media/prodotti/17qro001_2_1746612233_15.jpg",
+    "file_locale": "quarzo_rosa.jpg",
+    "immagine_locale": "assets/pietre/quarzo_rosa.jpg",
+    "didoni_source_url": "https://store.didoni.com/prodotti/materiale-quarzo-rosa.html",
+    "compatible_bracelets": [
+      "prod_rame_001",
+      "prod_rame_002",
+      "prod_rame_003",
+      "pronta_001",
+      "pronta_002"
+    ],
+    "compatibilita_bracciali": [
+      "prod_rame_001",
+      "prod_rame_002",
+      "prod_rame_003",
+      "prod_intr_cuff_bottega",
+      "prod_intr_corona_regale",
+      "prod_intr_modello_2",
+      "prod_intr_massiccio_spina",
+      "prod_intr_trama_nobile",
+      "prod_intr_spiga_polso",
+      "prod_pronta_intrecciato"
+    ],
+    "tecniche_compatibili": [
+      "Intrecciati",
+      "Martellati",
+      "Rigidi"
+    ]
+  },
+  {
+    "id": "pietra_occhio_tigre",
+    "nome": "Occhio di Tigre Solare",
+    "tipo": "Burattato con riflessi cangianti (2 - 2,5 cm)",
+    "prezzo_fornitore": 2.0,
+    "prezzo_vendita": 10.0,
+    "proprieta": "Scudo di protezione millenario contro invidie ed energie pesanti. Dona determinazione incrollabile, chiarezza mentale e attira abbondanza materiale.",
+    "elemento": "Fuoco",
+    "chakra": "Plesso Solare (3° Chakra)",
+    "immagine_remota": "https://store.didoni.com/media/prodotti/17oti001_2_1724156846_19.jpg",
+    "file_locale": "occhio_di_tigre.jpg",
+    "immagine_locale": "assets/pietre/occhio_di_tigre.jpg",
+    "didoni_source_url": "https://store.didoni.com/prodotti/materiale-occhio-di-tigre.html",
+    "compatible_bracelets": [
+      "prod_rame_001",
+      "prod_rame_003",
+      "pronta_001",
+      "pronta_003"
+    ],
+    "compatibilita_bracciali": [
+      "prod_rame_001",
+      "prod_rame_002",
+      "prod_rame_003",
+      "prod_intr_cuff_bottega",
+      "prod_intr_corona_regale",
+      "prod_intr_modello_2",
+      "prod_intr_massiccio_spina",
+      "prod_intr_trama_nobile",
+      "prod_intr_spiga_polso",
+      "prod_pronta_intrecciato"
+    ],
+    "tecniche_compatibili": [
+      "Intrecciati",
+      "Martellati",
+      "Rigidi"
+    ]
+  },
+  {
+    "id": "pietra_lapislazzuli",
+    "nome": "Lapislazzuli Reale d'Egitto",
+    "tipo": "Burattato blu cobalto con inclusioni dorate di pirite (2 - 3 cm)",
+    "prezzo_fornitore": 4.0,
+    "prezzo_vendita": 10.0,
+    "proprieta": "Pietra dei faraoni: favorisce la chiaroveggenza, la verità interiore e la nobile saggezza. Connette l'intelletto all'intuizione profonda.",
+    "elemento": "Aria / Etere",
+    "chakra": "Terzo Occhio & Gola (5°-6° Chakra)",
+    "immagine_remota": "https://store.didoni.com/media/prodotti/17lap001_2_1724156043_46.jpg",
+    "file_locale": "lapislazzuli.jpg",
+    "immagine_locale": "assets/pietre/lapislazzuli.jpg",
+    "didoni_source_url": "https://store.didoni.com/prodotti/materiale-lapislazzuli.html",
+    "compatible_bracelets": [
+      "prod_rame_001",
+      "prod_rame_002",
+      "pronta_002",
+      "pronta_003"
+    ],
+    "compatibilita_bracciali": [
+      "prod_rame_001",
+      "prod_rame_002",
+      "prod_rame_003",
+      "prod_intr_cuff_bottega",
+      "prod_intr_corona_regale",
+      "prod_intr_modello_2",
+      "prod_intr_massiccio_spina",
+      "prod_intr_trama_nobile",
+      "prod_intr_spiga_polso",
+      "prod_pronta_intrecciato"
+    ],
+    "tecniche_compatibili": [
+      "Intrecciati",
+      "Martellati",
+      "Rigidi"
+    ]
+  },
+  {
+    "id": "pietra_pirite",
+    "nome": "Pirite Dorata Grezza",
+    "tipo": "Aggregato cristallino cubico dorato (2,5 - 4 cm)",
+    "prezzo_fornitore": 3.0,
+    "prezzo_vendita": 10.0,
+    "proprieta": "La pietra dell'oro e del fuoco vitale. Potentissimo magnete di ricchezza, stimola il coraggio dell'azione e scherma le fughe energetiche dall'aura.",
+    "elemento": "Fuoco / Terra",
+    "chakra": "Plesso Solare & Radice (1°-3° Chakra)",
+    "immagine_remota": "https://store.didoni.com/media/prodotti/01pir001_2_1729245197_40.jpg",
+    "file_locale": "pirite_grezza.jpg",
+    "immagine_locale": "assets/pietre/pirite_grezza.jpg",
+    "didoni_source_url": "https://store.didoni.com/prodotti/materiale-pirite.html",
+    "compatible_bracelets": [
+      "prod_rame_001",
+      "prod_rame_003",
+      "pronta_001",
+      "pronta_002"
+    ],
+    "compatibilita_bracciali": [
+      "prod_rame_001",
+      "prod_rame_002",
+      "prod_intr_cuff_bottega",
+      "prod_intr_corona_regale",
+      "prod_intr_massiccio_spina"
+    ],
+    "tecniche_compatibili": [
+      "Intrecciati",
+      "Martellati"
+    ]
+  },
+  {
+    "id": "pietra_malachite",
+    "nome": "Malachite Fasciata Naturale",
+    "tipo": "Burattato vellutato con cerchi concentrici (2 - 2,5 cm)",
+    "prezzo_fornitore": 5.0,
+    "prezzo_vendita": 15.0,
+    "proprieta": "Gemma della metamorfosi e della guarigione profonda. Assorbe le radiazioni nocive, apre il centro del cuore e amplifica l'intuito rigenerativo.",
+    "elemento": "Terra",
+    "chakra": "Cuore (4° Chakra)",
+    "immagine_remota": "https://store.didoni.com/media/prodotti/17mal001_2_1724156651_50.jpg",
+    "file_locale": "malachite.jpg",
+    "immagine_locale": "assets/pietre/malachite.jpg",
+    "didoni_source_url": "https://store.didoni.com/prodotti/materiale-malachite.html",
+    "compatible_bracelets": [
+      "prod_rame_001",
+      "prod_rame_002",
+      "prod_rame_003",
+      "pronta_001"
+    ],
+    "compatibilita_bracciali": [
+      "prod_rame_001",
+      "prod_rame_002",
+      "prod_rame_003",
+      "prod_intr_cuff_bottega",
+      "prod_intr_corona_regale",
+      "prod_intr_modello_2",
+      "prod_intr_massiccio_spina",
+      "prod_intr_trama_nobile",
+      "prod_intr_spiga_polso",
+      "prod_pronta_intrecciato"
+    ],
+    "tecniche_compatibili": [
+      "Intrecciati",
+      "Martellati",
+      "Rigidi"
+    ]
+  },
+  {
+    "id": "pietra_labradorite",
+    "nome": "Labradorite Spettrolite Iridiscente",
+    "tipo": "Pebble levigato con labradorescenza blu e oro (2,5 - 3,5 cm)",
+    "prezzo_fornitore": 3.0,
+    "prezzo_vendita": 10.0,
+    "proprieta": "Il tempio della luce interiore. Crea una barriera impenetrabile attorno all'aura, dissipa illusioni e risveglia le facoltà intuitive superiori.",
+    "elemento": "Acqua / Etere",
+    "chakra": "Corona & Terzo Occhio (6°-7° Chakra)",
+    "immagine_remota": "https://store.didoni.com/media/prodotti/27lab035x_2_1747836265_29.jpg",
+    "file_locale": "labradorite.jpg",
+    "immagine_locale": "assets/pietre/labradorite.jpg",
+    "didoni_source_url": "https://store.didoni.com/prodotti/materiale-labradorite.html",
+    "compatible_bracelets": [
+      "prod_rame_001",
+      "prod_rame_002",
+      "pronta_002",
+      "pronta_003"
+    ],
+    "compatibilita_bracciali": [
+      "prod_rame_001",
+      "prod_rame_002",
+      "prod_rame_003",
+      "prod_intr_cuff_bottega",
+      "prod_intr_corona_regale",
+      "prod_intr_modello_2",
+      "prod_intr_massiccio_spina",
+      "prod_intr_trama_nobile",
+      "prod_intr_spiga_polso",
+      "prod_pronta_intrecciato"
+    ],
+    "tecniche_compatibili": [
+      "Intrecciati",
+      "Martellati",
+      "Rigidi"
+    ]
+  },
+  {
+    "id": "pietra_tormalina_nera",
+    "nome": "Tormalina Nera Schorl Grezza",
+    "tipo": "Prisma naturale striato a sezione triangolare (2 - 3 cm)",
+    "prezzo_fornitore": 1.5,
+    "prezzo_vendita": 10.0,
+    "proprieta": "Il parafulmine bioenergetico più potente del regno minerale. Devia ogni interferenza elettromagnetica, scarica a terra lo stress e purifica il corpo sottile.",
+    "elemento": "Terra Primordiale",
+    "chakra": "Radice (1° Chakra)",
+    "immagine_remota": "https://store.didoni.com/media/prodotti/17tnr001_2_1775567427_85.jpg",
+    "file_locale": "tormalina_nera.jpg",
+    "immagine_locale": "assets/pietre/tormalina_nera.jpg",
+    "didoni_source_url": "https://store.didoni.com/prodotti/materiale-tormalina-nera.html",
+    "compatible_bracelets": [
+      "prod_rame_001",
+      "prod_rame_003",
+      "pronta_001",
+      "pronta_003"
+    ],
+    "compatibilita_bracciali": [
+      "prod_rame_001",
+      "prod_rame_002",
+      "prod_intr_cuff_bottega",
+      "prod_intr_corona_regale",
+      "prod_intr_massiccio_spina"
+    ],
+    "tecniche_compatibili": [
+      "Intrecciati",
+      "Martellati"
+    ]
+  },
+  {
+    "id": "pietra_giada",
+    "nome": "Giada Nefrite Imperiale",
+    "tipo": "Burattato serico verde profondo (2 - 2,5 cm)",
+    "prezzo_fornitore": 4.0,
+    "prezzo_vendita": 10.0,
+    "proprieta": "Simbolo di saggezza serena e longevità. Calma la mente agitata, favorisce la prosperità nelle imprese e infonde stabilità emotiva duratura.",
+    "elemento": "Legno / Terra",
+    "chakra": "Cuore (4° Chakra)",
+    "immagine_remota": "https://store.didoni.com/media/prodotti/17gia001_2_1724155704_52.jpg",
+    "file_locale": "giada.jpg",
+    "immagine_locale": "assets/pietre/giada.jpg",
+    "didoni_source_url": "https://store.didoni.com/prodotti/materiale-giada.html",
+    "compatible_bracelets": [
+      "prod_rame_001",
+      "prod_rame_002",
+      "pronta_001",
+      "pronta_002"
+    ],
+    "compatibilita_bracciali": [
+      "prod_rame_001",
+      "prod_rame_002",
+      "prod_rame_003",
+      "prod_intr_cuff_bottega",
+      "prod_intr_corona_regale",
+      "prod_intr_modello_2",
+      "prod_intr_massiccio_spina",
+      "prod_intr_trama_nobile",
+      "prod_intr_spiga_polso",
+      "prod_pronta_intrecciato"
+    ],
+    "tecniche_compatibili": [
+      "Intrecciati",
+      "Martellati",
+      "Rigidi"
+    ]
+  },
+  {
+    "id": "pietra_citrino",
+    "nome": "Quarzo Citrino Dorato",
+    "tipo": "Gemma naturale soleggiata (2 - 3 cm)",
+    "prezzo_fornitore": 15.0,
+    "prezzo_vendita": 25.0,
+    "proprieta": "La pietra del mercante e della luce solare. Non trattiene mai energia negativa ma la trasmuta, portando gioia radiante, generosità e abbondanza.",
+    "elemento": "Fuoco Solare",
+    "chakra": "Plesso Solare (3° Chakra)",
+    "immagine_remota": "https://store.didoni.com/media/prodotti/26ang001_2_1790782715_56.jpg",
+    "file_locale": "citrino.jpg",
+    "immagine_locale": "assets/pietre/citrino.jpg",
+    "didoni_source_url": "https://store.didoni.com/prodotti/materiale-quarzo-citrino.html",
+    "compatible_bracelets": [
+      "prod_rame_001",
+      "prod_rame_003",
+      "pronta_001",
+      "pronta_002"
+    ],
+    "compatibilita_bracciali": [
+      "prod_rame_001",
+      "prod_rame_002",
+      "prod_rame_003",
+      "prod_intr_cuff_bottega",
+      "prod_intr_corona_regale",
+      "prod_intr_modello_2",
+      "prod_intr_massiccio_spina",
+      "prod_intr_trama_nobile",
+      "prod_intr_spiga_polso",
+      "prod_pronta_intrecciato"
+    ],
+    "tecniche_compatibili": [
+      "Intrecciati",
+      "Martellati",
+      "Rigidi"
+    ]
+  },
+  {
+    "id": "pietra_ossidiana",
+    "nome": "Ossidiana Nera Specchio Vulcanico",
+    "tipo": "Vetro vulcanico levigato a specchio (2 - 3 cm)",
+    "prezzo_fornitore": 2.0,
+    "prezzo_vendita": 10.0,
+    "proprieta": "Lama di verità primordiale nata dalla lava ardente. Taglia i legami tossici, dissolve paure inconsce e protegge con un manto invisibile ad alta densità.",
+    "elemento": "Fuoco / Terra",
+    "chakra": "Radice (1° Chakra)",
+    "immagine_remota": "https://store.didoni.com/media/prodotti/17oss001x_1_1775568165_36.jpg",
+    "file_locale": "ossidiana_nera.jpg",
+    "immagine_locale": "assets/pietre/ossidiana_nera.jpg",
+    "didoni_source_url": "https://store.didoni.com/prodotti/materiale-ossidiana-nera.html",
+    "compatible_bracelets": [
+      "prod_rame_001",
+      "prod_rame_003",
+      "pronta_001",
+      "pronta_003"
+    ],
+    "compatibilita_bracciali": [
+      "prod_rame_001",
+      "prod_rame_002",
+      "prod_rame_003",
+      "prod_intr_cuff_bottega",
+      "prod_intr_corona_regale",
+      "prod_intr_modello_2",
+      "prod_intr_massiccio_spina",
+      "prod_intr_trama_nobile",
+      "prod_intr_spiga_polso",
+      "prod_pronta_intrecciato"
+    ],
+    "tecniche_compatibili": [
+      "Intrecciati",
+      "Martellati",
+      "Rigidi"
+    ]
+  },
+  {
+    "id": "pietra_shungite",
+    "nome": "Shungite di Carelia",
+    "tipo": "Minerale organico a fullereni naturali (2 - 2,5 cm)",
+    "prezzo_fornitore": 14.0,
+    "prezzo_vendita": 24.0,
+    "proprieta": "Miracolo naturale della Russia settentrionale contenente fullereni C60. Neutralizza le radiazioni 5G/Wi-Fi, purifica l'acqua e ripristina la bio-matrice umana.",
+    "elemento": "Terra / Cosmo",
+    "chakra": "Radice (1° Chakra)",
+    "immagine_remota": "https://store.didoni.com/media/prodotti/53shup02_1_1733480278_82.jpg",
+    "file_locale": "shungite.jpg",
+    "immagine_locale": "assets/pietre/shungite.jpg",
+    "didoni_source_url": "https://store.didoni.com/prodotti/materiale-shungite.html",
+    "compatible_bracelets": [
+      "prod_rame_001",
+      "prod_rame_003",
+      "pronta_001",
+      "pronta_003"
+    ],
+    "compatibilita_bracciali": [
+      "prod_rame_001",
+      "prod_rame_002",
+      "prod_rame_003",
+      "prod_intr_cuff_bottega",
+      "prod_intr_corona_regale",
+      "prod_intr_modello_2",
+      "prod_intr_massiccio_spina",
+      "prod_intr_trama_nobile",
+      "prod_intr_spiga_polso",
+      "prod_pronta_intrecciato"
+    ],
+    "tecniche_compatibili": [
+      "Intrecciati",
+      "Martellati",
+      "Rigidi"
+    ]
+  },
+  {
+    "id": "pietra_di_luna",
+    "nome": "Pietra di Luna (Adularia)",
+    "tipo": "Burattato con riflessi perlacei adularescenti (2 - 2,5 cm)",
+    "prezzo_fornitore": 12.0,
+    "prezzo_vendita": 22.0,
+    "proprieta": "Connessa ai ritmi ciclici della luna e dell'acqua. Favorisce il rilassamento del sistema nervoso, risveglia l'empatia e accompagna il sonno con sogni lucidi.",
+    "elemento": "Acqua Lunare",
+    "chakra": "Sacrale & Corona (2°-7° Chakra)",
+    "immagine_remota": "https://store.didoni.com/media/prodotti/27mix012_2_1781516746_69.jpg",
+    "file_locale": "pietra_di_luna.jpg",
+    "immagine_locale": "assets/pietre/pietra_di_luna.jpg",
+    "didoni_source_url": "https://store.didoni.com/prodotti/materiale-pietra-di-luna.html",
+    "compatible_bracelets": [
+      "prod_rame_001",
+      "prod_rame_002",
+      "pronta_002",
+      "pronta_003"
+    ],
+    "compatibilita_bracciali": [
+      "prod_rame_001",
+      "prod_rame_002",
+      "prod_rame_003",
+      "prod_intr_cuff_bottega",
+      "prod_intr_corona_regale",
+      "prod_intr_modello_2",
+      "prod_intr_massiccio_spina",
+      "prod_intr_trama_nobile",
+      "prod_intr_spiga_polso",
+      "prod_pronta_intrecciato"
+    ],
+    "tecniche_compatibili": [
+      "Intrecciati",
+      "Martellati",
+      "Rigidi"
+    ]
+  },
+  {
+    "id": "pietra_sodalite",
+    "nome": "Sodalite Blu Reale S-M",
+    "tipo": "Burattato levigato (2 - 3 cm)",
+    "prezzo_fornitore": 3.0,
+    "prezzo_vendita": 10.0,
+    "proprieta": "Chiarezza mentale, pensiero razionale, verità interiore e calma emozionale profonda.",
+    "elemento": "Aria / Acqua",
+    "chakra": "Terzo Occhio & Gola (5°-6° Chakra)",
+    "immagine_remota": "https://store.didoni.com/media/prodotti/17sod002_2_1724159249_64.jpg",
+    "file_locale": "sodalite_blu.jpg",
+    "immagine_locale": "assets/pietre/sodalite_blu.jpg",
+    "compatibilita_bracciali": [
+      "prod_rame_001",
+      "prod_rame_002",
+      "prod_rame_003",
+      "prod_intr_cuff_bottega",
+      "prod_intr_corona_regale",
+      "prod_intr_modello_2",
+      "prod_intr_massiccio_spina",
+      "prod_intr_trama_nobile",
+      "prod_intr_spiga_polso",
+      "prod_pronta_intrecciato"
+    ],
+    "tecniche_compatibili": [
+      "Intrecciati",
+      "Martellati",
+      "Rigidi"
+    ]
+  },
+  {
+    "id": "pietra_sodalite_grezza",
+    "nome": "Sodalite Grezza Naturale",
+    "tipo": "Grezzo naturale di miniera (3 - 6 cm)",
+    "prezzo_fornitore": 3.0,
+    "prezzo_vendita": 10.0,
+    "proprieta": "Pietra di autenticità e risveglio intuitivo, scudo contro il sovraccarico mentale.",
+    "elemento": "Etere",
+    "chakra": "Terzo Occhio (6° Chakra)",
+    "immagine_remota": "https://store.didoni.com/media/prodotti/pietra-immagine_1733001368_31.jpg",
+    "file_locale": "sodalite_grezza.jpg",
+    "immagine_locale": "assets/pietre/sodalite_grezza.jpg",
+    "compatibilita_bracciali": [
+      "prod_rame_001",
+      "prod_rame_002",
+      "prod_intr_cuff_bottega",
+      "prod_intr_corona_regale",
+      "prod_intr_massiccio_spina"
+    ],
+    "tecniche_compatibili": [
+      "Intrecciati",
+      "Martellati"
+    ]
+  },
+  {
+    "id": "pietra_agata_albero",
+    "nome": "Agata Albero Silvestre",
+    "tipo": "Burattato levigato (2,5 - 3 cm)",
+    "prezzo_fornitore": 3.0,
+    "prezzo_vendita": 10.0,
+    "proprieta": "Radicamento nella natura, perseveranza, prosperità e profondo senso di sicurezza interiore.",
+    "elemento": "Terra",
+    "chakra": "Cuore (4° Chakra)",
+    "immagine_remota": "https://store.didoni.com/media/prodotti/17AAL1M1_1.jpg",
+    "file_locale": "agata_albero.jpg",
+    "immagine_locale": "assets/pietre/agata_albero.jpg",
+    "compatibilita_bracciali": [
+      "prod_rame_001",
+      "prod_rame_002",
+      "prod_rame_003",
+      "prod_intr_cuff_bottega",
+      "prod_intr_corona_regale",
+      "prod_intr_modello_2",
+      "prod_intr_massiccio_spina",
+      "prod_intr_trama_nobile",
+      "prod_intr_spiga_polso",
+      "prod_pronta_intrecciato"
+    ],
+    "tecniche_compatibili": [
+      "Intrecciati",
+      "Martellati",
+      "Rigidi"
+    ]
+  },
+  {
+    "id": "pietra_agata_dendritica",
+    "nome": "Agata Dendritica Rara",
+    "tipo": "Burattato con inclusioni (2 - 2,5 cm)",
+    "prezzo_fornitore": 2.0,
+    "prezzo_vendita": 10.0,
+    "proprieta": "Pietra della pienezza e della crescita personale, favorisce la pazienza e il legame con la terra.",
+    "elemento": "Terra",
+    "chakra": "Radice & Cuore (1°-4° Chakra)",
+    "immagine_remota": "https://store.didoni.com/media/prodotti/17aga003_2_1724147262_39.jpg",
+    "file_locale": "agata_dendritica.jpg",
+    "immagine_locale": "assets/pietre/agata_dendritica.jpg",
+    "compatibilita_bracciali": [
+      "prod_rame_001",
+      "prod_rame_002",
+      "prod_rame_003",
+      "prod_intr_cuff_bottega",
+      "prod_intr_corona_regale",
+      "prod_intr_modello_2",
+      "prod_intr_massiccio_spina",
+      "prod_intr_trama_nobile",
+      "prod_intr_spiga_polso",
+      "prod_pronta_intrecciato"
+    ],
+    "tecniche_compatibili": [
+      "Intrecciati",
+      "Martellati",
+      "Rigidi"
+    ]
+  },
+  {
+    "id": "pietra_agata_sakura",
+    "nome": "Agata Sakura Fiore di Ciliegio",
+    "tipo": "Burattato levigato (2,5 - 3 cm)",
+    "prezzo_fornitore": 3.0,
+    "prezzo_vendita": 10.0,
+    "proprieta": "Fioritura del potenziale spirituale, dolcezza, amorevolezza e rinascita interiore.",
+    "elemento": "Acqua / Terra",
+    "chakra": "Cuore (4° Chakra)",
+    "immagine_remota": "https://store.didoni.com/media/prodotti/17AGS1M1_1.jpg",
+    "file_locale": "agata_sakura.jpg",
+    "immagine_locale": "assets/pietre/agata_sakura.jpg",
+    "compatibilita_bracciali": [
+      "prod_rame_001",
+      "prod_rame_002",
+      "prod_rame_003",
+      "prod_intr_cuff_bottega",
+      "prod_intr_corona_regale",
+      "prod_intr_modello_2",
+      "prod_intr_massiccio_spina",
+      "prod_intr_trama_nobile",
+      "prod_intr_spiga_polso",
+      "prod_pronta_intrecciato"
+    ],
+    "tecniche_compatibili": [
+      "Intrecciati",
+      "Martellati",
+      "Rigidi"
+    ]
+  },
+  {
+    "id": "pietra_fluorite_arcobaleno",
+    "nome": "Fluorite Arcobaleno",
+    "tipo": "Burattato sfaccettato (2 - 2,5 cm)",
+    "prezzo_fornitore": 4.0,
+    "prezzo_vendita": 10.0,
+    "proprieta": "Massima concentrazione, riorganizzazione del pensiero, armonia tra mente e spirito.",
+    "elemento": "Aria",
+    "chakra": "Terzo Occhio & Corona (6°-7° Chakra)",
+    "immagine_remota": "https://store.didoni.com/media/prodotti/17flu004-ingr_1_1757065757_91.jpg",
+    "file_locale": "fluorite_arcobaleno.jpg",
+    "immagine_locale": "assets/pietre/fluorite_arcobaleno.jpg",
+    "compatibilita_bracciali": [
+      "prod_rame_001",
+      "prod_rame_002",
+      "prod_rame_003",
+      "prod_intr_cuff_bottega",
+      "prod_intr_corona_regale",
+      "prod_intr_modello_2",
+      "prod_intr_massiccio_spina",
+      "prod_intr_trama_nobile",
+      "prod_intr_spiga_polso",
+      "prod_pronta_intrecciato"
+    ],
+    "tecniche_compatibili": [
+      "Intrecciati",
+      "Martellati",
+      "Rigidi"
+    ]
+  },
+  {
+    "id": "pietra_fluorite_verde",
+    "nome": "Fluorite Verde Naturale",
+    "tipo": "Burattato levigato (2 - 2,5 cm)",
+    "prezzo_fornitore": 3.0,
+    "prezzo_vendita": 10.0,
+    "proprieta": "Rinnovamento emotivo, disintossicazione dai pensieri negativi e apertura all'intuizione.",
+    "elemento": "Terra / Aria",
+    "chakra": "Cuore (4° Chakra)",
+    "immagine_remota": "https://store.didoni.com/media/prodotti/17flu001ingr_2_1757066201_75.jpg",
+    "file_locale": "fluorite_verde.jpg",
+    "immagine_locale": "assets/pietre/fluorite_verde.jpg",
+    "compatibilita_bracciali": [
+      "prod_rame_001",
+      "prod_rame_002",
+      "prod_rame_003",
+      "prod_intr_cuff_bottega",
+      "prod_intr_corona_regale",
+      "prod_intr_modello_2",
+      "prod_intr_massiccio_spina",
+      "prod_intr_trama_nobile",
+      "prod_intr_spiga_polso",
+      "prod_pronta_intrecciato"
+    ],
+    "tecniche_compatibili": [
+      "Intrecciati",
+      "Martellati",
+      "Rigidi"
+    ]
+  },
+  {
+    "id": "pietra_quarzo_fume",
+    "nome": "Quarzo Fumè Tellurico",
+    "tipo": "Burattato ambrato (2 - 2,5 cm)",
+    "prezzo_fornitore": 2.0,
+    "prezzo_vendita": 10.0,
+    "proprieta": "Scudo protettivo tellurico, trasmutazione delle energie dense, lucidità e pragmatismo.",
+    "elemento": "Terra",
+    "chakra": "Radice (1° Chakra)",
+    "immagine_remota": "https://store.didoni.com/media/prodotti/17qfu001_2_1724157893_96.jpg",
+    "file_locale": "quarzo_fume.jpg",
+    "immagine_locale": "assets/pietre/quarzo_fume.jpg",
+    "compatibilita_bracciali": [
+      "prod_rame_001",
+      "prod_rame_002",
+      "prod_rame_003",
+      "prod_intr_cuff_bottega",
+      "prod_intr_corona_regale",
+      "prod_intr_modello_2",
+      "prod_intr_massiccio_spina",
+      "prod_intr_trama_nobile",
+      "prod_intr_spiga_polso",
+      "prod_pronta_intrecciato"
+    ],
+    "tecniche_compatibili": [
+      "Intrecciati",
+      "Martellati",
+      "Rigidi"
+    ]
   }
 ]

@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+  <title>Atelier Pietre & Cristalloterapia Didoni | Fatto a Mano</title>
+  <meta name="description" content="Shop dedicato alle pietre naturali autentiche Didoni Store per personalizzare i bracciali in puro rame 99.9%. Filtra in base ai modelli in shop, alle proprietà vibrazionali e ai chakra.">
+  <meta name="theme-color" content="#0a0a0e">
+
+  <!-- Favicon Standard & SVG -->
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="alternate icon" type="image/x-icon" href="favicon.ico">
+
+  <!-- Google Fonts & FontAwesome -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- Global Master Stylesheet (Strict Purple Ban Compliance) -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-main text-primary">
+
+  <!-- ============================================================================
+       TOP LUXURY NAVIGATION HEADER
+       ============================================================================ -->
+  <header class="main-header" id="mainHeader">
+    <div class="header-container">
+      <a href="index.html" class="brand-wrapper">
+        <div class="brand-symbol">
+          <i class="fa-solid fa-gem" style="color: #fff; font-size: 1.1rem;"></i>
+        </div>
+        <div class="brand-text-group">
+          <span class="brand-title">Fatto a Mano</span>
+          <span class="brand-subtitle">Atelier del Rame Puro 99.9%</span>
+        </div>
+      </a>
+
+      <nav>
+        <ul class="nav-links">
+          <li><a href="index.html#prontaconsegna" class="nav-link"><i class="fa-solid fa-bolt" style="color: var(--copper-light); font-size: 0.75rem; margin-right: 4px;"></i>Pronta Consegna</a></li>
+          <li><a href="index.html#collezione" class="nav-link">Collezione</a></li>
+          <li><a href="index.html#bottega-pietre" class="nav-link"><i class="fa-solid fa-gem" style="color: var(--copper-light); font-size: 0.75rem; margin-right: 4px;"></i>Bottega Pietre</a></li>
+          <li><a href="atelier-pietre.html" class="nav-link active" style="color: var(--copper-light); font-weight: 600;"><i class="fa-solid fa-store" style="color: var(--copper-light); font-size: 0.75rem; margin-right: 4px;"></i>Atelier Shop</a></li>
+          <li><a href="index.html#filosofia" class="nav-link">La Forgiatura</a></li>
+          <li><a href="index.html#proprieta" class="nav-link">Proprietà del Rame</a></li>
+          <li><a href="index.html#garanzia" class="nav-link">Autenticità & Cura</a></li>
+        </ul>
+      </nav>
+
+      <div class="header-actions">
+        <button class="cart-trigger-btn" id="openCartBtn" aria-label="Apri Carrello">
+          <i class="fa-solid fa-bag-shopping" style="color: var(--copper-light);"></i>
+          <span class="cart-btn-label">Carrello</span>
+          <span class="cart-badge" id="cartCountBadge">0</span>
+        </button>
+        <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Menu di Navigazione" onclick="toggleMobileMenu()">
+          <i class="fa-solid fa-bars" id="mobileMenuIcon"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ============================================================================
+       MOBILE NAVIGATION DRAWER (#mobileNavDrawer)
+       ============================================================================ -->
+  <div class="mobile-nav-backdrop" id="mobileNavBackdrop" onclick="closeMobileMenu()"></div>
+  <aside class="mobile-nav-drawer" id="mobileNavDrawer" aria-label="Menu Mobile">
+    <div class="mobile-nav-header">
+      <div class="brand-wrapper">
+        <div class="brand-symbol" style="width: 38px; height: 38px;">
+          <i class="fa-solid fa-gem" style="color: #fff; font-size: 0.95rem;"></i>
+        </div>
+        <div class="brand-text-group">
+          <span class="brand-title" style="font-size: 1.35rem;">Fatto a Mano</span>
+          <span class="brand-subtitle" style="font-size: 0.55rem;">Atelier del Rame Puro</span>
+        </div>
+      </div>
+      <button class="mobile-nav-close-btn" id="closeMobileNavBtn" aria-label="Chiudi Menu" onclick="closeMobileMenu()">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <ul class="mobile-nav-links">
+      <li>
+        <a href="index.html#prontaconsegna" class="mobile-nav-link" onclick="closeMobileMenu()">
+          <i class="fa-solid fa-bolt" style="color: var(--copper-light);"></i>
+          <span>Pronta Consegna</span>
+        </a>
+      </li>
+      <li>
+        <a href="index.html#collezione" class="mobile-nav-link" onclick="closeMobileMenu()">
+          <i class="fa-solid fa-layer-group" style="color: var(--copper-light);"></i>
+          <span>Collezione Bracciali</span>
+        </a>
+      </li>
+      <li>
+        <a href="atelier-pietre.html" class="mobile-nav-link active" onclick="closeMobileMenu()" style="border-left: 2px solid var(--copper-primary);">
+          <i class="fa-solid fa-store" style="color: var(--copper-light);"></i>
+          <span>Atelier Pietre Shop (Filtri)</span>
+        </a>
+      </li>
+      <li>
+        <a href="index.html#bottega-pietre" class="mobile-nav-link" onclick="closeMobileMenu()">
+          <i class="fa-solid fa-gem" style="color: var(--copper-light);"></i>
+          <span>Bottega delle Pietre Didoni</span>
+        </a>
+      </li>
+      <li>
+        <a href="index.html#filosofia" class="mobile-nav-link" onclick="closeMobileMenu()">
+          <i class="fa-solid fa-fire-burner" style="color: var(--copper-light);"></i>
+          <span>La Forgiatura</span>
+        </a>
+      </li>
+      <li>
+        <a href="index.html#proprieta" class="mobile-nav-link" onclick="closeMobileMenu()">
+          <i class="fa-solid fa-atom" style="color: var(--copper-light);"></i>
+          <span>Proprietà del Rame</span>
+        </a>
+      </li>
+      <li>
+        <a href="index.html#garanzia" class="mobile-nav-link" onclick="closeMobileMenu()">
+          <i class="fa-solid fa-certificate" style="color: var(--copper-light);"></i>
+          <span>Autenticità & Cura</span>
+        </a>
+      </li>
+    </ul>
+  </aside>
+
+  <!-- ============================================================================
+       BREADCRUMB & EDITORIAL HERO BANNER
+       ============================================================================ -->
+  <main>
+    <div class="container">
+      <div class="breadcrumb-wrap">
+        <a href="index.html"><i class="fa-solid fa-house"></i> Home</a>
+        <i class="fa-solid fa-chevron-right" style="font-size: 0.7rem; opacity: 0.5;"></i>
+        <a href="index.html#bottega-pietre">Bottega Pietre</a>
+        <i class="fa-solid fa-chevron-right" style="font-size: 0.7rem; opacity: 0.5;"></i>
+        <span class="crumb-current">Shop Completo &amp; Filtri</span>
+      </div>
+
+      <!-- Masterpiece Editorial Head -->
+      <div class="atelier-editorial-head" style="margin-top: 1rem; margin-bottom: 2.5rem;">
+        <div class="atelier-head-kicker">
+          <span class="kicker-gem"><i class="fa-solid fa-gem"></i></span>
+          <span class="kicker-text">Shop Esclusivo Minerali Didoni Store</span>
+          <span class="kicker-sparkle"><i class="fa-solid fa-sparkles"></i></span>
+        </div>
+
+        <h1 class="atelier-head-title" style="font-size: clamp(2rem, 5vw, 3.2rem);">
+          Atelier delle Pietre <em>&amp; Cristalloterapia</em>
+        </h1>
+
+        <div class="atelier-ornament-divider" aria-hidden="true">
+          <span class="ornament-line"></span>
+          <span class="ornament-icon"><i class="fa-solid fa-gem"></i></span>
+          <span class="ornament-line"></span>
+        </div>
+
+        <p class="atelier-head-lead">
+          Esplora l'intero catalogo di <strong>35 minerali autentici</strong> grezzi e burattati selezionati da <em>Didoni Store</em>. Puoi <strong>filtrare le pietre in base al modello di bracciale scelto nello shop</strong>, personalizzare una creazione presente nel tuo scrigno oppure acquistare la gemma come minerale singolo da meditazione.
+        </p>
+
+        <div class="atelier-head-trust-badges">
+          <div class="trust-badge-item">
+            <i class="fa-solid fa-cube"></i>
+            <span>35 Minerali 100% Autentici Didoni</span>
+          </div>
+          <span class="trust-badge-dot">•</span>
+          <div class="trust-badge-item">
+            <i class="fa-solid fa-hammer"></i>
+            <span>Incastonatura ad Incudine su Rame 99.9%</span>
+          </div>
+          <span class="trust-badge-dot">•</span>
+          <div class="trust-badge-item">
+            <i class="fa-solid fa-tag"></i>
+            <span>Tariffa Fissa €10.00 / Burattato</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============================================================================
+           INTERACTIVE FILTER TOOLBAR (FILTRO OGGETTI IN SHOP + CARRELLO + PROPRIETÀ)
+           ============================================================================ -->
+      <section class="stone-shop-toolbar" id="atelierShopToolbar" aria-label="Filtri Pietre">
+        <div class="filter-section-title">
+          <div class="filter-title-label">
+            <i class="fa-solid fa-sliders" style="color: var(--copper-light);"></i>
+            <span>Filtra Pietre per Oggetto nello Shop &amp; Proprietà</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <span id="stoneResultsCount" class="stone-counter-badge">Caricamento 35 gemme...</span>
+            <button type="button" class="btn-reset-filters" id="btnResetAllFilters" onclick="resetAllStoneFilters()">
+              <i class="fa-solid fa-rotate-left"></i> Azzera Filtri
+            </button>
+          </div>
+        </div>
+
+        <!-- 1. FILTRO PER OGGETTI PRESENTI IN SHOP (BRACCIALI) -->
+        <div class="filter-group-block">
+          <div class="filter-group-header">
+            <span class="filter-group-label">
+              <i class="fa-solid fa-hand-holding-hand"></i> Filtra in base agli Oggetti presenti in Shop:
+            </span>
+            <button type="button" class="filter-cart-btn" id="filterByCartBraceletBtn" onclick="toggleCartBraceletFilter()">
+              <i class="fa-solid fa-bag-shopping"></i>
+              <span>Mostra solo per il bracciale nel carrello</span>
+              <span id="cartFilterCountBadge" class="pill-count" style="display:none;">0</span>
+            </button>
+          </div>
+
+          <div class="shop-filter-pills-row" id="shopModelFilterPills">
+            <button type="button" class="shop-filter-pill active" data-model="all" onclick="filterByShopModel('all')">
+              <i class="fa-solid fa-shapes"></i> Tutti gli Oggetti <span class="pill-count">35</span>
+            </button>
+            <button type="button" class="shop-filter-pill" data-model="prod_rame_001" onclick="filterByShopModel('prod_rame_001')">
+              <i class="fa-solid fa-hammer"></i> 3 Filamenti Torciti (€30)
+            </button>
+            <button type="button" class="shop-filter-pill" data-model="prod_intr_cuff_bottega" onclick="filterByShopModel('prod_intr_cuff_bottega')">
+              <i class="fa-solid fa-gem"></i> Cuff Bottega (€30)
+            </button>
+            <button type="button" class="shop-filter-pill" data-model="prod_intr_corona_regale" onclick="filterByShopModel('prod_intr_corona_regale')">
+              <i class="fa-solid fa-crown"></i> Corona Regale (€35)
+            </button>
+            <button type="button" class="shop-filter-pill" data-model="prod_intr_modello_2" onclick="filterByShopModel('prod_intr_modello_2')">
+              <i class="fa-solid fa-dna"></i> Spirale Modello 2 (€30)
+            </button>
+            <button type="button" class="shop-filter-pill" data-model="prod_intr_massiccio_spina" onclick="filterByShopModel('prod_intr_massiccio_spina')">
+              <i class="fa-solid fa-shield"></i> Spina Massiccia (€35)
+            </button>
+            <button type="button" class="shop-filter-pill" data-model="prod_intr_trama_nobile" onclick="filterByShopModel('prod_intr_trama_nobile')">
+              <i class="fa-solid fa-feather"></i> Trama Nobile (€35)
+            </button>
+            <button type="button" class="shop-filter-pill" data-model="prod_intr_spiga_polso" onclick="filterByShopModel('prod_intr_spiga_polso')">
+              <i class="fa-solid fa-wheat-awn"></i> Spiga in Rame (€35)
+            </button>
+            <button type="button" class="shop-filter-pill" data-model="prod_rame_002" onclick="filterByShopModel('prod_rame_002')">
+              <i class="fa-solid fa-fire"></i> Cuff Martellato (€45)
+            </button>
+            <button type="button" class="shop-filter-pill" data-model="prod_rame_003" onclick="filterByShopModel('prod_rame_003')">
+              <i class="fa-solid fa-circle-notch"></i> Bangle Minimal (€25)
+            </button>
+            <button type="button" class="shop-filter-pill" data-model="prod_pronta_intrecciato" onclick="filterByShopModel('prod_pronta_intrecciato')">
+              <i class="fa-solid fa-bolt"></i> Pronta Consegna (€30)
+            </button>
+          </div>
+        </div>
+
+        <!-- 2. FILTRI SECONDARI: RICERCA, TIPOLOGIA MINERALE, CHAKRA & ELEMENTO -->
+        <div class="filter-secondary-row">
+          <div class="filter-search-box">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="stoneShopSearchInput" class="luxury-input filter-search-input" 
+                   placeholder="Cerca per nome (es. Sodalite, Ametista, Acquamarina) o beneficio..." 
+                   oninput="onStoneSearchInput(this.value)">
+          </div>
+
+          <div>
+            <select id="stoneTypeFilterSelect" class="luxury-input" onchange="onStoneTypeFilterChange(this.value)" style="width: 100%;">
+              <option value="all">Tutte le Tipologie</option>
+              <option value="burattato">Pietre Burattate Levigate (€10.00)</option>
+              <option value="grezzo">Grezzi Rari di Miniera</option>
+            </select>
+          </div>
+
+          <div>
+            <select id="stoneChakraFilterSelect" class="luxury-input" onchange="onStoneChakraFilterChange(this.value)" style="width: 100%;">
+              <option value="all">Tutti i Chakra</option>
+              <option value="radice">1° Radice (Muladhara)</option>
+              <option value="sacrale">2° Sacrale (Svadhisthana)</option>
+              <option value="plesso">3° Plesso Solare (Manipura)</option>
+              <option value="cuore">4° Cuore (Anahata)</option>
+              <option value="gola">5° Gola (Vishuddha)</option>
+              <option value="terzo">6° Terzo Occhio (Ajna)</option>
+              <option value="corona">7° Corona (Sahasrara)</option>
+            </select>
+          </div>
+
+          <div>
+            <select id="stoneElementFilterSelect" class="luxury-input" onchange="onStoneElementFilterChange(this.value)" style="width: 100%;">
+              <option value="all">Tutti gli Elementi</option>
+              <option value="terra">Terra</option>
+              <option value="acqua">Acqua</option>
+              <option value="fuoco">Fuoco</option>
+              <option value="aria">Aria</option>
+              <option value="etere">Etere</option>
+            </select>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================================
+           MAIN DEDICATED STONES SHOP GRID (#atelierShopFullGrid)
+           ============================================================================ -->
+      <section aria-label="Catalogo Pietre Atelier">
+        <div class="atelier-full-grid" id="atelierShopFullGrid">
+          <!-- Populated dynamically via app.js -->
+        </div>
+
+        <div class="no-stones-found" id="noStonesFoundMsg" style="display: none;">
+          <div class="no-stones-icon"><i class="fa-solid fa-gem"></i></div>
+          <h3 style="font-family: var(--font-serif); font-size: 1.6rem; margin-bottom: 0.5rem;">Nessuna pietra trovata con questi filtri</h3>
+          <p style="color: var(--text-secondary); max-width: 500px; margin: 0 auto 1.5rem auto;">
+            Prova a selezionare un altro modello di bracciale o azzera i parametri di ricerca per visualizzare l'intera collezione.
+          </p>
+          <button type="button" class="btn btn-primary" onclick="resetAllStoneFilters()">
+            <i class="fa-solid fa-rotate-left"></i> Mostra Tutte le 35 Gemme
+          </button>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- ============================================================================
+       SLIDE-OVER DRAWER CART (SHARED WITH INDEX.HTML)
+       ============================================================================ -->
+  <div class="cart-backdrop" id="cartBackdrop"></div>
+  <aside class="cart-drawer" id="cartDrawer" aria-label="Carrello della Spesa">
+    <div class="cart-drawer-header">
+      <div class="cart-drawer-title">
+        <i class="fa-solid fa-bag-shopping" style="color: var(--copper-light);"></i>
+        <span>Il Tuo Scrigno</span>
+      </div>
+      <button class="cart-close-btn" id="closeCartBtn" aria-label="Chiudi Carrello">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <!-- Shipping Info Box -->
+    <div class="shipping-progress-box">
+      <div style="display: flex; align-items: center; gap: 0.6rem;">
+        <i class="fa-solid fa-truck-fast" style="color: var(--copper-primary); font-size: 1rem;"></i>
+        <span id="shippingNoticeText">Spedizione <strong>€6,00 tutta Italia</strong> • Consegna <strong>3/5 giorni lavorativi</strong></span>
+      </div>
+    </div>
+
+    <!-- Cart Items List -->
+    <div class="cart-items-body" id="cartItemsContainer">
+      <!-- Populated via app.js -->
+    </div>
+
+    <!-- Cart Footer & Stripe Checkout -->
+    <div class="cart-drawer-footer">
+      <div class="cart-summary-breakdown">
+        <div class="cart-subtotal-row">
+          <span class="cart-subtotal-label">Subtotale Creazioni:</span>
+          <span class="cart-subtotal-amount" id="cartSubtotalAmount">€0.00</span>
+        </div>
+        <div class="cart-subtotal-row shipping-row">
+          <span class="cart-subtotal-label"><i class="fa-solid fa-truck"></i> Spedizione Italia (3/5 gg):</span>
+          <span class="cart-subtotal-amount" id="cartShippingAmount">€6.00</span>
+        </div>
+        <div class="cart-total-divider"></div>
+        <div class="cart-subtotal-row total-row">
+          <span class="cart-total-label">Totale Finale:</span>
+          <span class="cart-total-amount" id="cartTotalAmount">€6.00</span>
+        </div>
+      </div>
+
+      <!-- Step 1 nel carrello: Inserimento Dati Spedizione prima del pagamento -->
+      <button class="cart-shipping-step-btn" id="cartShippingBtn" onclick="openCheckoutModal()">
+        <i class="fa-solid fa-truck-fast"></i>
+        <span>Dati Spedizione</span>
+        <i class="fa-solid fa-arrow-right" style="margin-left: auto;"></i>
+      </button>
+
+      <div class="stripe-badge-notice">
+        <i class="fa-solid fa-clipboard-check" style="color: var(--copper-light);"></i>
+        <span>Fase 1: Dati recapito e misura polso • Fase 2: Checkout Stripe</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ============================================================================
+       PRE-ACQUISTO CHECKOUT & SPEDIZIONE MODAL (#checkoutModalBackdrop)
+       ============================================================================ -->
+  <div class="modal-backdrop" id="checkoutModalBackdrop">
+    <div class="modal-container checkout-modal-container" id="checkoutModal">
+      <button class="modal-close-btn" id="closeCheckoutModalBtn" aria-label="Chiudi Spedizione" onclick="closeCheckoutModal()">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <!-- Modal Header -->
+      <div class="checkout-modal-header">
+        <span class="hero-badge"><i class="fa-solid fa-truck-fast"></i> Consegna Espressa 3/5 Giorni Lavorativi</span>
+        <h3 class="checkout-modal-title">Dati di Spedizione & Consegna</h3>
+        <p class="checkout-modal-subtitle">Compila l'indirizzo per il recapito assicurato del tuo bracciale forgiato a mano prima di accedere al circuito di pagamento Stripe.</p>
+      </div>
+
+      <!-- Live Order Mini-Summary Banner -->
+      <div class="checkout-order-summary">
+        <div class="summary-line">
+          <span>Articoli nello Scrigno:</span>
+          <strong id="modalSummaryItemsCount">0 pezzi</strong>
+        </div>
+        <div class="summary-line">
+          <span>Subtotale Creazioni:</span>
+          <span id="modalSummarySubtotal">€0.00</span>
+        </div>
+        <div class="summary-line highlight-shipping">
+          <span><i class="fa-solid fa-truck"></i> Spedizione Corriere Espresso (Tutta Italia):</span>
+          <span>€6.00</span>
+        </div>
+        <div class="summary-divider"></div>
+        <div class="summary-line total-line">
+          <span>Totale Ordine (Spedizione Inclusa):</span>
+          <strong id="modalSummaryTotal">€6.00</strong>
+        </div>
+      </div>
+
+      <!-- Shipping Form -->
+      <form id="shippingCheckoutForm" onsubmit="handleShippingFormSubmit(event)">
+        <div class="checkout-form-grid">
+          <!-- Nome e Cognome -->
+          <div class="form-group span-2">
+            <label for="shipFullName"><i class="fa-solid fa-user"></i> Nome e Cognome Destinatario *</label>
+            <input type="text" id="shipFullName" class="luxury-input" required placeholder="Es. Marco Rossi" autocomplete="name">
+          </div>
+
+          <!-- Email -->
+          <div class="form-group">
+            <label for="shipEmail"><i class="fa-solid fa-envelope"></i> Email (per ricevuta e tracking) *</label>
+            <input type="email" id="shipEmail" class="luxury-input" required placeholder="mario.rossi@example.com" autocomplete="email">
+          </div>
+
+          <!-- Telefono -->
+          <div class="form-group">
+            <label for="shipPhone"><i class="fa-solid fa-phone"></i> Cellulare (avviso SMS corriere) *</label>
+            <input type="tel" id="shipPhone" class="luxury-input" required placeholder="+39 333 1234567" autocomplete="tel">
+          </div>
+
+          <!-- Misura Circonferenza Polso (cm) per Forgiatura -->
+          <div class="form-group span-2" style="background: rgba(200, 125, 85, 0.08); border: 1px solid rgba(200, 125, 85, 0.35); border-radius: var(--radius-md); padding: 1rem 1.15rem;">
+            <label for="shipWristCm" style="color: var(--copper-light); font-weight: 600; display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
+              <span><i class="fa-solid fa-ruler-horizontal"></i> Misura del Polso (cm) per Forgiatura Personalizzata *</span>
+              <span style="font-size: 0.72rem; color: #38a169; text-transform: uppercase; letter-spacing: 0.06em;"><i class="fa-solid fa-check"></i> Calibratura Anatomica</span>
+            </label>
+            <select id="shipWristCm" class="luxury-input" required style="width: 100%; cursor: pointer;">
+              <option value="" disabled selected>Seleziona la misura in cm del tuo polso...</option>
+              <option value="15 cm">15 cm (Polso molto sottile / Small)</option>
+              <option value="16 cm">16 cm (Polso sottile / Small-Medium)</option>
+              <option value="17 cm">17 cm (Polso standard donna / Medium)</option>
+              <option value="18 cm">18 cm (Polso standard uomo / Medium-Large)</option>
+              <option value="19 cm">19 cm (Polso robusto / Large)</option>
+              <option value="20 cm">20 cm (Polso forte / XL)</option>
+              <option value="21 cm">21 cm (Polso molto forte / XXL)</option>
+              <option value="Su Misura">Altra misura speciale (indicala nelle note in basso)</option>
+            </select>
+            <p style="font-size: 0.76rem; color: var(--text-secondary); margin-top: 0.5rem; line-height: 1.4;">
+              <i class="fa-solid fa-circle-info" style="color: var(--copper-primary);"></i> Misura la circonferenza del polso aderente con un metro da sarta o uno spago. Il maestro ramaio calibrerà il bracciale sulla tua esatta anatomia.
+            </p>
+          </div>
+
+          <!-- Indirizzo e Numero Civico -->
+          <div class="form-group span-2">
+            <label for="shipAddress"><i class="fa-solid fa-location-dot"></i> Indirizzo di Consegna e N. Civico *</label>
+            <input type="text" id="shipAddress" class="luxury-input" required placeholder="Es. Via dei Tornabuoni 12" autocomplete="street-address">
+          </div>
+
+          <!-- CAP -->
+          <div class="form-group">
+            <label for="shipCap"><i class="fa-solid fa-map-pin"></i> CAP (Codice Postale) *</label>
+            <input type="text" id="shipCap" class="luxury-input" required pattern="[0-9]{5}" maxlength="5" placeholder="50123" autocomplete="postal-code">
+          </div>
+
+          <!-- Città -->
+          <div class="form-group">
+            <label for="shipCity"><i class="fa-solid fa-city"></i> Città / Comune *</label>
+            <input type="text" id="shipCity" class="luxury-input" required placeholder="Es. Firenze" autocomplete="address-level2">
+          </div>
+
+          <!-- Provincia -->
+          <div class="form-group">
+            <label for="shipProvince"><i class="fa-solid fa-map"></i> Provincia (Sigla) *</label>
+            <input type="text" id="shipProvince" class="luxury-input" required maxlength="4" style="text-transform: uppercase;" placeholder="FI" autocomplete="address-level1">
+          </div>
+
+          <!-- Note per la consegna -->
+          <div class="form-group span-2">
+            <label for="shipNotes"><i class="fa-solid fa-comment-dots"></i> Istruzioni o Note per il Corriere (Facoltativo)</label>
+            <input type="text" id="shipNotes" class="luxury-input" placeholder="Es. Scala B, interno 4, citofono Rossi...">
+          </div>
+        </div>
+
+        <!-- Privacy & Security Notice -->
+        <div class="checkout-security-notice">
+          <i class="fa-solid fa-lock" style="color: var(--copper-primary); font-size: 1.1rem; flex-shrink: 0;"></i>
+          <span>I recapiti sono protetti ai sensi del GDPR (UE 2016/679). Cliccando su procedi verrai reindirizzato sui server crittografati a 256-bit di <strong>Stripe</strong> per effettuare il pagamento in totale sicurezza.</span>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="checkout-stripe-btn" id="submitShippingPayBtn">
+          <i class="fa-brands fa-stripe" style="font-size: 1.4rem;"></i>
+          <span id="submitPayBtnText">Procedi al Pagamento su Stripe (€6.00)</span>
+          <i class="fa-solid fa-arrow-right" style="font-size: 0.9rem;"></i>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ============================================================================
+       CONFIRM REMOVAL MODAL (EDGE CASE B: BRACCIALE CON PIETRE INCASTONATE)
+       ============================================================================ -->
+  <div class="modal-backdrop" id="stoneRemoveConfirmModalBackdrop">
+    <div class="modal-container stone-confirm-modal-container">
+      <div style="text-align: center; margin-bottom: 1.25rem;">
+        <div class="stone-confirm-icon-wrap">
+          <i class="fa-solid fa-gem"></i>
+        </div>
+        <h3 style="font-family: var(--font-serif); font-size: 1.7rem; margin-top: 0.75rem;">Bracciale con Pietre Incastonate</h3>
+        <p id="stoneRemoveConfirmMsg" style="color: var(--text-secondary); font-size: 0.92rem; line-height: 1.6; margin-top: 0.5rem;">
+          Questo bracciale ha una o più pietre naturali incastonate. Come desideri procedere?
+        </p>
+      </div>
+      <div class="stone-confirm-actions">
+        <button type="button" class="btn-secondary" onclick="confirmKeepStonesAsStandalone()" style="width: 100%; justify-content: center; padding: 0.85rem 1rem;">
+          <i class="fa-solid fa-gem"></i> Mantieni pietre nel carrello come minerali singoli
+        </button>
+        <button type="button" class="btn-primary" onclick="confirmRemoveBraceletAndStones()" style="width: 100%; justify-content: center; background: #8a3c2b; border-color: #a44834; padding: 0.85rem 1rem;">
+          <i class="fa-solid fa-trash-can"></i> Rimuovi tutto (Bracciale e Pietre)
+        </button>
+        <button type="button" class="btn-text-subtle" onclick="closeStoneRemoveConfirmModal()" style="width: 100%; text-align: center; margin-top: 0.5rem;">
+          Annulla operazione
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================================
+       TOAST NOTIFICATION CONTAINER
+       ============================================================================ -->
+  <div class="toast-container" id="toastContainer" aria-live="polite"></div>
+
+  <!-- ============================================================================
+       LUXURY ARTISAN FOOTER
+       ============================================================================ -->
+  <footer class="main-footer" style="margin-top: 5rem;">
+    <div class="container footer-grid">
+      <div class="footer-col">
+        <div class="brand-wrapper" style="margin-bottom: 1.2rem;">
+          <div class="brand-symbol">
+            <i class="fa-solid fa-gem" style="color: #fff; font-size: 1.1rem;"></i>
+          </div>
+          <div class="brand-text-group">
+            <span class="brand-title">Fatto a Mano</span>
+            <span class="brand-subtitle">Atelier del Rame Puro 99.9%</span>
+          </div>
+        </div>
+        <p style="color: var(--text-secondary); font-size: 0.88rem; line-height: 1.7; margin-bottom: 1.2rem;">
+          Bottega artigiana orafa e ramearia. Ogni gioiello è un'opera d'arte viva, forgiata su misura anatomica del polso ed impreziosita con cristalli autentici di Didoni Store.
+        </p>
+        <div style="font-size: 0.8rem; color: var(--copper-light); display: flex; align-items: center; gap: 0.5rem;">
+          <i class="fa-solid fa-shield-halved"></i>
+          <span>Rame Elettrolitico CU-ETP 99.9% Vergine</span>
+        </div>
+      </div>
+
+      <div class="footer-col">
+        <h4 class="footer-title">Navigazione Bottega</h4>
+        <ul class="footer-links">
+          <li><a href="index.html#prontaconsegna"><i class="fa-solid fa-bolt" style="font-size: 0.75rem; margin-right: 6px; color: var(--copper-light);"></i>Pronta Consegna</a></li>
+          <li><a href="index.html#collezione">Collezione Bracciali</a></li>
+          <li><a href="atelier-pietre.html" style="color: var(--copper-light); font-weight: 600;"><i class="fa-solid fa-gem" style="font-size: 0.75rem; margin-right: 6px;"></i>Atelier Pietre Shop</a></li>
+          <li><a href="index.html#bottega-pietre">Bottega delle Pietre Didoni</a></li>
+          <li><a href="index.html#filosofia">La Nostra Filosofia</a></li>
+          <li><a href="index.html#proprieta">Proprietà del Rame</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4 class="footer-title">Garanzie &amp; Trasparenza</h4>
+        <ul class="footer-links">
+          <li><a href="index.html#garanzia">Purezza 99.9% Certificata</a></li>
+          <li><a href="index.html#garanzia">Lucidatura con Cera d'Api Naturale</a></li>
+          <li><a href="index.html#garanzia">Pietre Autentiche Didoni Store</a></li>
+          <li><a href="index.html#garanzia">Spedizione Tracciata 3-5 Giorni</a></li>
+          <li><a href="index.html#garanzia">Reso Facile entro 14 Giorni</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4 class="footer-title">Assistenza &amp; Bottega</h4>
+        <p style="color: var(--text-secondary); font-size: 0.85rem; line-height: 1.6; margin-bottom: 0.75rem;">
+          <i class="fa-solid fa-envelope" style="color: var(--copper-primary); margin-right: 0.5rem;"></i>
+          agtechdesigne@gmail.com
+        </p>
+        <p style="color: var(--text-secondary); font-size: 0.85rem; line-height: 1.6; margin-bottom: 0.75rem;">
+          <i class="fa-solid fa-truck" style="color: var(--copper-primary); margin-right: 0.5rem;"></i>
+          Spedizione Corriere Espresso €6,00
+        </p>
+        <p style="color: var(--text-secondary); font-size: 0.85rem; line-height: 1.6;">
+          <i class="fa-solid fa-lock" style="color: var(--copper-primary); margin-right: 0.5rem;"></i>
+          Pagamenti Sicuri Stripe 256-bit
+        </p>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <div class="container footer-bottom-content">
+        <p style="margin: 0; font-size: 0.8rem; color: var(--text-muted);">
+          &copy; 2026 Fatto a Mano — Atelier del Rame Puro &amp; Bottega Didoni Store. Tutti i diritti riservati.
+        </p>
+        <div style="font-size: 0.78rem; color: var(--text-muted); display: flex; gap: 1rem;">
+          <span>100% Artigianale Italiano</span>
+          <span>•</span>
+          <span>Zero Nichel &amp; Zero Vernici Chimiche</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Application Logic -->
+  <script src="app.js"></script>
+</body>
+</html>

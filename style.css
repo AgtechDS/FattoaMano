@@ -3981,6 +3981,492 @@ body {
   }
 }
 
+/* ==============================================================================
+   ATELIER PIETRE SHOP & FILTERING ENGINE STYLES
+   Warm Metallic Glow (Copper, Charcoal, Gold, Amber)
+   ============================================================================== */
+
+/* Home Showcase CTA Card */
+.atelier-shop-cta-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  background: linear-gradient(135deg, rgba(200, 125, 85, 0.15) 0%, rgba(18, 18, 24, 0.95) 100%);
+  border: 1px solid rgba(200, 125, 85, 0.4);
+  border-radius: var(--radius-lg);
+  padding: 2.2rem 2.5rem;
+  margin-bottom: 2.5rem;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.45);
+  position: relative;
+  overflow: hidden;
+}
+
+.atelier-shop-cta-card::before {
+  content: '';
+  position: absolute;
+  top: -40px;
+  right: -40px;
+  width: 180px;
+  height: 180px;
+  background: radial-gradient(circle, rgba(200, 125, 85, 0.25) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.atelier-shop-cta-info {
+  flex: 1;
+}
+
+.atelier-shop-cta-action {
+  flex-shrink: 0;
+}
+
+.atelier-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1.1rem 2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  box-shadow: 0 6px 20px rgba(200, 125, 85, 0.35);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.atelier-cta-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 28px rgba(200, 125, 85, 0.5);
+}
+
+/* Breadcrumb Navigation */
+.breadcrumb-wrap {
+  padding: 1.25rem 0;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.breadcrumb-wrap a {
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.breadcrumb-wrap a:hover {
+  color: var(--copper-light);
+}
+
+.breadcrumb-wrap .crumb-current {
+  color: var(--copper-light);
+  font-weight: 600;
+}
+
+/* Dedicated Stone Shop Filter Toolbar */
+.stone-shop-toolbar {
+  background: rgba(18, 18, 24, 0.92);
+  border: 1px solid rgba(200, 125, 85, 0.3);
+  border-radius: var(--radius-lg);
+  padding: 1.85rem;
+  margin-bottom: 2.75rem;
+  box-shadow: 0 10px 32px rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(14px);
+}
+
+.filter-section-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.85rem;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.filter-title-label {
+  font-family: var(--font-serif);
+  font-size: 1.2rem;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.filter-group-block {
+  margin-bottom: 1.35rem;
+}
+
+.filter-group-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.65rem;
+}
+
+.filter-group-label {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+  color: var(--copper-light);
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+/* Filter Pills Group (Scrollable on Mobile) */
+.shop-filter-pills-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  overflow-x: auto;
+  padding-bottom: 0.35rem;
+  -webkit-overflow-scrolling: touch;
+}
+
+.shop-filter-pill {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-full);
+  color: var(--text-secondary);
+  font-size: 0.84rem;
+  padding: 0.5rem 1.05rem;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.25s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-family: var(--font-sans);
+}
+
+.shop-filter-pill:hover {
+  background: rgba(200, 125, 85, 0.12);
+  border-color: rgba(200, 125, 85, 0.4);
+  color: var(--text-primary);
+  transform: translateY(-1px);
+}
+
+.shop-filter-pill.active {
+  background: linear-gradient(135deg, var(--copper-primary) 0%, #a65b32 100%);
+  border-color: var(--copper-light);
+  color: #ffffff;
+  font-weight: 600;
+  box-shadow: 0 4px 14px rgba(200, 125, 85, 0.4);
+}
+
+.shop-filter-pill .pill-count {
+  font-size: 0.72rem;
+  opacity: 0.8;
+  background: rgba(0, 0, 0, 0.25);
+  padding: 0.15rem 0.45rem;
+  border-radius: var(--radius-full);
+}
+
+/* Smart Cart Filter Button */
+.filter-cart-btn {
+  background: rgba(200, 125, 85, 0.1);
+  border: 1px solid rgba(200, 125, 85, 0.45);
+  border-radius: var(--radius-full);
+  color: var(--copper-light);
+  font-size: 0.85rem;
+  padding: 0.55rem 1.2rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-weight: 600;
+  transition: all 0.25s ease;
+}
+
+.filter-cart-btn:hover {
+  background: rgba(200, 125, 85, 0.22);
+  border-color: var(--copper-light);
+  color: #ffffff;
+}
+
+.filter-cart-btn.active {
+  background: linear-gradient(135deg, var(--copper-primary) 0%, #87411f 100%);
+  color: #ffffff;
+  border-color: #ffd6b3;
+  box-shadow: 0 4px 16px rgba(200, 125, 85, 0.45);
+}
+
+/* Secondary Filters Row: Search, Type, Chakra */
+.filter-secondary-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr auto;
+  gap: 0.85rem;
+  align-items: center;
+  margin-top: 1.15rem;
+  padding-top: 1.15rem;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.filter-search-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.filter-search-box i {
+  position: absolute;
+  left: 1rem;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.filter-search-input {
+  width: 100%;
+  padding-left: 2.6rem !important;
+}
+
+.stone-counter-badge {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 0.45rem 0.85rem;
+  white-space: nowrap;
+}
+
+.btn-reset-filters {
+  background: transparent;
+  border: 1px dashed var(--border-subtle);
+  color: var(--text-muted);
+  border-radius: var(--radius-sm);
+  padding: 0.5rem 0.85rem;
+  font-size: 0.8rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  transition: all 0.2s ease;
+}
+
+.btn-reset-filters:hover {
+  border-color: var(--copper-light);
+  color: var(--copper-light);
+}
+
+/* Full Stone Shop Grid */
+.atelier-full-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+  gap: 1.85rem;
+  margin-bottom: 4rem;
+}
+
+/* Enhanced Stone Card for Shop */
+.stone-shop-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+}
+
+.stone-shop-card:hover {
+  transform: translateY(-5px);
+  border-color: rgba(200, 125, 85, 0.55);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.5);
+}
+
+.stone-shop-media {
+  height: 230px;
+  position: relative;
+  overflow: hidden;
+  background: #0d0d12;
+}
+
+.stone-shop-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.stone-shop-card:hover .stone-shop-media img {
+  transform: scale(1.08);
+}
+
+.stone-shop-price-badge {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  background: rgba(10, 10, 14, 0.88);
+  border: 1px solid var(--copper-primary);
+  backdrop-filter: blur(8px);
+  color: var(--copper-light);
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 0.35rem 0.8rem;
+  border-radius: var(--radius-full);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+.stone-shop-type-badge {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  background: rgba(200, 125, 85, 0.22);
+  border: 1px solid rgba(200, 125, 85, 0.45);
+  backdrop-filter: blur(8px);
+  color: #ffffff;
+  font-size: 0.68rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 0.3rem 0.65rem;
+  border-radius: var(--radius-sm);
+}
+
+.stone-shop-content {
+  padding: 1.4rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.stone-shop-title {
+  font-family: var(--font-serif);
+  font-size: 1.25rem;
+  color: var(--text-primary);
+  margin: 0 0 0.5rem 0;
+  line-height: 1.3;
+}
+
+.stone-shop-badges {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.85rem;
+}
+
+.stone-shop-pill {
+  background: rgba(200, 125, 85, 0.1);
+  border: 1px solid rgba(200, 125, 85, 0.25);
+  color: var(--copper-light);
+  font-size: 0.72rem;
+  padding: 0.25rem 0.6rem;
+  border-radius: var(--radius-full);
+}
+
+.stone-shop-desc {
+  font-size: 0.86rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: 1.15rem;
+  flex: 1;
+}
+
+/* Compatible Models Section in Card */
+.stone-compatible-box {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: var(--radius-sm);
+  padding: 0.75rem;
+  margin-bottom: 1.15rem;
+}
+
+.stone-compatible-title {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--text-muted);
+  margin-bottom: 0.45rem;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.stone-compatible-models {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.compatible-tag {
+  font-size: 0.7rem;
+  background: rgba(200, 125, 85, 0.12);
+  color: var(--copper-light);
+  padding: 0.2rem 0.55rem;
+  border-radius: 4px;
+}
+
+.stone-shop-target-select {
+  margin-bottom: 0.85rem;
+  width: 100%;
+  font-size: 0.82rem;
+  padding: 0.55rem 0.75rem;
+}
+
+/* Empty State */
+.no-stones-found {
+  text-align: center;
+  padding: 4.5rem 1.5rem;
+  background: rgba(18, 18, 24, 0.5);
+  border: 1px dashed var(--border-subtle);
+  border-radius: var(--radius-lg);
+  grid-column: 1 / -1;
+}
+
+.no-stones-icon {
+  font-size: 3rem;
+  color: var(--copper-primary);
+  margin-bottom: 1rem;
+}
+
+/* Responsive Overrides for Atelier Shop */
+@media (max-width: 992px) {
+  .atelier-shop-cta-card {
+    flex-direction: column;
+    text-align: center;
+    padding: 2rem 1.5rem;
+  }
+  .atelier-shop-cta-action {
+    width: 100%;
+  }
+  .atelier-cta-btn {
+    width: 100%;
+    justify-content: center;
+  }
+  .filter-secondary-row {
+    grid-template-columns: 1fr 1fr;
+  }
+  .filter-search-box {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 640px) {
+  .stone-shop-toolbar {
+    padding: 1.25rem 0.95rem;
+  }
+  .filter-secondary-row {
+    grid-template-columns: 1fr;
+  }
+  .atelier-full-grid {
+    grid-template-columns: 1fr;
+    gap: 1.35rem;
+  }
+  .stone-shop-media {
+    height: 190px;
+  }
+  .shop-filter-pills-row {
+    flex-wrap: nowrap;
+  }
+}
+
+
 
 
 

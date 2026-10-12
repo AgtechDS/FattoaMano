@@ -340,6 +340,7 @@ function saveCart() {
   localStorage.setItem('fattoamano_cart', JSON.stringify(state.cart));
   renderCart();
   populateAtelierCartBraceletSelect();
+  if (typeof updateShopModelCounts === 'function') updateShopModelCounts();
 }
 
 function addToCartById(productId) {
@@ -1253,6 +1254,7 @@ async function loadStones() {
   renderStoneMiniCarousel();
   renderAtelierStonesGrid();
   populateAtelierCartBraceletSelect();
+  initAtelierShopPage();
 
   if (state.stones && state.stones.length > 0) {
     selectStone(state.stones[0].id);
@@ -1669,15 +1671,7 @@ function confirmPromptAddStone() {
 
 function exploreFullAtelierFromPrompt() {
   closeStonePromptModal();
-  const atelierSection = document.getElementById('bottega-pietre');
-  if (atelierSection) {
-    atelierSection.scrollIntoView({ behavior: 'smooth' });
-  }
-
-  if (state.activePromptCartItem) {
-    populateAtelierCartBraceletSelect(state.activePromptCartItem.id);
-  }
-  showToast('Esplora l\'Atelier delle Pietre per personalizzare il tuo bracciale');
+  window.location.href = 'atelier-pietre.html';
 }
 
 function skipPromptToCart() {
@@ -1759,7 +1753,10 @@ function renderAtelierStonesGrid() {
   const grid = document.getElementById('atelierStonesGrid');
   if (!grid || !state.stones) return;
 
-  grid.innerHTML = state.stones.map(stone => `
+  // On the homepage, render top 6 featured stones to prevent a giant full scroll
+  const stonesToShow = state.stones.slice(0, 6);
+
+  grid.innerHTML = stonesToShow.map(stone => `
     <div class="atelier-stone-card" id="atelierStoneCard_${stone.id}">
       <div class="atelier-stone-img-wrap">
         <img src="${stone.immagine_locale}" alt="${stone.nome}" onerror="this.src='${stone.immagine_remota}'" loading="lazy">
@@ -1996,6 +1993,395 @@ window.getItemUnitPrice = getItemUnitPrice;
 window.toggleMobileMenu = toggleMobileMenu;
 window.openMobileMenu = openMobileMenu;
 window.closeMobileMenu = closeMobileMenu;
+
+// ==============================================================================
+// DEDICATED ATELIER PIETRE SHOP PAGE LOGIC & FILTERING ENGINE
+// ==============================================================================
+const stoneShopState = {
+  selectedModel: 'all',
+  cartFilterActive: false,
+  typeFilter: 'all',
+  chakraFilter: 'all',
+  elementFilter: 'all',
+  searchQuery: '',
+  selectedTargets: {}
+};
+
+function initAtelierShopPage() {
+  const fullGrid = document.getElementById('atelierShopFullGrid');
+  if (!fullGrid) return;
+
+  updateShopModelCounts();
+  renderAtelierShopFullGrid();
+}
+
+function updateShopModelCounts() {
+  const stones = state.stones || [];
+  
+  // Count compatibility for each model pill
+  document.querySelectorAll('#shopModelFilterPills .shop-filter-pill').forEach(pill => {
+    const model = pill.dataset.model;
+    let countEl = pill.querySelector('.pill-count');
+    if (!countEl) {
+      countEl = document.createElement('span');
+      countEl.className = 'pill-count';
+      pill.appendChild(countEl);
+    }
+
+    if (model === 'all') {
+      countEl.textContent = stones.length;
+    } else {
+      const matchingCount = stones.filter(s => {
+        if (!s.compatibilita_bracciali) return true;
+        return s.compatibilita_bracciali.includes(model);
+      }).length;
+      countEl.textContent = matchingCount;
+    }
+  });
+
+  // Cart filter button badge
+  const cartBracelets = (state.cart || []).filter(i => !i.is_standalone_stone);
+  const badge = document.getElementById('cartFilterCountBadge');
+  if (badge) {
+    if (cartBracelets.length > 0) {
+      badge.style.display = 'inline-block';
+      badge.textContent = `${cartBracelets.length} nello scrigno`;
+    } else {
+      badge.style.display = 'none';
+    }
+  }
+}
+
+function filterByShopModel(modelId) {
+  stoneShopState.selectedModel = modelId;
+  stoneShopState.cartFilterActive = false;
+  
+  const cartBtn = document.getElementById('filterByCartBraceletBtn');
+  if (cartBtn) cartBtn.classList.remove('active');
+
+  document.querySelectorAll('#shopModelFilterPills .shop-filter-pill').forEach(pill => {
+    pill.classList.toggle('active', pill.dataset.model === modelId);
+  });
+
+  renderAtelierShopFullGrid();
+}
+
+function toggleCartBraceletFilter() {
+  const cartBracelets = (state.cart || []).filter(i => !i.is_standalone_stone);
+  if (cartBracelets.length === 0) {
+    showToast('Nessun bracciale nel carrello. Seleziona prima un modello dallo Shop.');
+    return;
+  }
+
+  stoneShopState.cartFilterActive = !stoneShopState.cartFilterActive;
+  const cartBtn = document.getElementById('filterByCartBraceletBtn');
+  if (cartBtn) cartBtn.classList.toggle('active', stoneShopState.cartFilterActive);
+
+  if (stoneShopState.cartFilterActive) {
+    document.querySelectorAll('#shopModelFilterPills .shop-filter-pill').forEach(pill => {
+      pill.classList.toggle('active', pill.dataset.model === 'all');
+    });
+    stoneShopState.selectedModel = 'all';
+    showToast(`Filtro attivo: gemme adatte al bracciale nel tuo scrigno!`);
+  }
+
+  renderAtelierShopFullGrid();
+}
+
+function onStoneSearchInput(query) {
+  stoneShopState.searchQuery = (query || '').trim().toLowerCase();
+  renderAtelierShopFullGrid();
+}
+
+function onStoneTypeFilterChange(type) {
+  stoneShopState.typeFilter = type;
+  renderAtelierShopFullGrid();
+}
+
+function onStoneChakraFilterChange(chakra) {
+  stoneShopState.chakraFilter = chakra;
+  renderAtelierShopFullGrid();
+}
+
+function onStoneElementFilterChange(element) {
+  stoneShopState.elementFilter = element;
+  renderAtelierShopFullGrid();
+}
+
+function resetAllStoneFilters() {
+  stoneShopState.selectedModel = 'all';
+  stoneShopState.cartFilterActive = false;
+  stoneShopState.typeFilter = 'all';
+  stoneShopState.chakraFilter = 'all';
+  stoneShopState.elementFilter = 'all';
+  stoneShopState.searchQuery = '';
+
+  const searchInput = document.getElementById('stoneShopSearchInput');
+  if (searchInput) searchInput.value = '';
+  const typeSelect = document.getElementById('stoneTypeFilterSelect');
+  if (typeSelect) typeSelect.value = 'all';
+  const chakraSelect = document.getElementById('stoneChakraFilterSelect');
+  if (chakraSelect) chakraSelect.value = 'all';
+  const elementSelect = document.getElementById('stoneElementFilterSelect');
+  if (elementSelect) elementSelect.value = 'all';
+  const cartBtn = document.getElementById('filterByCartBraceletBtn');
+  if (cartBtn) cartBtn.classList.remove('active');
+
+  document.querySelectorAll('#shopModelFilterPills .shop-filter-pill').forEach(pill => {
+    pill.classList.toggle('active', pill.dataset.model === 'all');
+  });
+
+  renderAtelierShopFullGrid();
+  showToast('Filtri azzerati. Visualizzazione completa di tutte le gemme.');
+}
+
+function getFilteredStones() {
+  let stones = state.stones || [];
+
+  // Filter 1: Shop Model Filter
+  if (stoneShopState.selectedModel !== 'all') {
+    stones = stones.filter(s => {
+      if (!s.compatibilita_bracciali) return true;
+      return s.compatibilita_bracciali.includes(stoneShopState.selectedModel);
+    });
+  }
+
+  // Filter 2: Smart Cart Filter
+  if (stoneShopState.cartFilterActive) {
+    const cartBracelets = (state.cart || []).filter(i => !i.is_standalone_stone);
+    if (cartBracelets.length > 0) {
+      stones = stones.filter(s => {
+        if (!s.compatibilita_bracciali) return true;
+        return s.compatibilita_bracciali.some(compatId => {
+          return cartBracelets.some(b => (b.id && b.id.includes(compatId)) || b.productId === compatId || compatId === 'prod_rame_001');
+        });
+      });
+    }
+  }
+
+  // Filter 3: Type Filter
+  if (stoneShopState.typeFilter !== 'all') {
+    if (stoneShopState.typeFilter === 'burattato') {
+      stones = stones.filter(s => (s.tipo || '').toLowerCase().includes('burattato'));
+    } else if (stoneShopState.typeFilter === 'grezzo') {
+      stones = stones.filter(s => (s.tipo || '').toLowerCase().includes('grezzo') || (s.nome || '').toLowerCase().includes('grezzo') || (s.nome || '').toLowerCase().includes('grezza'));
+    }
+  }
+
+  // Filter 4: Chakra Filter
+  if (stoneShopState.chakraFilter !== 'all') {
+    const q = stoneShopState.chakraFilter.toLowerCase();
+    stones = stones.filter(s => (s.chakra || '').toLowerCase().includes(q));
+  }
+
+  // Filter 5: Element Filter
+  if (stoneShopState.elementFilter !== 'all') {
+    const q = stoneShopState.elementFilter.toLowerCase();
+    stones = stones.filter(s => (s.elemento || '').toLowerCase().includes(q));
+  }
+
+  // Filter 6: Search Query
+  if (stoneShopState.searchQuery) {
+    const q = stoneShopState.searchQuery;
+    stones = stones.filter(s => 
+      (s.nome || '').toLowerCase().includes(q) ||
+      (s.proprieta || '').toLowerCase().includes(q) ||
+      (s.chakra || '').toLowerCase().includes(q) ||
+      (s.elemento || '').toLowerCase().includes(q) ||
+      (s.tipo || '').toLowerCase().includes(q)
+    );
+  }
+
+  return stones;
+}
+
+function renderAtelierShopFullGrid() {
+  const fullGrid = document.getElementById('atelierShopFullGrid');
+  const countEl = document.getElementById('stoneResultsCount');
+  const noMsg = document.getElementById('noStonesFoundMsg');
+  if (!fullGrid) return;
+
+  const filtered = getFilteredStones();
+  const total = (state.stones || []).length;
+
+  if (countEl) {
+    countEl.textContent = `Visualizzando ${filtered.length} di ${total} gemme`;
+  }
+
+  if (filtered.length === 0) {
+    fullGrid.innerHTML = '';
+    if (noMsg) noMsg.style.display = 'block';
+    return;
+  }
+
+  if (noMsg) noMsg.style.display = 'none';
+
+  const cartBracelets = (state.cart || []).filter(i => !i.is_standalone_stone);
+
+  fullGrid.innerHTML = filtered.map(stone => {
+    const isGrezzo = (stone.tipo || '').toLowerCase().includes('grezzo') || (stone.nome || '').toLowerCase().includes('grezza');
+    const typeLabel = isGrezzo ? 'Grezzo di Miniera' : 'Burattato Levigato';
+    const currentTarget = stoneShopState.selectedTargets[stone.id] || (cartBracelets.length > 0 ? cartBracelets[0].id : 'standalone');
+
+    // Build target selector options
+    let targetOptionsHtml = '';
+    if (cartBracelets.length > 0) {
+      targetOptionsHtml += '<optgroup label="Bracciali nel tuo Scrigno">';
+      cartBracelets.forEach(b => {
+        const titleShort = b.title.length > 25 ? b.title.substring(0, 23) + '...' : b.title;
+        targetOptionsHtml += `<option value="${b.id}" ${currentTarget === b.id ? 'selected' : ''}>Incastona su: ${titleShort}</option>`;
+      });
+      targetOptionsHtml += '</optgroup>';
+      targetOptionsHtml += '<optgroup label="Opzione Minerale Singolo">';
+      targetOptionsHtml += `<option value="standalone" ${currentTarget === 'standalone' ? 'selected' : ''}>Pietra Singola da Collezione (€${Number(stone.prezzo_vendita).toFixed(2)})</option>`;
+      targetOptionsHtml += '</optgroup>';
+    } else {
+      targetOptionsHtml += `<option value="standalone" ${currentTarget === 'standalone' ? 'selected' : ''}>Pietra Singola da Collezione (€${Number(stone.prezzo_vendita).toFixed(2)})</option>`;
+      targetOptionsHtml += '<optgroup label="Aggiungi con Bracciale dello Shop">';
+      targetOptionsHtml += `<option value="combo_prod_rame_001" ${currentTarget === 'combo_prod_rame_001' ? 'selected' : ''}>+ Bracciale 3 Filamenti Torciti (€30)</option>`;
+      targetOptionsHtml += `<option value="combo_prod_rame_002" ${currentTarget === 'combo_prod_rame_002' ? 'selected' : ''}>+ Cuff Martellato Ossidato (€45)</option>`;
+      targetOptionsHtml += `<option value="combo_prod_rame_003" ${currentTarget === 'combo_prod_rame_003' ? 'selected' : ''}>+ Bangle Minimal Chisel (€25)</option>`;
+      targetOptionsHtml += '</optgroup>';
+    }
+
+    const buttonLabel = (currentTarget && currentTarget.startsWith('combo_'))
+      ? `<i class="fa-solid fa-plus"></i> Ordina con Bracciale`
+      : (cartBracelets.length > 0 && currentTarget !== 'standalone')
+        ? `<i class="fa-solid fa-gem"></i> Incastona nel Bracciale`
+        : `<i class="fa-solid fa-plus"></i> Aggiungi allo Scrigno`;
+
+    return `
+      <article class="stone-shop-card" id="shopCard_${stone.id}">
+        <div class="stone-shop-media">
+          <img src="${stone.immagine_locale}" alt="${stone.nome}" onerror="this.src='${stone.immagine_remota}'" loading="lazy">
+          <span class="stone-shop-price-badge">€${Number(stone.prezzo_vendita).toFixed(2)}</span>
+          <span class="stone-shop-type-badge">${typeLabel}</span>
+        </div>
+        <div class="stone-shop-content">
+          <h3 class="stone-shop-title">${stone.nome}</h3>
+          <div class="stone-shop-badges">
+            <span class="stone-shop-pill"><i class="fa-solid fa-sun"></i> ${stone.chakra}</span>
+            <span class="stone-shop-pill"><i class="fa-solid fa-water"></i> ${stone.elemento}</span>
+          </div>
+          <p class="stone-shop-desc">${stone.proprieta}</p>
+
+          <div class="stone-compatible-box">
+            <div class="stone-compatible-title">
+              <i class="fa-solid fa-shield-halved"></i> Montatura artigianale per:
+            </div>
+            <div class="stone-compatible-models">
+              <span class="compatible-tag">3 Filamenti</span>
+              <span class="compatible-tag">Intrecciati</span>
+              <span class="compatible-tag">Cuff Battuto</span>
+              ${!isGrezzo ? '<span class="compatible-tag">Bangle Rigido</span>' : ''}
+            </div>
+          </div>
+
+          <label style="font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 0.35rem; display: block;">
+            Destinazione Lavorazione:
+          </label>
+          <select class="luxury-input stone-shop-target-select" id="selectTarget_${stone.id}" onchange="onShopCardTargetChange('${stone.id}', this.value)">
+            ${targetOptionsHtml}
+          </select>
+
+          <button type="button" class="btn-primary" style="width: 100%; justify-content: center;" onclick="addStoneFromShopCard('${stone.id}')">
+            ${buttonLabel}
+          </button>
+        </div>
+      </article>
+    `;
+  }).join('');
+}
+
+function onShopCardTargetChange(stoneId, targetValue) {
+  stoneShopState.selectedTargets[stoneId] = targetValue;
+  renderAtelierShopFullGrid();
+}
+
+function addStoneFromShopCard(stoneId) {
+  const stone = (state.stones || []).find(s => s.id === stoneId);
+  if (!stone) return;
+
+  const target = stoneShopState.selectedTargets[stoneId] || 'standalone';
+
+  if (target.startsWith('combo_')) {
+    const braceletId = target.replace('combo_', '');
+    addToCartById(braceletId);
+    
+    const newBracelet = state.cart[state.cart.length - 1];
+    if (newBracelet) {
+      if (!newBracelet.custom_stones) newBracelet.custom_stones = [];
+      newBracelet.custom_stones.push({
+        id: stone.id,
+        nome: stone.nome,
+        prezzo_vendita: Number(stone.prezzo_vendita),
+        immagine_locale: stone.immagine_locale,
+        chakra: stone.chakra,
+        elemento: stone.elemento
+      });
+      saveCart();
+      showToast(`${stone.nome} incastonata sul bracciale aggiunto!`);
+      openCart();
+      updateShopModelCounts();
+      renderAtelierShopFullGrid();
+      return;
+    }
+  } else if (target !== 'standalone') {
+    const targetBracelet = state.cart.find(i => i.id === target);
+    if (targetBracelet) {
+      if (!targetBracelet.custom_stones) targetBracelet.custom_stones = [];
+      targetBracelet.custom_stones.push({
+        id: stone.id,
+        nome: stone.nome,
+        prezzo_vendita: Number(stone.prezzo_vendita),
+        immagine_locale: stone.immagine_locale,
+        chakra: stone.chakra,
+        elemento: stone.elemento
+      });
+      saveCart();
+      showToast(`${stone.nome} incastonata su ${targetBracelet.title}!`);
+      openCart();
+      updateShopModelCounts();
+      renderAtelierShopFullGrid();
+      return;
+    }
+  }
+
+  state.cart.push({
+    id: `standalone_stone_${stone.id}_${Date.now()}`,
+    title: `Pietra Naturale Didoni: ${stone.nome}`,
+    basePrice: Number(stone.prezzo_vendita),
+    price: Number(stone.prezzo_vendita),
+    image_url: stone.immagine_locale,
+    quantity: 1,
+    is_standalone_stone: true,
+    stone: {
+      id: stone.id,
+      name: stone.nome,
+      price: Number(stone.prezzo_vendita)
+    }
+  });
+
+  saveCart();
+  showToast(`${stone.nome} aggiunta allo scrigno!`);
+  openCart();
+  updateShopModelCounts();
+  renderAtelierShopFullGrid();
+}
+
+// Bind dedicated stone shop functions to window
+window.initAtelierShopPage = initAtelierShopPage;
+window.filterByShopModel = filterByShopModel;
+window.toggleCartBraceletFilter = toggleCartBraceletFilter;
+window.onStoneSearchInput = onStoneSearchInput;
+window.onStoneTypeFilterChange = onStoneTypeFilterChange;
+window.onStoneChakraFilterChange = onStoneChakraFilterChange;
+window.onStoneElementFilterChange = onStoneElementFilterChange;
+window.resetAllStoneFilters = resetAllStoneFilters;
+window.renderAtelierShopFullGrid = renderAtelierShopFullGrid;
+window.addStoneFromShopCard = addStoneFromShopCard;
+window.onShopCardTargetChange = onShopCardTargetChange;
+
 
 
 
