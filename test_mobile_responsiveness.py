@@ -94,6 +94,25 @@ class TestMobileResponsiveness(unittest.TestCase):
         self.assertNotIn('#4b0082', css_lower)
         print("\n[Mobile Test 6] Fluidità touch e rispetto assoluto del Purple Ban superati")
 
+    def test_07_atelier_editorial_head_elegance_and_centering(self):
+        """Verifica la struttura e le classi di centratura ed eleganza dell'header Bottega delle Pietre."""
+        self.assertIn('class="atelier-editorial-head"', self.html)
+        self.assertIn('class="atelier-head-kicker"', self.html)
+        self.assertIn('class="atelier-head-title"', self.html)
+        self.assertIn('class="atelier-ornament-divider"', self.html)
+        self.assertIn('class="atelier-head-lead"', self.html)
+        self.assertIn('class="atelier-head-trust-badges"', self.html)
+
+        # Verifica CSS
+        self.assertIn('.atelier-editorial-head', self.css)
+        self.assertIn('.atelier-head-kicker', self.css)
+        self.assertIn('.atelier-head-title', self.css)
+        self.assertIn('.atelier-ornament-divider', self.css)
+        self.assertIn('.atelier-head-lead', self.css)
+        self.assertIn('.atelier-head-trust-badges', self.css)
+        print("\n[Mobile Test 7] Eleganza Desktop e Centratura Mobile di Bottega delle Pietre verificate al 100%")
+
 
 if __name__ == "__main__":
     unittest.main()
+

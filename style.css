@@ -2367,6 +2367,158 @@ body {
   z-index: 0;
 }
 
+/* ==============================================================================
+   ATELIER EDITORIAL HEADER (LUXURY CENTERING & MASTERPIECE TYPOGRAPHY)
+   ============================================================================== */
+.atelier-editorial-head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  max-width: 880px;
+  margin: 0 auto 3.75rem auto;
+  position: relative;
+  z-index: 2;
+  padding: 0 1rem;
+}
+
+.atelier-head-kicker {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  padding: 0.45rem 1.25rem;
+  border-radius: var(--radius-full);
+  background: linear-gradient(135deg, rgba(200, 125, 85, 0.16) 0%, rgba(200, 125, 85, 0.05) 100%);
+  border: 1px solid rgba(200, 125, 85, 0.35);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35), inset 0 0 12px rgba(200, 125, 85, 0.1);
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--copper-light);
+  margin-bottom: 1.25rem;
+}
+
+.atelier-head-kicker .kicker-gem {
+  color: var(--copper-primary);
+  font-size: 0.85rem;
+  display: inline-flex;
+}
+
+.atelier-head-kicker .kicker-sparkle {
+  color: var(--copper-light);
+  font-size: 0.75rem;
+  opacity: 0.85;
+}
+
+.atelier-head-title {
+  font-family: var(--font-serif);
+  font-size: clamp(2.4rem, 4.6vw, 3.5rem);
+  font-weight: 500;
+  line-height: 1.15;
+  color: var(--text-primary);
+  margin: 0 0 1.25rem 0;
+  letter-spacing: -0.015em;
+  text-align: center;
+}
+
+.atelier-head-title em {
+  font-style: italic;
+  font-weight: 500;
+  background: var(--copper-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: inline-block;
+  padding: 0 0.12em;
+}
+
+.atelier-ornament-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  width: 100%;
+  max-width: 260px;
+  margin: 0 auto 1.5rem auto;
+}
+
+.atelier-ornament-divider .ornament-line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(200, 125, 85, 0.5), transparent);
+}
+
+.atelier-ornament-divider .ornament-icon {
+  color: var(--copper-light);
+  font-size: 0.72rem;
+  text-shadow: 0 0 10px var(--copper-glow-strong);
+  display: inline-flex;
+}
+
+.atelier-head-lead {
+  font-family: var(--font-sans);
+  font-size: 1.05rem;
+  line-height: 1.8;
+  color: var(--text-secondary);
+  max-width: 780px;
+  margin: 0 auto 1.75rem auto;
+  text-align: center;
+}
+
+.atelier-head-lead strong {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.atelier-head-lead em {
+  color: var(--copper-light);
+  font-style: normal;
+  font-weight: 600;
+}
+
+.atelier-head-trust-badges {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.85rem;
+  flex-wrap: wrap;
+  margin-top: 0.25rem;
+}
+
+.atelier-head-trust-badges .trust-badge-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  background: rgba(22, 22, 28, 0.75);
+  border: 1px solid rgba(200, 125, 85, 0.24);
+  padding: 0.4rem 0.95rem;
+  border-radius: var(--radius-full);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+  transition: all var(--transition-fast);
+}
+
+.atelier-head-trust-badges .trust-badge-item:hover {
+  border-color: var(--copper-primary);
+  background: rgba(26, 26, 34, 0.9);
+  transform: translateY(-1px);
+}
+
+.atelier-head-trust-badges .trust-badge-item i {
+  color: var(--copper-light);
+  font-size: 0.82rem;
+}
+
+.atelier-head-trust-badges .trust-badge-dot {
+  color: var(--copper-deep);
+  font-size: 0.75rem;
+  opacity: 0.7;
+}
+
 .stone-workshop-grid {
   display: grid;
   grid-template-columns: 1fr 1.18fr;
@@ -3442,6 +3594,40 @@ body {
     justify-content: center;
   }
 
+  /* Atelier Editorial Head Mobile Centering */
+  .atelier-editorial-head {
+    align-items: center !important;
+    text-align: center !important;
+    margin-bottom: 2.5rem;
+    padding: 0 0.5rem;
+  }
+  .atelier-head-title {
+    font-size: clamp(2rem, 6.5vw, 2.6rem);
+    text-align: center !important;
+  }
+  .atelier-head-lead {
+    font-size: 0.95rem;
+    line-height: 1.65;
+    text-align: center !important;
+    margin-bottom: 1.35rem;
+  }
+  .atelier-head-trust-badges {
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: center;
+    width: 100%;
+  }
+  .atelier-head-trust-badges .trust-badge-dot {
+    display: none;
+  }
+  .atelier-head-trust-badges .trust-badge-item {
+    width: 100%;
+    max-width: 320px;
+    justify-content: center;
+    font-size: 0.78rem;
+    padding: 0.45rem 0.85rem;
+  }
+
   /* Headers & Filter Controls */
   .section-head {
     flex-direction: column;
@@ -3699,6 +3885,29 @@ body {
   }
   .hero-visual-card img {
     height: 240px;
+  }
+
+  /* Atelier Editorial Head Ultra-Compact Centering */
+  .atelier-head-kicker {
+    font-size: 0.7rem;
+    padding: 0.35rem 0.85rem;
+    letter-spacing: 0.1em;
+    gap: 0.45rem;
+    margin-bottom: 1rem;
+  }
+  .atelier-head-title {
+    font-size: clamp(1.75rem, 7.8vw, 2.2rem);
+    line-height: 1.2;
+    margin-bottom: 1rem;
+  }
+  .atelier-ornament-divider {
+    max-width: 180px;
+    margin-bottom: 1.15rem;
+  }
+  .atelier-head-lead {
+    font-size: 0.88rem;
+    line-height: 1.6;
+    margin-bottom: 1.25rem;
   }
 
   /* Products & Pronta Consegna */
