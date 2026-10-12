@@ -363,9 +363,24 @@ class FattoAManoHandler(SimpleHTTPRequestHandler):
     def do_GET(self):
         parsed = urllib.parse.urlparse(self.path)
 
+        # Clean URLs: mapping automatico verso i file .html (es. /atelier-pietre -> /atelier-pietre.html)
+        clean_name = parsed.path.strip("/")
+        if clean_name and "." not in clean_name and not clean_name.startswith("api/"):
+            target_html = APP_DIR / f"{clean_name}.html"
+            if target_html.exists():
+                self.path = f"/{clean_name}.html"
+                if parsed.query:
+                    self.path += f"?{parsed.query}"
+                return super().do_GET()
+
         # Route /admin pulita verso admin.html
         if parsed.path in ("/admin", "/admin/"):
             self.path = "/admin.html"
+            return super().do_GET()
+
+        # Route /atelier-pietre pulita verso atelier-pietre.html
+        if parsed.path in ("/atelier-pietre", "/atelier-pietre/"):
+            self.path = "/atelier-pietre.html"
             return super().do_GET()
 
         # Admin API endpoints
