@@ -30,6 +30,7 @@ ROOT_ENV = ROOT_DIR / ".env"
 CACHE_FILE = APP_DIR / "products_cache.json"
 PRIVACY_FILE = APP_DIR / "privacy_requests.json"
 ORDERS_AUDIT_FILE = APP_DIR / "orders_audit.json"
+STONE_INQUIRIES_FILE = APP_DIR / "stone_inquiries.json"
 
 if ROOT_ENV.exists():
     load_dotenv(ROOT_ENV)
@@ -127,6 +128,38 @@ def log_privacy_request(data: dict) -> str:
         json.dump(requests, f, indent=2, ensure_ascii=False)
 
     return protocol
+
+
+def log_stone_inquiry(data: dict) -> dict:
+    """Registra una richiesta di informazioni o personalizzazione pietra Didoni."""
+    inquiry_id = data.get("inquiry_id") or f"INFO-PIETRA-{int(time.time() * 1000) % 1000000:06d}"
+    record = {
+        "inquiry_id": inquiry_id,
+        "timestamp": time.strftime("%Y-%m-%d %H:%M:%S UTC", time.gmtime()),
+        "customer_name": data.get("fullName", "").strip(),
+        "customer_email": data.get("email", "").strip(),
+        "customer_phone": data.get("phone", "").strip(),
+        "stone": data.get("stone", {}),
+        "bracelet": data.get("bracelet", {}),
+        "wrist_cm": data.get("wrist_cm", "17 cm"),
+        "notes": data.get("notes", "").strip(),
+        "total_estimated": float(data.get("total_estimated", 0.0)),
+        "status": "RICEVUTA_INFO"
+    }
+
+    inquiries = []
+    if STONE_INQUIRIES_FILE.exists():
+        try:
+            with open(STONE_INQUIRIES_FILE, "r", encoding="utf-8") as f:
+                inquiries = json.load(f)
+        except Exception:
+            inquiries = []
+
+    inquiries.insert(0, record)
+    with open(STONE_INQUIRIES_FILE, "w", encoding="utf-8") as f:
+        json.dump(inquiries, f, indent=2, ensure_ascii=False)
+
+    return {"success": True, "inquiry_id": inquiry_id, "record": record}
 
 
 def log_and_dispatch_order(data: dict) -> dict:
@@ -406,6 +439,12 @@ class FattoAManoHandler(SimpleHTTPRequestHandler):
                 "message": "Richiesta acquisita e protocollata a norma del Regolamento UE 2016/679"
             }
             self.send_json(200, response_payload)
+            return
+
+        # Endpoint: Richiesta Info & Personalizzazione Pietra Didoni
+        if parsed.path == "/api/stone-inquiry":
+            result = log_stone_inquiry(data)
+            self.send_json(200, result)
             return
 
         # Endpoint: Notifica Nuovo Ordine & Invio Email ad agtechdesigne@gmail.com

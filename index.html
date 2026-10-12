@@ -61,6 +61,7 @@
         <ul class="nav-links">
           <li><a href="#prontaconsegna" class="nav-link"><i class="fa-solid fa-bolt" style="color: var(--copper-light); font-size: 0.75rem; margin-right: 4px;"></i>Pronta Consegna</a></li>
           <li><a href="#collezione" class="nav-link active">Collezione</a></li>
+          <li><a href="#bottega-pietre" class="nav-link"><i class="fa-solid fa-gem" style="color: var(--copper-light); font-size: 0.75rem; margin-right: 4px;"></i>Bottega Pietre</a></li>
           <li><a href="#filosofia" class="nav-link">La Forgiatura</a></li>
           <li><a href="#proprieta" class="nav-link">Proprietà del Rame</a></li>
           <li><a href="#garanzia" class="nav-link">Autenticità & Cura</a></li>
@@ -196,6 +197,69 @@
       <!-- Live Grid Populated via JS / Supabase -->
       <div class="products-grid" id="productsGrid">
         <!-- Rendered dynamically by app.js with instant cache fallback -->
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================================
+       BOTTEGA DELLE PIETRE & PERSONALIZZAZIONE (#bottega-pietre)
+       Incastonatura Artigianale su Rame 99.9% con Pietre Didoni Store
+       ============================================================================ -->
+  <section class="bottega-pietre-section" id="bottega-pietre">
+    <div class="container">
+      <div class="section-head text-center" style="max-width: 860px; margin: 0 auto 3rem auto; text-align: center;">
+        <span class="hero-badge"><i class="fa-solid fa-gem"></i> Bottega delle Pietre & Cristalloterapia Didoni</span>
+        <h2 style="font-family: var(--font-serif); font-size: 2.7rem; font-weight: 500; margin-top: 0.75rem; color: var(--text-primary);">
+          Bottega delle Pietre & Personalizzazione
+        </h2>
+        <p style="color: var(--text-secondary); margin-top: 1rem; font-size: 1.05rem; line-height: 1.7;">
+          Scegli un minerale autentico grezzo o burattato selezionato da Didoni Store per il tuo bracciale. Il maestro ramaio calibrerà una montatura esclusiva battuta ad incudine, fondendo la nobile conduttività del rame puro 99.9% all'energia vibrazionale del cristallo.
+        </p>
+      </div>
+
+      <!-- Atelier Selector Bar for Cart Bracelets -->
+      <div class="atelier-selection-banner" id="atelierSelectionBanner">
+        <div class="atelier-banner-content">
+          <div class="atelier-banner-title">
+            <i class="fa-solid fa-sliders" style="color: var(--copper-light); font-size: 1.3rem;"></i>
+            <div>
+              <h4 style="margin: 0; font-size: 1.08rem; color: var(--text-primary); font-family: var(--font-serif);">Personalizza una Creazione nel tuo Scrigno</h4>
+              <p style="margin: 0.15rem 0 0 0; font-size: 0.82rem; color: var(--text-secondary);">Seleziona a quale bracciale nel carrello vuoi applicare la pietra preziosa incastonata</p>
+            </div>
+          </div>
+          <div class="atelier-banner-select-wrap">
+            <select id="atelierCartBraceletSelect" class="luxury-input atelier-cart-dropdown" onchange="onAtelierBraceletSelectChange(this.value)">
+              <!-- Populated dynamically via app.js -->
+            </select>
+          </div>
+        </div>
+        <div id="atelierCartEmptyNotice" class="atelier-notice-pill" style="display: none;">
+          <i class="fa-solid fa-info-circle" style="color: var(--copper-light);"></i>
+          <span>Nessun bracciale attualmente nello scrigno: puoi acquistare la pietra come <strong>minerale singolo da collezione (€10.00)</strong> oppure <a href="#collezione" style="color: var(--copper-light); text-decoration: underline;">selezionare prima un bracciale</a>.</span>
+        </div>
+      </div>
+
+      <!-- Dedicated Atelier Stones Grid with Explanations, Photos, and Prices -->
+      <div class="atelier-stones-wrapper" id="atelierPietreCompleto">
+        <div class="atelier-grid-header">
+          <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem;">
+            <div>
+              <span class="hero-badge" style="font-size: 0.72rem;"><i class="fa-solid fa-gem"></i> Collezione Minerali Didoni</span>
+              <h3 style="font-family: var(--font-serif); font-size: 2.1rem; color: var(--text-primary); margin-top: 0.4rem;">Atelier delle Pietre & Cristalloterapia</h3>
+            </div>
+            <div class="atelier-price-legend">
+              <span class="legend-badge"><i class="fa-solid fa-check"></i> Pietre Burattate Standard: <strong>€10.00</strong></span>
+              <span class="legend-badge-gold"><i class="fa-solid fa-star"></i> Grezzi Rari Selezionati</span>
+            </div>
+          </div>
+          <p style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6; max-width: 820px; margin-bottom: 2rem;">
+            Ogni gemma possiede una frequenza vibrazionale unica e proprietà cristalloterapeutiche secolari. Scegli la tua pietra: verrà forgiata a caldo in una gabbia di rame puro e montata ad incudine sul bracciale indicato.
+          </p>
+        </div>
+
+        <div class="atelier-stones-grid" id="atelierStonesGrid">
+          <!-- Dynamically populated from pietre_catalog.json in app.js -->
+        </div>
       </div>
     </div>
   </section>
@@ -436,11 +500,105 @@
           <span>Spedizione <strong>€6,00 in tutta Italia</strong> (isole comprese) • Consegna in <strong>3/5 giorni lavorativi</strong></span>
         </div>
 
-        <div style="margin-top: auto; display: flex; gap: 1rem;">
-          <button class="btn-primary" style="flex-grow: 1; justify-content: center;" id="modalAddCartBtn">
-            <i class="fa-solid fa-bag-shopping"></i> Aggiungi al Carrello
+        <div style="margin-top: auto; display: flex; flex-direction: column; gap: 0.65rem;">
+          <button class="btn-primary" style="width: 100%; justify-content: center;" id="modalAddCartBtn">
+            <i class="fa-solid fa-bag-shopping"></i> Aggiungi allo Scrigno
+          </button>
+          <button type="button" class="btn-secondary" style="width: 100%; justify-content: center; font-size: 0.88rem; padding: 0.75rem 1rem;" id="modalCustomizeStoneBtn" onclick="customizeCurrentModalBracelet()">
+            <i class="fa-solid fa-gem" style="color: var(--copper-light);"></i> Personalizza con Pietra Naturale Didoni (+€10)
           </button>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================================
+       PROMPT MODAL: VUOI AGGIUNGERE UNA PIETRA NATURALE? (#stonePromptModalBackdrop)
+       ============================================================================ -->
+  <div class="modal-backdrop" id="stonePromptModalBackdrop">
+    <div class="modal-container stone-prompt-modal-container" id="stonePromptModal">
+      <button class="modal-close-btn" id="closeStonePromptModalBtn" aria-label="Chiudi Modale Pietra" onclick="closeStonePromptModal()">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <div class="stone-prompt-head">
+        <span class="hero-badge"><i class="fa-solid fa-gem"></i> Incastonatura Artigianale Didoni</span>
+        <h3 class="stone-prompt-title">Vuoi aggiungere una pietra naturale?</h3>
+        <p class="stone-prompt-subtitle">
+          Personalizza il tuo <strong id="promptModalBraceletTitle" style="color: var(--copper-light);">Bracciale</strong> con un minerale puro battuto a caldo ad incudine.
+        </p>
+      </div>
+
+      <!-- Mini Carosello Orizzontale Pietre con Solo Prezzo Pietra -->
+      <div class="stone-mini-carousel-wrap">
+        <div class="stone-mini-carousel-header">
+          <span class="carousel-hint"><i class="fa-solid fa-hand-pointer"></i> Scorri e tocca una pietra (prezzo solo pietra):</span>
+          <div class="carousel-nav-arrows">
+            <button type="button" class="carousel-arrow-btn" onclick="scrollStoneCarousel(-1)" aria-label="Scorri a sinistra"><i class="fa-solid fa-chevron-left"></i></button>
+            <button type="button" class="carousel-arrow-btn" onclick="scrollStoneCarousel(1)" aria-label="Scorri a destra"><i class="fa-solid fa-chevron-right"></i></button>
+          </div>
+        </div>
+        
+        <div class="stone-mini-carousel" id="stoneMiniCarousel">
+          <!-- Popolato dinamicamente da app.js -->
+        </div>
+      </div>
+
+      <!-- Striscia Riepilogo Pietra Selezionata -->
+      <div class="stone-prompt-selected-strip" id="promptSelectedStrip">
+        <div class="prompt-selected-left">
+          <img id="promptSelectedImg" src="assets/pietre/acquamarina_s.jpg" alt="Pietra Selezionata" class="prompt-selected-thumb">
+          <div>
+            <div style="font-size: 0.74rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;">Pietra Selezionata:</div>
+            <strong id="promptSelectedName" style="color: var(--text-primary); font-size: 1.05rem;">Acquamarina S</strong>
+            <div id="promptSelectedChakra" style="font-size: 0.75rem; color: var(--copper-light); margin-top: 2px;">Gola (5° Chakra) • Acqua</div>
+          </div>
+        </div>
+        <div class="prompt-selected-price-box">
+          <span style="font-size: 0.72rem; color: var(--text-muted); display: block;">Solo Valore Pietra:</span>
+          <strong id="promptSelectedPrice" class="prompt-price-val">+€10.00</strong>
+        </div>
+      </div>
+
+      <!-- Azioni Prompt Modal -->
+      <div class="stone-prompt-actions">
+        <button type="button" class="btn-primary" id="btnPromptAddStone" onclick="confirmPromptAddStone()">
+          <i class="fa-solid fa-plus"></i> <span id="btnPromptAddStoneText">Aggiungi Pietra al Bracciale (+€10.00)</span>
+        </button>
+        <button type="button" class="btn-secondary" id="btnPromptExploreAtelier" onclick="exploreFullAtelierFromPrompt()">
+          <i class="fa-solid fa-compass"></i> Esplora Atelier Pietre Completo
+        </button>
+        <button type="button" class="btn-text-subtle" onclick="skipPromptToCart()">
+          <i class="fa-solid fa-arrow-right"></i> No grazie, prosegui allo scrigno
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================================
+       CONFIRM REMOVAL MODAL (EDGE CASE B: BRACCIALE CON PIETRE INCASTONATE)
+       ============================================================================ -->
+  <div class="modal-backdrop" id="stoneRemoveConfirmModalBackdrop">
+    <div class="modal-container stone-confirm-modal-container">
+      <div style="text-align: center; margin-bottom: 1.25rem;">
+        <div class="stone-confirm-icon-wrap">
+          <i class="fa-solid fa-gem"></i>
+        </div>
+        <h3 style="font-family: var(--font-serif); font-size: 1.7rem; margin-top: 0.75rem;">Bracciale con Pietre Incastonate</h3>
+        <p id="stoneRemoveConfirmMsg" style="color: var(--text-secondary); font-size: 0.92rem; line-height: 1.6; margin-top: 0.5rem;">
+          Questo bracciale ha una o più pietre naturali incastonate. Come desideri procedere?
+        </p>
+      </div>
+      <div class="stone-confirm-actions">
+        <button type="button" class="btn-secondary" onclick="confirmKeepStonesAsStandalone()" style="width: 100%; justify-content: center; padding: 0.85rem 1rem;">
+          <i class="fa-solid fa-gem"></i> Mantieni pietre nel carrello come minerali singoli
+        </button>
+        <button type="button" class="btn-primary" onclick="confirmRemoveBraceletAndStones()" style="width: 100%; justify-content: center; background: #8a3c2b; border-color: #a44834; padding: 0.85rem 1rem;">
+          <i class="fa-solid fa-trash-can"></i> Rimuovi tutto (Bracciale e Pietre)
+        </button>
+        <button type="button" class="btn-text-subtle" onclick="closeStoneRemoveConfirmModal()" style="width: 100%; text-align: center; margin-top: 0.5rem;">
+          Annulla operazione
+        </button>
       </div>
     </div>
   </div>
@@ -703,6 +861,7 @@
           <h5>Fatto a Mano</h5>
           <ul>
             <li><a href="#collezione">Tutti i Bracciali</a></li>
+            <li><a href="#bottega-pietre">Bottega delle Pietre</a></li>
             <li><a href="#filosofia">L'Arte della Battitura</a></li>
             <li><a href="#proprieta">Proprietà & Benefici</a></li>
             <li><a href="#garanzia">Cura e Lucidatura Naturale</a></li>

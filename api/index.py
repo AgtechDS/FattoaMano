@@ -259,6 +259,17 @@ class handler(SimpleHTTPRequestHandler):
             })
             return
 
+        # API Stone Inquiry & Customization
+        if path == "/api/stone-inquiry" or path.endswith("/stone-inquiry"):
+            inquiry_id = data.get("inquiry_id") or f"INFO-PIETRA-{int(time.time() * 1000) % 1000000:06d}"
+            self.send_json(200, {
+                "success": True,
+                "inquiry_id": inquiry_id,
+                "timestamp": time.strftime("%Y-%m-%d %H:%M:%S UTC", time.gmtime()),
+                "message": "Richiesta personalizzazione pietra acquisita con successo"
+            })
+            return
+
         # API Stripe Checkout Session
         if path == "/api/create-checkout-session" or path.endswith("/create-checkout-session"):
             stripe_key = os.environ.get("STRIPE_SECRET_KEY", "").strip()

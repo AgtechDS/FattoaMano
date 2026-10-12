@@ -2215,4 +2215,1023 @@ body {
   box-shadow: 0 16px 40px rgba(0, 0, 0, 0.65), 0 0 20px var(--copper-glow);
 }
 
+/* ==============================================================================
+   BOTTEGA DELLE PIETRE & INCASTONATURA ARTIGIANALE (#bottega-pietre)
+   DARK LUXURY ATELIER SYSTEM • EXCLUSIVE COPPER PALETTE
+   ============================================================================== */
+.bottega-pietre-section {
+  padding: 6rem 0;
+  position: relative;
+  background: linear-gradient(180deg, rgba(10, 10, 12, 0.95) 0%, rgba(18, 18, 24, 0.98) 50%, rgba(10, 10, 12, 0.95) 100%);
+  border-top: 1px solid var(--border-subtle);
+  border-bottom: 1px solid var(--border-subtle);
+  overflow: hidden;
+}
+
+.bottega-pietre-section::before {
+  content: '';
+  position: absolute;
+  top: -100px;
+  right: -80px;
+  width: 480px;
+  height: 480px;
+  background: radial-gradient(circle, rgba(200, 125, 85, 0.12) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.bottega-pietre-section::after {
+  content: '';
+  position: absolute;
+  bottom: -120px;
+  left: -80px;
+  width: 520px;
+  height: 520px;
+  background: radial-gradient(circle, rgba(150, 78, 41, 0.1) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.stone-workshop-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.18fr;
+  gap: 2.75rem;
+  align-items: start;
+  position: relative;
+  z-index: 1;
+}
+
+/* Left Column: Live Visual Preview Stage */
+.stone-preview-stage {
+  position: sticky;
+  top: 90px;
+}
+
+.stone-preview-card {
+  background: rgba(18, 18, 24, 0.88);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--border-hover);
+  border-radius: var(--radius-lg);
+  padding: 2.25rem;
+  box-shadow: var(--shadow-lg), 0 0 30px rgba(200, 125, 85, 0.16);
+  display: flex;
+  flex-direction: column;
+  gap: 1.35rem;
+  transition: border-color var(--transition-smooth), box-shadow var(--transition-smooth);
+}
+
+.stone-preview-card:hover {
+  border-color: var(--copper-primary);
+  box-shadow: var(--shadow-lg), 0 0 40px rgba(200, 125, 85, 0.28);
+}
+
+/* Gemstone Viewport Visualizer */
+.stone-gem-viewport {
+  position: relative;
+  width: 100%;
+  height: 290px;
+  background: radial-gradient(circle at center, #1b1b24 0%, #101015 85%);
+  border: 1px solid rgba(200, 125, 85, 0.25);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.7);
+}
+
+.stone-gem-halo {
+  position: absolute;
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(200, 125, 85, 0.32) 0%, rgba(200, 125, 85, 0.08) 50%, transparent 75%);
+  filter: blur(12px);
+  animation: stoneHaloPulse 4s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+@keyframes stoneHaloPulse {
+  0% { transform: scale(0.92); opacity: 0.7; }
+  100% { transform: scale(1.08); opacity: 1; }
+}
+
+.stone-preview-main-img {
+  max-width: 82%;
+  max-height: 82%;
+  object-fit: contain;
+  filter: drop-shadow(0 14px 28px rgba(0, 0, 0, 0.85)) drop-shadow(0 0 12px rgba(200, 125, 85, 0.25));
+  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+  z-index: 2;
+  cursor: pointer;
+}
+
+.stone-preview-main-img:hover {
+  transform: scale(1.06) rotate(1deg);
+}
+
+.stone-gem-bezel-ring {
+  position: absolute;
+  width: 240px;
+  height: 240px;
+  border-radius: 50%;
+  border: 1px dashed rgba(200, 125, 85, 0.35);
+  pointer-events: none;
+  animation: stoneRingRotate 60s linear infinite;
+}
+
+@keyframes stoneRingRotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.stone-cert-tag {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: rgba(14, 14, 18, 0.88);
+  border: 1px solid var(--border-subtle);
+  backdrop-filter: blur(8px);
+  color: var(--copper-light);
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 0.3rem 0.65rem;
+  border-radius: var(--radius-full);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  letter-spacing: 0.03em;
+  z-index: 3;
+}
+
+/* Header within Preview Card */
+.stone-preview-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.stone-preview-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.stone-preview-title-row h3 {
+  font-family: var(--font-serif);
+  font-size: 1.85rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+
+.stone-price-tag {
+  background: rgba(200, 125, 85, 0.18);
+  border: 1px solid var(--copper-primary);
+  color: #ffffff;
+  font-size: 1.15rem;
+  font-weight: 700;
+  padding: 0.3rem 0.85rem;
+  border-radius: var(--radius-sm);
+  box-shadow: 0 4px 14px rgba(200, 125, 85, 0.25);
+  white-space: nowrap;
+}
+
+.stone-badge-pill {
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+  letter-spacing: 0.02em;
+}
+
+/* Transparency & Fair Pricing Justification */
+.stone-transparency-box {
+  background: rgba(25, 25, 33, 0.7);
+  border: 1px solid rgba(200, 125, 85, 0.25);
+  border-left: 3px solid var(--copper-primary);
+  border-radius: var(--radius-sm);
+  padding: 0.85rem 1rem;
+}
+
+.transparency-header {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+/* Holistic & Energetic Box */
+.stone-holistic-box {
+  background: rgba(20, 20, 26, 0.65);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 1rem 1.15rem;
+}
+
+.holistic-meta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 0.6rem;
+}
+
+.meta-pill {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  background: rgba(14, 14, 18, 0.7);
+  border: 1px solid var(--border-subtle);
+  padding: 0.25rem 0.65rem;
+  border-radius: var(--radius-full);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.meta-pill strong {
+  color: var(--copper-light);
+}
+
+.stone-holistic-text {
+  font-size: 0.86rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+/* Live Pairing Summary Bar */
+.stone-pairing-bar {
+  background: rgba(200, 125, 85, 0.08);
+  border: 1px solid rgba(200, 125, 85, 0.35);
+  border-radius: var(--radius-sm);
+  padding: 0.9rem 1.15rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.pairing-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.pairing-total {
+  text-align: right;
+  flex-shrink: 0;
+}
+
+/* Right Column: Workshop Form Card */
+.stone-form-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-hover);
+  border-radius: var(--radius-lg);
+  padding: 2.25rem;
+  box-shadow: var(--shadow-lg);
+}
+
+.stone-form-head {
+  margin-bottom: 1.5rem;
+}
+
+.form-badge-accent {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.74rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--copper-light);
+  background: rgba(200, 125, 85, 0.12);
+  border: 1px solid rgba(200, 125, 85, 0.3);
+  padding: 0.3rem 0.75rem;
+  border-radius: var(--radius-full);
+}
+
+/* Fast-Click Stone Chips Carousel */
+.stone-quick-picker-wrap {
+  margin-bottom: 1.5rem;
+}
+
+.field-label-sm {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  display: block;
+  margin-bottom: 0.65rem;
+}
+
+.stone-chips-scroll {
+  display: flex;
+  gap: 0.65rem;
+  overflow-x: auto;
+  padding-bottom: 0.65rem;
+  scrollbar-width: thin;
+  scrollbar-color: var(--copper-deep) transparent;
+}
+
+.stone-chips-scroll::-webkit-scrollbar {
+  height: 5px;
+}
+
+.stone-chips-scroll::-webkit-scrollbar-thumb {
+  background: var(--copper-deep);
+  border-radius: 4px;
+}
+
+.stone-chip {
+  flex-shrink: 0;
+  background: #16161e;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-full);
+  padding: 0.35rem 0.75rem 0.35rem 0.35rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  user-select: none;
+}
+
+.stone-chip:hover {
+  border-color: var(--copper-primary);
+  background: #1c1c26;
+  color: var(--text-primary);
+  transform: translateY(-2px);
+}
+
+.stone-chip.active {
+  border-color: var(--copper-light);
+  background: rgba(200, 125, 85, 0.2);
+  color: #ffffff;
+  box-shadow: 0 0 14px rgba(200, 125, 85, 0.35);
+}
+
+.stone-chip-thumb {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid rgba(200, 125, 85, 0.4);
+}
+
+.stone-chip-price {
+  font-size: 0.74rem;
+  color: var(--copper-light);
+  font-weight: 700;
+}
+
+/* Fields Grid */
+.stone-fields-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.15rem;
+}
+
+.stone-fields-grid .span-2 {
+  grid-column: span 2;
+}
+
+.stone-dropdown-select {
+  font-size: 0.92rem;
+  font-weight: 500;
+  background-color: #171720;
+  cursor: pointer;
+}
+
+.stone-dropdown-select option {
+  background: #121217;
+  color: var(--text-primary);
+  padding: 0.5rem;
+}
+
+.form-hint {
+  font-size: 0.76rem;
+  color: var(--text-muted);
+  margin-top: 0.35rem;
+  line-height: 1.4;
+}
+
+/* Reassurance Pill */
+.stone-reassurance-pill {
+  background: rgba(18, 18, 24, 0.6);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 0.75rem 1rem;
+  margin: 1.25rem 0;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+/* Dual Actions Grid */
+.stone-actions-grid {
+  display: grid;
+  grid-template-columns: 1.15fr 1fr;
+  gap: 0.85rem;
+}
+
+.stone-cart-submit-btn {
+  justify-content: center;
+  padding: 0.95rem 1.15rem;
+  font-size: 0.92rem;
+  font-weight: 600;
+}
+
+.stone-info-submit-btn {
+  justify-content: center;
+  padding: 0.95rem 1.15rem;
+  font-size: 0.88rem;
+  border: 1px solid var(--border-hover);
+}
+
+.stone-info-submit-btn:hover {
+  border-color: var(--copper-primary);
+  background: rgba(200, 125, 85, 0.12);
+}
+
+/* Cart Item Stone Badge (In Slide-over Cart) */
+.cart-item-stone-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.72rem;
+  color: var(--copper-light);
+  background: rgba(200, 125, 85, 0.15);
+  border: 1px solid rgba(200, 125, 85, 0.35);
+  padding: 0.15rem 0.55rem;
+  border-radius: var(--radius-full);
+  margin-top: 0.25rem;
+}
+
+.cart-stone-remove-mini {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  line-height: 1;
+  padding: 0 0 0 4px;
+  cursor: pointer;
+  transition: color var(--transition-fast);
+}
+
+.cart-stone-remove-mini:hover {
+  color: #ff6b6b;
+}
+
+/* ==============================================================================
+   PROMPT MODAL: VUOI AGGIUNGERE UNA PIETRA NATURALE?
+   DARK LUXURY ATELIER SYSTEM • EXCLUSIVE COPPER PALETTE
+   ============================================================================== */
+.stone-prompt-modal-container {
+  max-width: 620px;
+  width: 94%;
+  max-height: 90vh;
+  overflow-y: auto;
+  background: rgba(18, 18, 24, 0.96);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(200, 125, 85, 0.35);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.85), 0 0 35px rgba(200, 125, 85, 0.2);
+  border-radius: var(--radius-lg);
+  padding: 2.25rem;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.stone-prompt-head {
+  text-align: center;
+}
+
+.stone-prompt-title {
+  font-family: var(--font-serif);
+  font-size: 2.1rem;
+  color: var(--text-primary);
+  margin-top: 0.5rem;
+  line-height: 1.2;
+}
+
+.stone-prompt-subtitle {
+  color: var(--text-secondary);
+  font-size: 0.92rem;
+  margin-top: 0.45rem;
+  line-height: 1.5;
+}
+
+/* Mini Carosello Orizzontale Pietre */
+.stone-mini-carousel-wrap {
+  background: rgba(10, 10, 14, 0.7);
+  border: 1px solid rgba(200, 125, 85, 0.2);
+  border-radius: var(--radius-md);
+  padding: 1rem 1.15rem;
+}
+
+.stone-mini-carousel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.carousel-hint {
+  font-size: 0.8rem;
+  color: var(--copper-light);
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.carousel-nav-arrows {
+  display: flex;
+  gap: 0.35rem;
+}
+
+.carousel-arrow-btn {
+  background: rgba(200, 125, 85, 0.12);
+  border: 1px solid rgba(200, 125, 85, 0.25);
+  color: var(--text-primary);
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 0.72rem;
+  transition: all var(--transition-fast);
+}
+
+.carousel-arrow-btn:hover {
+  background: var(--copper-primary);
+  color: #fff;
+  border-color: var(--copper-primary);
+}
+
+.stone-mini-carousel {
+  display: flex;
+  gap: 0.85rem;
+  overflow-x: auto;
+  padding: 0.35rem 0.25rem 0.85rem 0.25rem;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: var(--copper-primary) transparent;
+}
+
+.stone-mini-carousel::-webkit-scrollbar {
+  height: 5px;
+}
+
+.stone-mini-carousel::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+}
+
+.stone-mini-carousel::-webkit-scrollbar-thumb {
+  background: var(--copper-primary);
+  border-radius: 4px;
+}
+
+.stone-mini-card {
+  flex: 0 0 128px;
+  scroll-snap-align: start;
+  background: rgba(22, 22, 30, 0.85);
+  border: 1px solid rgba(200, 125, 85, 0.2);
+  border-radius: var(--radius-md);
+  padding: 0.65rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  user-select: none;
+}
+
+.stone-mini-card:hover {
+  border-color: var(--copper-light);
+  transform: translateY(-3px);
+  background: rgba(30, 30, 42, 0.95);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5), 0 0 12px rgba(200, 125, 85, 0.2);
+}
+
+.stone-mini-card.active {
+  border-color: var(--copper-light);
+  background: linear-gradient(180deg, rgba(200, 125, 85, 0.16) 0%, rgba(26, 26, 36, 0.95) 100%);
+  box-shadow: 0 0 16px rgba(200, 125, 85, 0.4), inset 0 0 8px rgba(200, 125, 85, 0.15);
+}
+
+.mini-card-img-wrap {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: radial-gradient(circle at center, #262635 0%, #101015 85%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  margin-bottom: 0.45rem;
+  border: 1px solid rgba(200, 125, 85, 0.25);
+}
+
+.mini-card-img-wrap img {
+  width: 80%;
+  height: 80%;
+  object-fit: contain;
+  transition: transform var(--transition-fast);
+}
+
+.stone-mini-card:hover .mini-card-img-wrap img {
+  transform: scale(1.1);
+}
+
+.mini-card-title {
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.mini-card-price {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--copper-light);
+  margin-top: 0.25rem;
+}
+
+/* Striscia di Anteprima Pietra Selezionata */
+.stone-prompt-selected-strip {
+  background: rgba(24, 24, 34, 0.9);
+  border: 1px solid rgba(200, 125, 85, 0.35);
+  border-radius: var(--radius-md);
+  padding: 0.85rem 1.15rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.prompt-selected-left {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.prompt-selected-thumb {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: contain;
+  background: #14141c;
+  border: 1px solid var(--copper-primary);
+  padding: 2px;
+  flex-shrink: 0;
+}
+
+.prompt-selected-price-box {
+  text-align: right;
+}
+
+.prompt-price-val {
+  font-size: 1.25rem;
+  color: var(--copper-light);
+}
+
+/* Azioni Prompt Modal */
+.stone-prompt-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.stone-prompt-actions .btn-primary {
+  width: 100%;
+  justify-content: center;
+  padding: 0.95rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.stone-prompt-actions .btn-secondary {
+  width: 100%;
+  justify-content: center;
+  padding: 0.75rem;
+  font-size: 0.88rem;
+}
+
+.btn-text-subtle {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  transition: color var(--transition-fast);
+}
+
+.btn-text-subtle:hover {
+  color: var(--text-primary);
+  text-decoration: underline;
+}
+
+/* ==============================================================================
+   ATELIER SELECTION BANNER & FULL STONES CATALOG
+   ============================================================================== */
+.atelier-selection-banner {
+  background: linear-gradient(90deg, rgba(24, 24, 34, 0.95) 0%, rgba(32, 28, 32, 0.95) 100%);
+  border: 1px solid rgba(200, 125, 85, 0.35);
+  border-radius: var(--radius-lg);
+  padding: 1.35rem 1.75rem;
+  margin-bottom: 2.75rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.atelier-banner-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.atelier-banner-title {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+.atelier-banner-select-wrap {
+  flex: 1;
+  min-width: 280px;
+  max-width: 500px;
+}
+
+.atelier-cart-dropdown {
+  width: 100%;
+  font-weight: 600;
+  color: var(--copper-light);
+  border-color: rgba(200, 125, 85, 0.4);
+}
+
+.atelier-notice-pill {
+  margin-top: 0.85rem;
+  padding: 0.55rem 0.85rem;
+  background: rgba(200, 125, 85, 0.1);
+  border: 1px dashed rgba(200, 125, 85, 0.3);
+  border-radius: var(--radius-sm);
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.atelier-price-legend {
+  display: flex;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+}
+
+.legend-badge {
+  background: rgba(200, 125, 85, 0.15);
+  border: 1px solid rgba(200, 125, 85, 0.35);
+  color: var(--copper-light);
+  font-size: 0.78rem;
+  padding: 0.3rem 0.75rem;
+  border-radius: var(--radius-full);
+}
+
+.legend-badge-gold {
+  background: rgba(212, 175, 55, 0.15);
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  color: #e5c158;
+  font-size: 0.78rem;
+  padding: 0.3rem 0.75rem;
+  border-radius: var(--radius-full);
+}
+
+/* Griglia Completa Atelier Pietre */
+.atelier-stones-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.85rem;
+}
+
+.atelier-stone-card {
+  background: rgba(18, 18, 24, 0.88);
+  border: 1px solid rgba(200, 125, 85, 0.22);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform var(--transition-smooth), border-color var(--transition-smooth), box-shadow var(--transition-smooth);
+}
+
+.atelier-stone-card:hover {
+  transform: translateY(-5px);
+  border-color: var(--copper-primary);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.65), 0 0 20px rgba(200, 125, 85, 0.25);
+}
+
+.atelier-stone-img-wrap {
+  position: relative;
+  width: 100%;
+  height: 200px;
+  background: radial-gradient(circle at center, #20202c 0%, #121217 80%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.atelier-stone-img-wrap img {
+  max-width: 75%;
+  max-height: 75%;
+  object-fit: contain;
+  filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.75));
+  transition: transform var(--transition-smooth);
+}
+
+.atelier-stone-card:hover .atelier-stone-img-wrap img {
+  transform: scale(1.08) rotate(1deg);
+}
+
+.atelier-stone-price-tag {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: rgba(12, 12, 16, 0.88);
+  border: 1px solid var(--copper-primary);
+  color: var(--copper-light);
+  font-size: 0.82rem;
+  font-weight: 700;
+  padding: 0.25rem 0.65rem;
+  border-radius: var(--radius-full);
+  backdrop-filter: blur(8px);
+}
+
+.atelier-stone-body {
+  padding: 1.35rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.atelier-stone-title-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.atelier-stone-name {
+  font-family: var(--font-serif);
+  font-size: 1.35rem;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.atelier-stone-badges {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.75rem;
+}
+
+.atelier-pill {
+  font-size: 0.7rem;
+  color: var(--copper-light);
+  background: rgba(200, 125, 85, 0.1);
+  border: 1px solid rgba(200, 125, 85, 0.2);
+  padding: 0.15rem 0.5rem;
+  border-radius: var(--radius-sm);
+}
+
+.atelier-stone-desc {
+  font-size: 0.83rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin-bottom: 1rem;
+  flex: 1;
+}
+
+.atelier-stone-meta {
+  margin-bottom: 1.15rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid rgba(200, 125, 85, 0.12);
+}
+
+.btn-atelier-add-stone {
+  width: 100%;
+  justify-content: center;
+  font-size: 0.86rem;
+  padding: 0.75rem 1rem;
+}
+
+/* ==============================================================================
+   EDGE CASE B: CONFIRM REMOVAL MODAL
+   ============================================================================== */
+.stone-confirm-modal-container {
+  max-width: 480px;
+  width: 92%;
+  background: rgba(18, 18, 24, 0.98);
+  border: 1px solid rgba(200, 125, 85, 0.35);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.85);
+  border-radius: var(--radius-lg);
+  padding: 2rem;
+}
+
+.stone-confirm-icon-wrap {
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  background: rgba(200, 125, 85, 0.15);
+  border: 1px solid var(--copper-primary);
+  color: var(--copper-light);
+  font-size: 1.5rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stone-confirm-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+/* Mobile Responsiveness for Workshop & Atelier */
+@media (max-width: 992px) {
+  .stone-workshop-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  .atelier-stones-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .stone-preview-stage {
+    position: static;
+  }
+  .stone-gem-viewport {
+    height: 250px;
+  }
+  .stone-actions-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .atelier-stones-grid {
+    grid-template-columns: 1fr;
+  }
+  .atelier-banner-content {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .atelier-banner-select-wrap {
+    max-width: 100%;
+    min-width: auto;
+  }
+  .stone-mini-card {
+    flex: 0 0 110px;
+    padding: 0.5rem;
+  }
+  .mini-card-img-wrap {
+    width: 60px;
+    height: 60px;
+  }
+  .stone-prompt-modal-container {
+    padding: 1.5rem 1.15rem;
+  }
+  .stone-prompt-title {
+    font-size: 1.65rem;
+  }
+  .stone-fields-grid {
+    grid-template-columns: 1fr;
+  }
+  .stone-fields-grid .span-2 {
+    grid-column: span 1;
+  }
+  .stone-preview-card,
+  .stone-form-card {
+    padding: 1.5rem;
+  }
+}
+
+
+
 

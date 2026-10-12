@@ -7,6 +7,8 @@
 // State Management
 const state = {
   products: [],
+  stones: [],
+  selectedStone: null,
   cart: JSON.parse(localStorage.getItem('fattoamano_cart') || '[]'),
   activeFilter: 'all',
   activeModalProduct: null,
@@ -55,6 +57,7 @@ const submitPayBtnText = document.getElementById('submitPayBtnText');
 document.addEventListener('DOMContentLoaded', () => {
   loadSiteSettings();
   loadProducts();
+  loadStones();
   setupEventListeners();
   renderCart();
   initCookieBanner();
@@ -325,32 +328,51 @@ function renderProducts() {
 // ==============================================================================
 // CART LOGIC & PERSISTENCE
 // ==============================================================================
+// CART LOGIC & PERSISTENCE
+// ==============================================================================
+function getItemUnitPrice(item) {
+  const base = item.basePrice !== undefined ? Number(item.basePrice) : Number(item.price);
+  const stonesTotal = item.custom_stones ? item.custom_stones.reduce((sum, s) => sum + Number(s.prezzo_vendita), 0) : (item.stone ? Number(item.stone.price) : 0);
+  return base + stonesTotal;
+}
+
 function saveCart() {
   localStorage.setItem('fattoamano_cart', JSON.stringify(state.cart));
   renderCart();
+  populateAtelierCartBraceletSelect();
 }
 
 function addToCartById(productId) {
   const product = state.products.find(p => p.id === productId);
   if (!product) return;
 
-  const existingIndex = state.cart.findIndex(item => item.id === productId);
+  // Create unique cart entry so customizations attach to the specific piece
+  let cartItem;
+  const existingIndex = state.cart.findIndex(item => (item.id === productId || item.productId === productId) && (!item.custom_stones || item.custom_stones.length === 0));
+  
   if (existingIndex > -1) {
     state.cart[existingIndex].quantity += 1;
+    cartItem = state.cart[existingIndex];
   } else {
-    state.cart.push({
-      id: product.id,
+    cartItem = {
+      id: `${product.id}_${Date.now()}`,
+      productId: product.id,
       title: product.title,
+      basePrice: Number(product.price),
       price: Number(product.price),
       image_url: product.image_url,
       stripe_price_id: product.stripe_price_id || null,
-      quantity: 1
-    });
+      quantity: 1,
+      custom_stones: []
+    };
+    state.cart.push(cartItem);
   }
 
   saveCart();
   showToast(`Aggiunto: ${product.title}`);
-  openCart();
+
+  // Open prompt modal immediately: "Vuoi aggiungere una pietra naturale?"
+  openStonePromptModal(cartItem);
 }
 
 function updateCartQuantity(productId, delta) {
@@ -359,22 +381,37 @@ function updateCartQuantity(productId, delta) {
 
   state.cart[index].quantity += delta;
   if (state.cart[index].quantity <= 0) {
-    state.cart.splice(index, 1);
-    showToast('Bracciale rimosso dal carrello');
+    removeCartItem(productId);
+    return;
   }
 
   saveCart();
 }
 
 function removeCartItem(productId) {
-  state.cart = state.cart.filter(item => item.id !== productId);
-  saveCart();
-  showToast('Bracciale rimosso dallo scrigno');
+  const item = state.cart.find(i => i.id === productId);
+  if (!item) return;
+
+  const hasStones = (item.custom_stones && item.custom_stones.length > 0) || Boolean(item.stone);
+  if (hasStones) {
+    // Edge case B: Ask customer whether to remove all or keep stones as standalone
+    state.pendingRemoveItemId = productId;
+    const stoneNames = item.custom_stones ? item.custom_stones.map(s => s.nome).join(', ') : item.stone.name;
+    const msgEl = document.getElementById('stoneRemoveConfirmMsg');
+    if (msgEl) {
+      msgEl.innerHTML = `Il bracciale <strong>${item.title}</strong> ha le seguenti pietre incastonate: <strong style="color: var(--copper-light);">${stoneNames}</strong>.<br><br>Vuoi rimuovere anche le pietre, oppure conservarle nel carrello come minerali singoli da collezione / tasca (€10.00 cad.)?`;
+    }
+    openStoneRemoveConfirmModal();
+  } else {
+    state.cart = state.cart.filter(item => item.id !== productId);
+    saveCart();
+    showToast('Bracciale rimosso dallo scrigno');
+  }
 }
 
 function renderCart() {
   const totalItems = state.cart.reduce((sum, item) => sum + item.quantity, 0);
-  const subtotal = state.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  const subtotal = state.cart.reduce((sum, item) => sum + (getItemUnitPrice(item) * item.quantity), 0);
   const shipping = state.cart.length > 0 ? state.shippingFee : 0;
   const total = subtotal + shipping;
 
@@ -410,11 +447,42 @@ function renderCart() {
   state.cart.forEach(item => {
     const row = document.createElement('div');
     row.className = 'cart-item';
+    
+    // Multiple stones badges + single stone fallback
+    let stoneBadgeHtml = '';
+    if (item.custom_stones && item.custom_stones.length > 0) {
+      stoneBadgeHtml = item.custom_stones.map((st, idx) => `
+        <div class="cart-item-stone-badge">
+          <i class="fa-solid fa-gem"></i>
+          <span>${st.nome} (+€${Number(st.prezzo_vendita).toFixed(2)})</span>
+          <button type="button" class="cart-stone-remove-mini" onclick="removeSingleStoneFromCartItem('${item.id}', ${idx})" title="Rimuovi questa pietra">×</button>
+        </div>
+      `).join('');
+    } else if (item.stone) {
+      stoneBadgeHtml = `
+        <div class="cart-item-stone-badge">
+          <i class="fa-solid fa-gem"></i>
+          <span>${item.stone.name} (+€${Number(item.stone.price).toFixed(2)})</span>
+        </div>
+      `;
+    }
+
+    const wristBadge = item.wrist_cm ? `
+      <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 2px;">
+        <i class="fa-solid fa-ruler-horizontal"></i> Misura: ${item.wrist_cm}
+      </div>
+    ` : '';
+
+    const unitPrice = getItemUnitPrice(item);
+    item.price = unitPrice;
+
     row.innerHTML = `
       <img src="${item.image_url}" alt="${item.title}" class="cart-item-img">
       <div class="cart-item-info">
         <h4>${item.title}</h4>
-        <div class="cart-item-price">€${(item.price * item.quantity).toFixed(2)}</div>
+        ${stoneBadgeHtml}
+        ${wristBadge}
+        <div class="cart-item-price">€${(unitPrice * item.quantity).toFixed(2)}</div>
         <div class="cart-item-controls">
           <button class="qty-btn" onclick="updateCartQuantity('${item.id}', -1)" aria-label="Riduci">−</button>
           <span class="qty-count">${item.quantity}</span>
@@ -648,14 +716,21 @@ const EMAILJS_CONFIG = {
 };
 
 async function sendShippingEmailNotification(shippingInfo, cartItems, totalAmount) {
-  const itemsText = cartItems.map(item => 
-    `• ${item.title} (x${item.quantity}) - €${(item.price * item.quantity).toFixed(2)}`
-  ).join('\n');
+  const itemsText = cartItems.map(item => {
+    const itemPrice = getItemUnitPrice(item);
+    let line = `• ${item.title} (x${item.quantity}) - €${(itemPrice * item.quantity).toFixed(2)}`;
+    if (item.custom_stones && item.custom_stones.length > 0) {
+      line += ` [Pietre incastonate ad incudine: ${item.custom_stones.map(s => s.nome + ' (+€' + Number(s.prezzo_vendita).toFixed(2) + ')').join(', ')}]`;
+    } else if (item.stone) {
+      line += ` [Pietra incastonata: ${item.stone.name} (+€${Number(item.stone.price).toFixed(2)})]`;
+    }
+    return line;
+  }).join('\n');
 
   const ordersArray = cartItems.map(item => ({
-    name: item.title,
+    name: item.title + (item.custom_stones && item.custom_stones.length > 0 ? ` (+${item.custom_stones.length} pietre: ${item.custom_stones.map(s => s.nome).join(', ')})` : ''),
     units: item.quantity,
-    price: (item.price * item.quantity).toFixed(2),
+    price: (getItemUnitPrice(item) * item.quantity).toFixed(2),
     image_url: item.image_url ? (item.image_url.startsWith('http') ? item.image_url : (window.location.origin + '/' + item.image_url.replace(/^\//, ''))) : ''
   }));
 
@@ -973,4 +1048,901 @@ window.handleShippingFormSubmit = handleShippingFormSubmit;
 window.openCart = openCart;
 window.closeCart = closeCart;
 window.addToCartById = addToCartById;
+
+// ==============================================================================
+// BOTTEGA DELLE PIETRE & INCASTONATURA ARTIGIANALE (DIDONI STORE)
+// ==============================================================================
+
+const DEFAULT_STONES_FALLBACK = [
+  {
+    "id": "pietra_acquamarina",
+    "nome": "Acquamarina S",
+    "tipo": "Burattato levigato (2 - 2,5 cm)",
+    "prezzo_fornitore": 3.00,
+    "prezzo_vendita": 10.00,
+    "proprieta": "Calma profonda, chiarezza interiore, distensione emotiva e apertura della comunicazione autentica.",
+    "elemento": "Acqua",
+    "chakra": "Gola (5° Chakra)",
+    "immagine_locale": "assets/pietre/acquamarina_s.jpg",
+    "immagine_remota": "https://store.didoni.com/media/prodotti/17acq003_2_1724082990_94.jpg"
+  },
+  {
+    "id": "pietra_ametista",
+    "nome": "Ametista Naturale S",
+    "tipo": "Burattato levigato (2 - 3 cm)",
+    "prezzo_fornitore": 2.00,
+    "prezzo_vendita": 10.00,
+    "proprieta": "Serenità spirituale, riequilibrio dei ritmi del sonno, lucidità mentale e purificazione energetica.",
+    "elemento": "Aria / Etere",
+    "chakra": "Terzo Occhio & Corona",
+    "immagine_locale": "assets/pietre/ametista_s.jpg",
+    "immagine_remota": "https://store.didoni.com/media/prodotti/17ame001_2_1724147678_31.jpg"
+  },
+  {
+    "id": "pietra_agata_blu",
+    "nome": "Agata Blu M-L",
+    "tipo": "Burattato pebble (3 - 4 cm)",
+    "prezzo_fornitore": 4.00,
+    "prezzo_vendita": 10.00,
+    "proprieta": "Pace della mente, scioglimento delle tensioni comunicative e armonia nelle relazioni quotidiane.",
+    "elemento": "Acqua",
+    "chakra": "Gola (5° Chakra)",
+    "immagine_locale": "assets/pietre/agata_blu.jpg",
+    "immagine_remota": "https://store.didoni.com/media/prodotti/17aga008_2_1724082029_90.jpg"
+  },
+  {
+    "id": "pietra_corniola",
+    "nome": "Agata Corniola S",
+    "tipo": "Burattato vivente (1,5 - 3 cm)",
+    "prezzo_fornitore": 2.00,
+    "prezzo_vendita": 10.00,
+    "proprieta": "Vitalità ardente, forza creativa, coraggio nelle decisioni e stimolo della circolazione sanguigna.",
+    "elemento": "Fuoco",
+    "chakra": "Sacrale & Radice (1°-2° Chakra)",
+    "immagine_locale": "assets/pietre/corniola_s.jpg",
+    "immagine_remota": "https://store.didoni.com/media/prodotti/17cor004_3_1658497901_634_1724147218_23.jpg"
+  },
+  {
+    "id": "pietra_amazzonite",
+    "nome": "Amazzonite S-M",
+    "tipo": "Burattato vellutato (2 - 2,5 cm)",
+    "prezzo_fornitore": 3.00,
+    "prezzo_vendita": 10.00,
+    "proprieta": "Scudo naturale contro le frequenze elettromagnetiche, armonia interiore, libertà e determinazione.",
+    "elemento": "Terra / Acqua",
+    "chakra": "Cuore & Gola (4°-5° Chakra)",
+    "immagine_locale": "assets/pietre/amazzonite_sm.jpg",
+    "immagine_remota": "https://store.didoni.com/media/prodotti/whatsapp-image-2024-12-19-at-15.10.49_1734617505_86.jpg"
+  },
+  {
+    "id": "pietra_agata_verde",
+    "nome": "Agata Verde L",
+    "tipo": "Burattato pebble (3 cm)",
+    "prezzo_fornitore": 4.00,
+    "prezzo_vendita": 10.00,
+    "proprieta": "Riequilibrio energetico del cuore, stabilità emotiva, abbondanza e profondo contatto con la natura.",
+    "elemento": "Terra",
+    "chakra": "Cuore (4° Chakra)",
+    "immagine_locale": "assets/pietre/agata_verde.jpg",
+    "immagine_remota": "https://store.didoni.com/media/prodotti/17aga007_2_1724082116_74.jpg"
+  },
+  {
+    "id": "pietra_agata_muschiata",
+    "nome": "Agata Muschiata M",
+    "tipo": "Burattato naturale (2,5 - 3 cm)",
+    "prezzo_fornitore": 3.00,
+    "prezzo_vendita": 10.00,
+    "proprieta": "Rigenerazione e rinascita, connessione botanica, benessere corporeo e liberazione dallo stress.",
+    "elemento": "Terra",
+    "chakra": "Cuore (4° Chakra)",
+    "immagine_locale": "assets/pietre/agata_muschiata.jpg",
+    "immagine_remota": "https://store.didoni.com/media/prodotti/17AGM1M1_1.jpg"
+  },
+  {
+    "id": "pietra_adularia",
+    "nome": "Pietra di Luna (Adularia Grezza)",
+    "tipo": "Grezzo naturale (1 - 2 cm)",
+    "prezzo_fornitore": 3.30,
+    "prezzo_vendita": 10.00,
+    "proprieta": "Risonanza con le fasi lunari, risveglio dell'intuito profondo, equilibrio ormonale e dolcezza d'animo.",
+    "elemento": "Acqua",
+    "chakra": "Corona (7° Chakra)",
+    "immagine_locale": "assets/pietre/adularia_grezza.jpg",
+    "immagine_remota": "https://store.didoni.com/media/prodotti/01plu001_2_1689674306_112_1732994241_7.jpg"
+  },
+  {
+    "id": "pietra_avventurina",
+    "nome": "Avventurina Verde Grezza",
+    "tipo": "Grezzo compatto (3 - 4 cm)",
+    "prezzo_fornitore": 3.00,
+    "prezzo_vendita": 10.00,
+    "proprieta": "Pietra della buona sorte, amplificatore di ottimismo, vitalità espansiva e purificazione vitale.",
+    "elemento": "Terra",
+    "chakra": "Cuore (4° Chakra)",
+    "immagine_locale": "assets/pietre/avventurina_grezza.jpg",
+    "immagine_remota": "https://store.didoni.com/media/prodotti/01avv001_2_1732998636_91.jpg"
+  },
+  {
+    "id": "pietra_ambra_baltica",
+    "nome": "Ambra Baltica Naturale S",
+    "tipo": "Resina fossile autentica (2 - 2,5 cm)",
+    "prezzo_fornitore": 5.00,
+    "prezzo_vendita": 16.00,
+    "proprieta": "Dono solare millenario: riscalda il corpo, allevia infiammazioni fisiche e dissipa negatività emotiva.",
+    "elemento": "Fuoco / Sole",
+    "chakra": "Plesso Solare (3° Chakra)",
+    "immagine_locale": "assets/pietre/ambra_baltica_s.jpg",
+    "immagine_remota": "https://store.didoni.com/media/prodotti/17amb001_2_1724147431_21.jpg"
+  },
+  {
+    "id": "pietra_ametista_chevron",
+    "nome": "Ametista Chevron XL",
+    "tipo": "Pietra sciamanica a bande (7 - 9 cm)",
+    "prezzo_fornitore": 8.00,
+    "prezzo_vendita": 18.00,
+    "proprieta": "Vibrazione trasmutativa potente: purificazione dell'aura, visione interiore e radicamento spirituale.",
+    "elemento": "Aria / Etere",
+    "chakra": "Terzo Occhio (6° Chakra)",
+    "immagine_locale": "assets/pietre/ametista_chevron_xl.jpg",
+    "immagine_remota": "https://store.didoni.com/media/prodotti/17ame006_1_1747837195_66.jpg"
+  },
+  {
+    "id": "pietra_blue_lace",
+    "nome": "Agata Pizzo Blu (Blue Lace)",
+    "tipo": "Pietra con foro per pendente (2,5 cm)",
+    "prezzo_fornitore": 10.00,
+    "prezzo_vendita": 20.00,
+    "proprieta": "Armonizzatore sublime: distende l'ansia, dona serenità angelica e apre canali di calma interiore.",
+    "elemento": "Aria / Acqua",
+    "chakra": "Gola (5° Chakra)",
+    "immagine_locale": "assets/pietre/blue_lace_forata.jpg",
+    "immagine_remota": "https://store.didoni.com/media/prodotti/25cdofor_1_1781528950_30.jpg"
+  },
+  {
+    "id": "pietra_ambra_grezza_ml",
+    "nome": "Ambra Baltica Grezza M-L",
+    "tipo": "Pepita grezza massiccia (6 - 8 cm)",
+    "prezzo_fornitore": 20.00,
+    "prezzo_vendita": 38.00,
+    "proprieta": "Rara resina fossile di grandi dimensioni: scudo bioelettrico, calore rigenerativo e carica bioenergetica.",
+    "elemento": "Sole / Fuoco",
+    "chakra": "Plesso Solare (3° Chakra)",
+    "immagine_locale": "assets/pietre/ambra_grezza_ml.jpg",
+    "immagine_remota": "https://store.didoni.com/media/prodotti/01amb001_2_1729244434_99.jpg"
+  },
+  {
+    "id": "pietra_cintamani",
+    "nome": "Agni Manitite (Cintamani Stone S)",
+    "tipo": "Tektite perla di fuoco rara",
+    "prezzo_fornitore": 27.00,
+    "prezzo_vendita": 48.00,
+    "proprieta": "Gemma sacra leggendaria: amplificatore della volontà superiore, risveglio kundalini e forte magnetismo.",
+    "elemento": "Fuoco Cosmico",
+    "chakra": "Plesso Solare & Radice",
+    "immagine_locale": "assets/pietre/cintamani_s.jpg",
+    "immagine_remota": "https://store.didoni.com/media/prodotti/01agni001_2_1729244386_49.jpg"
+  },
+  {
+    "id": "pietra_serafinite",
+    "nome": "Grezzo di Serafinite (Pietra degli Angeli)",
+    "tipo": "Minerale raro di Siberia (4 x 4 x 3 cm - 68.9 g)",
+    "prezzo_fornitore": 35.00,
+    "prezzo_vendita": 55.00,
+    "proprieta": "La celebre 'Pietra degli Angeli' del lago Baikal con piumature d'argento vivo. Connette con le guide spirituali, purifica l'aura, dissipa conflitti interiori e apre il cuore a frequenze elevate.",
+    "elemento": "Etere / Cuore",
+    "chakra": "Cuore Spirituale & Corona",
+    "immagine_locale": "assets/pietre/serafinite_grezza.jpg",
+    "immagine_remota": "https://store.didoni.com/media/prodotti/01SER006_1.jpg"
+  }
+];
+
+async function loadStones() {
+  try {
+    const res = await fetch('pietre_catalog.json?t=' + Date.now()).catch(() => null);
+    if (res && res.ok) {
+      state.stones = await res.json();
+    } else {
+      state.stones = DEFAULT_STONES_FALLBACK;
+    }
+  } catch (e) {
+    state.stones = DEFAULT_STONES_FALLBACK;
+  }
+
+  renderStoneSelect();
+  renderStoneChips();
+  renderStoneMiniCarousel();
+  renderAtelierStonesGrid();
+  populateAtelierCartBraceletSelect();
+
+  if (state.stones && state.stones.length > 0) {
+    selectStone(state.stones[0].id);
+    selectPromptStone(state.stones[0].id);
+  }
+}
+
+function renderStoneSelect() {
+  const selectEl = document.getElementById('stoneSelect');
+  if (!selectEl) return;
+
+  selectEl.innerHTML = '';
+  state.stones.forEach(stone => {
+    const opt = document.createElement('option');
+    opt.value = stone.id;
+    const isSpecial = stone.prezzo_vendita > 10;
+    const priceStr = `+€${Number(stone.prezzo_vendita).toFixed(2)}`;
+    opt.textContent = `${stone.nome} (${stone.tipo}) — ${priceStr} ${isSpecial ? '★ Raro' : ''}`;
+    selectEl.appendChild(opt);
+  });
+}
+
+function renderStoneChips() {
+  const container = document.getElementById('stoneChipsContainer');
+  if (!container) return;
+
+  container.innerHTML = '';
+  state.stones.forEach(stone => {
+    const chip = document.createElement('div');
+    chip.className = 'stone-chip';
+    chip.dataset.stoneId = stone.id;
+    chip.onclick = () => selectStone(stone.id);
+    
+    chip.innerHTML = `
+      <img src="${stone.immagine_locale}" alt="${stone.nome}" class="stone-chip-thumb" onerror="this.src='${stone.immagine_remota}'">
+      <span>${stone.nome}</span>
+      <span class="stone-chip-price">+€${Number(stone.prezzo_vendita).toFixed(2)}</span>
+    `;
+    container.appendChild(chip);
+  });
+}
+
+function selectStone(stoneId) {
+  const stone = state.stones.find(s => s.id === stoneId) || state.stones[0];
+  if (!stone) return;
+
+  state.selectedStone = stone;
+
+  // Sync select dropdown
+  const selectEl = document.getElementById('stoneSelect');
+  if (selectEl && selectEl.value !== stone.id) {
+    selectEl.value = stone.id;
+  }
+
+  // Sync chip active classes
+  document.querySelectorAll('.stone-chip').forEach(chip => {
+    chip.classList.toggle('active', chip.dataset.stoneId === stone.id);
+  });
+
+  // Update Visual Preview Image
+  const imgEl = document.getElementById('stonePreviewImg');
+  if (imgEl) {
+    imgEl.style.opacity = '0.3';
+    setTimeout(() => {
+      imgEl.src = stone.immagine_locale;
+      imgEl.onerror = () => { imgEl.src = stone.immagine_remota; };
+      imgEl.style.opacity = '1';
+    }, 120);
+  }
+
+  const titleEl = document.getElementById('stonePreviewTitle');
+  if (titleEl) titleEl.textContent = stone.nome;
+
+  const priceEl = document.getElementById('stonePreviewPrice');
+  if (priceEl) priceEl.textContent = `+€${Number(stone.prezzo_vendita).toFixed(2)}`;
+
+  const badgeEl = document.getElementById('stonePreviewBadge');
+  if (badgeEl) badgeEl.textContent = stone.tipo;
+
+  // Transparency explanation note
+  const supplierNoteEl = document.getElementById('stoneSupplierNote');
+  if (supplierNoteEl) {
+    if (stone.prezzo_fornitore <= 4) {
+      supplierNoteEl.innerHTML = `Costo fornitore Didoni: <strong>€${Number(stone.prezzo_fornitore).toFixed(2)}</strong> • Tariffa standard fissa <strong>€10.00</strong> (include minerale selezionato e incastonatura manuale in rame).`;
+    } else {
+      const extra = (stone.prezzo_vendita - stone.prezzo_fornitore).toFixed(2);
+      supplierNoteEl.innerHTML = `Costo minerale grezzo fornitore Didoni: <strong>€${Number(stone.prezzo_fornitore).toFixed(2)}</strong> + <strong>€${extra}</strong> (lavorazione artigianale ad incudine, fascetta di sicurezza in rame e garanzia).`;
+    }
+  }
+
+  // Holistic properties
+  const elemEl = document.getElementById('stonePreviewElement');
+  if (elemEl) elemEl.textContent = stone.elemento || 'Terra';
+
+  const chakraEl = document.getElementById('stonePreviewChakra');
+  if (chakraEl) chakraEl.textContent = stone.chakra || 'Cuore';
+
+  const descEl = document.getElementById('stonePreviewDesc');
+  if (descEl) descEl.textContent = stone.proprieta;
+
+  updateStoneCombinedTotal();
+}
+
+function onStoneSelectChange(stoneId) {
+  selectStone(stoneId);
+}
+
+function onStoneBraceletChange(val) {
+  updateStoneCombinedTotal();
+}
+
+function getSelectedBraceletInfo() {
+  const selectEl = document.getElementById('stoneBraceletSelect');
+  if (!selectEl) return { id: 'prod_rame_001', title: 'Bracciale Intrecciato 3 Filamenti', price: 30.00 };
+  
+  const opt = selectEl.options[selectEl.selectedIndex];
+  return {
+    id: selectEl.value,
+    title: opt ? opt.dataset.title : 'Bracciale in Rame',
+    price: opt ? parseFloat(opt.dataset.price || '30') : 30.00
+  };
+}
+
+function updateStoneCombinedTotal() {
+  const stone = state.selectedStone;
+  if (!stone) return;
+
+  const bracelet = getSelectedBraceletInfo();
+  const combinedTotal = bracelet.price + stone.prezzo_vendita;
+
+  const pairingTitle = document.getElementById('stonePairingTitle');
+  if (pairingTitle) pairingTitle.textContent = bracelet.title;
+
+  const combinedEl = document.getElementById('stoneCombinedTotal');
+  if (combinedEl) combinedEl.textContent = `€${combinedTotal.toFixed(2)}`;
+
+  const btnCartTotalLabel = document.getElementById('btnCartTotalLabel');
+  if (btnCartTotalLabel) btnCartTotalLabel.textContent = `€${combinedTotal.toFixed(2)}`;
+}
+
+function addStoneCustomToCart() {
+  const stone = state.selectedStone;
+  if (!stone) {
+    showToast('Seleziona prima una pietra');
+    return;
+  }
+
+  const bracelet = getSelectedBraceletInfo();
+  const wristCm = document.getElementById('stoneWristCm') ? document.getElementById('stoneWristCm').value : '17 cm';
+  const fullName = document.getElementById('stoneFullName') ? document.getElementById('stoneFullName').value.trim() : '';
+  const notes = document.getElementById('stoneNotes') ? document.getElementById('stoneNotes').value.trim() : '';
+
+  const finalPrice = bracelet.price + stone.prezzo_vendita;
+  const customTitle = bracelet.price > 0 ? `${bracelet.title} con ${stone.nome}` : `Pietra ${stone.nome} in Rame Forgiato`;
+
+  const customCartItem = {
+    id: `custom_stone_${stone.id}_${bracelet.id}_${Date.now()}`,
+    title: customTitle,
+    price: Number(finalPrice),
+    image_url: stone.immagine_locale || stone.immagine_remota,
+    stone: {
+      id: stone.id,
+      name: stone.nome,
+      type: stone.tipo,
+      price: stone.prezzo_vendita,
+      supplier_price: stone.prezzo_fornitore,
+      properties: stone.proprieta,
+      image: stone.immagine_locale || stone.immagine_remota
+    },
+    wrist_cm: wristCm,
+    customer_name: fullName,
+    notes: notes,
+    quantity: 1
+  };
+
+  state.cart.push(customCartItem);
+  saveCart();
+  showToast(`Aggiunto allo scrigno: ${customTitle} (€${finalPrice.toFixed(2)})`);
+  openCart();
+}
+
+async function handleStoneCustomizationSubmit(event) {
+  if (event) event.preventDefault();
+
+  const stone = state.selectedStone;
+  if (!stone) {
+    showToast('Seleziona una pietra');
+    return;
+  }
+
+  const bracelet = getSelectedBraceletInfo();
+  const fullName = document.getElementById('stoneFullName') ? document.getElementById('stoneFullName').value.trim() : '';
+  const email = document.getElementById('stoneEmail') ? document.getElementById('stoneEmail').value.trim() : '';
+  const phone = document.getElementById('stonePhone') ? document.getElementById('stonePhone').value.trim() : '';
+  const wristCm = document.getElementById('stoneWristCm') ? document.getElementById('stoneWristCm').value : '17 cm';
+  const notes = document.getElementById('stoneNotes') ? document.getElementById('stoneNotes').value.trim() : '';
+
+  if (!fullName || !email || !phone) {
+    showToast('Compila nome, email e cellulare');
+    return;
+  }
+
+  const submitBtn = document.getElementById('btnInviaRichiestaInfo');
+  if (submitBtn) {
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Invio all\'Atelier...';
+  }
+
+  const finalPrice = bracelet.price + stone.prezzo_vendita;
+  const inquiryData = {
+    inquiry_id: 'INFO-PIETRA-' + Date.now().toString().slice(-6),
+    stone: {
+      id: stone.id,
+      name: stone.nome,
+      type: stone.tipo,
+      price: stone.prezzo_vendita,
+      supplier_price: stone.prezzo_fornitore,
+      properties: stone.proprieta
+    },
+    bracelet: bracelet,
+    wrist_cm: wristCm,
+    fullName: fullName,
+    email: email,
+    phone: phone,
+    notes: notes,
+    total_estimated: finalPrice
+  };
+
+  try {
+    // 1. Invia a server backend API se disponibile
+    await fetch('/api/stone-inquiry', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(inquiryData)
+    }).catch(() => null);
+
+    // 2. Invia notifica EmailJS se configurata
+    if (window.emailjs && EMAILJS_CONFIG.publicKey) {
+      const templateParams = {
+        to_email: EMAILJS_CONFIG.targetEmail,
+        order_id: inquiryData.inquiry_id,
+        data_ordine: new Date().toLocaleString('it-IT', { timeZone: 'Europe/Rome' }),
+        destinatario_nome: fullName,
+        customer_name: fullName,
+        destinatario_email: email,
+        customer_email: email,
+        destinatario_telefono: phone,
+        customer_phone: phone,
+        misura_polso: wristCm,
+        wrist_cm: wristCm,
+        note_consegna: `[RICHIESTA PIETRA DIDONI] Pietra: ${stone.nome} (+€${stone.prezzo_vendita.toFixed(2)}) • Modello: ${bracelet.title} • Note: ${notes || 'Nessuna'}`,
+        shipping_notes: `Pietra scelta: ${stone.nome} (fornitore Didoni €${stone.prezzo_fornitore}) • Note cliente: ${notes || 'Nessuna'}`,
+        articoli_ordine: `1x Creazione Personalizzata: ${bracelet.title} con ${stone.nome} — Stima: €${finalPrice.toFixed(2)}`,
+        totale_ordine: finalPrice.toFixed(2),
+        subtotal: finalPrice.toFixed(2)
+      };
+      await window.emailjs.send(EMAILJS_CONFIG.serviceId, EMAILJS_CONFIG.templateId, templateParams, EMAILJS_CONFIG.publicKey).catch(() => null);
+    }
+
+    showToast(`Richiesta inviata con successo! Protocollo: ${inquiryData.inquiry_id}`);
+    alert(`[RICHIESTA INFO & PERSONALIZZAZIONE ACQUISITA]\n\nGrazie ${fullName}!\n\nAbbiamo registrato la tua richiesta per "${bracelet.title}" con pietra "${stone.nome}" (+€${stone.prezzo_vendita.toFixed(2)}).\n\nCodice Riferimento: ${inquiryData.inquiry_id}\n\nIl maestro ramaio ti contatterà al numero ${phone} e via email (${email}) per mostrarti la foto dell'abbinamento prima della lavorazione ad incudine.`);
+  } catch (err) {
+    showToast('Richiesta registrata');
+    alert(`[RICHIESTA INVIATA]\n\nI tuoi dati sono stati registrati. Ti ricontatteremo a breve.`);
+  } finally {
+    if (submitBtn) {
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = '<i class="fa-solid fa-envelope-open-text"></i> Invia Richiesta Info all\'Atelier';
+    }
+  }
+}
+
+function customizeCurrentModalBracelet() {
+  if (state.activeModalProduct) {
+    customizeBraceletWithStone(state.activeModalProduct.id);
+  }
+  closeProductModal();
+}
+
+function customizeBraceletWithStone(productId) {
+  const section = document.getElementById('bottega-pietre');
+  if (section) {
+    section.scrollIntoView({ behavior: 'smooth' });
+  }
+
+  const braceletSelect = document.getElementById('stoneBraceletSelect');
+  if (braceletSelect && productId) {
+    let found = false;
+    for (let i = 0; i < braceletSelect.options.length; i++) {
+      if (braceletSelect.options[i].value === productId) {
+        braceletSelect.selectedIndex = i;
+        found = true;
+        break;
+      }
+    }
+    if (!found && state.products) {
+      const prod = state.products.find(p => p.id === productId);
+      if (prod) {
+        const newOpt = document.createElement('option');
+        newOpt.value = prod.id;
+        newOpt.dataset.price = Number(prod.price);
+        newOpt.dataset.title = prod.title;
+        newOpt.textContent = `${prod.title} — €${Number(prod.price).toFixed(2)}`;
+        newOpt.selected = true;
+        braceletSelect.appendChild(newOpt);
+      }
+    }
+    updateStoneCombinedTotal();
+    showToast('Bracciale selezionato nella Bottega delle Pietre');
+  }
+}
+
+// ==============================================================================
+// PROMPT MODAL: VUOI AGGIUNGERE UNA PIETRA NATURALE? (MINI CAROSELLO ORIZZONTALE)
+// ==============================================================================
+function openStonePromptModal(cartItem) {
+  state.activePromptCartItem = cartItem;
+  const titleEl = document.getElementById('promptModalBraceletTitle');
+  if (titleEl) {
+    titleEl.textContent = cartItem.title;
+  }
+
+  renderStoneMiniCarousel();
+
+  const initialStoneId = state.selectedPromptStoneId || (state.stones && state.stones[0] ? state.stones[0].id : null);
+  if (initialStoneId) {
+    selectPromptStone(initialStoneId);
+  }
+
+  const modal = document.getElementById('stonePromptModalBackdrop');
+  if (modal) {
+    modal.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+}
+
+function closeStonePromptModal() {
+  const modal = document.getElementById('stonePromptModalBackdrop');
+  if (modal) {
+    modal.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+}
+
+function renderStoneMiniCarousel() {
+  const container = document.getElementById('stoneMiniCarousel');
+  if (!container || !state.stones) return;
+
+  container.innerHTML = state.stones.map(stone => `
+    <div class="stone-mini-card ${state.selectedPromptStoneId === stone.id ? 'active' : ''}" 
+         id="miniStone_${stone.id}" 
+         onclick="selectPromptStone('${stone.id}')"
+         title="${stone.nome}">
+      <div class="mini-card-img-wrap">
+        <img src="${stone.immagine_locale}" alt="${stone.nome}" onerror="this.src='${stone.immagine_remota}'" loading="lazy">
+      </div>
+      <div class="mini-card-info">
+        <h5 class="mini-card-title">${stone.nome}</h5>
+        <span class="mini-card-price">€${Number(stone.prezzo_vendita).toFixed(2)}</span>
+      </div>
+    </div>
+  `).join('');
+}
+
+function selectPromptStone(stoneId) {
+  state.selectedPromptStoneId = stoneId;
+  const stone = (state.stones || []).find(s => s.id === stoneId);
+  if (!stone) return;
+
+  document.querySelectorAll('.stone-mini-card').forEach(card => {
+    card.classList.toggle('active', card.id === `miniStone_${stoneId}`);
+  });
+
+  const nameEl = document.getElementById('promptSelectedName');
+  const imgEl = document.getElementById('promptSelectedImg');
+  const chakraEl = document.getElementById('promptSelectedChakra');
+  const priceEl = document.getElementById('promptSelectedPrice');
+  const btnTextEl = document.getElementById('btnPromptAddStoneText');
+
+  if (nameEl) nameEl.textContent = stone.nome;
+  if (imgEl) {
+    imgEl.src = stone.immagine_locale;
+    imgEl.onerror = () => { imgEl.src = stone.immagine_remota; };
+  }
+  if (chakraEl) chakraEl.textContent = `${stone.chakra || 'Chakra'} • ${stone.elemento || 'Pietra Naturale'}`;
+  if (priceEl) priceEl.textContent = `+€${Number(stone.prezzo_vendita).toFixed(2)}`;
+  if (btnTextEl) btnTextEl.textContent = `Aggiungi Pietra al Bracciale (+€${Number(stone.prezzo_vendita).toFixed(2)})`;
+}
+
+function confirmPromptAddStone() {
+  if (!state.activePromptCartItem) return;
+  const stone = (state.stones || []).find(s => s.id === state.selectedPromptStoneId) || (state.stones ? state.stones[0] : null);
+  if (!stone) return;
+
+  if (!state.activePromptCartItem.custom_stones) {
+    state.activePromptCartItem.custom_stones = [];
+  }
+
+  // Aggiunge la pietra al bracciale nel carrello (supporta più pietre sullo stesso pezzo)
+  state.activePromptCartItem.custom_stones.push({
+    id: stone.id,
+    nome: stone.nome,
+    prezzo_vendita: Number(stone.prezzo_vendita),
+    immagine_locale: stone.immagine_locale,
+    chakra: stone.chakra,
+    elemento: stone.elemento
+  });
+
+  saveCart();
+  closeStonePromptModal();
+  showToast(`Pietra ${stone.nome} incastonata sul tuo ${state.activePromptCartItem.title}!`);
+  openCart();
+}
+
+function exploreFullAtelierFromPrompt() {
+  closeStonePromptModal();
+  const atelierSection = document.getElementById('bottega-pietre');
+  if (atelierSection) {
+    atelierSection.scrollIntoView({ behavior: 'smooth' });
+  }
+
+  if (state.activePromptCartItem) {
+    populateAtelierCartBraceletSelect(state.activePromptCartItem.id);
+  }
+  showToast('Esplora l\'Atelier delle Pietre per personalizzare il tuo bracciale');
+}
+
+function skipPromptToCart() {
+  closeStonePromptModal();
+  openCart();
+}
+
+function scrollStoneCarousel(direction) {
+  const container = document.getElementById('stoneMiniCarousel');
+  if (container) {
+    container.scrollBy({ left: direction * 220, behavior: 'smooth' });
+  }
+}
+
+// ==============================================================================
+// ATELIER DELLE PIETRE: SELETTORE BRACCIALE CARRELLO & VETRINA COMPLETA
+// ==============================================================================
+function populateAtelierCartBraceletSelect(preferredSelectedId = null) {
+  const select = document.getElementById('atelierCartBraceletSelect');
+  const emptyNotice = document.getElementById('atelierCartEmptyNotice');
+  if (!select) return;
+
+  select.innerHTML = '';
+  const braceletItems = state.cart.filter(item => !item.is_standalone_stone);
+
+  if (braceletItems.length > 0) {
+    if (emptyNotice) emptyNotice.style.display = 'none';
+
+    braceletItems.forEach((item, idx) => {
+      const opt = document.createElement('option');
+      opt.value = item.id;
+      const stonesCount = item.custom_stones ? item.custom_stones.length : 0;
+      const stonesText = stonesCount > 0 ? ` (${stonesCount} ${stonesCount === 1 ? 'pietra incastonata' : 'pietre incastonate'})` : '';
+      opt.textContent = `Bracciale #${idx + 1}: ${item.title} — Base €${(item.basePrice || item.price).toFixed(2)}${stonesText}`;
+      if (preferredSelectedId && item.id === preferredSelectedId) {
+        opt.selected = true;
+      }
+      select.appendChild(opt);
+    });
+
+    const soloOpt = document.createElement('option');
+    soloOpt.value = 'standalone_stone';
+    soloOpt.textContent = 'Solo Pietra / Burattato Didoni da Collezione (€10.00 - nessun bracciale associato)';
+    select.appendChild(soloOpt);
+  } else {
+    if (emptyNotice) emptyNotice.style.display = 'flex';
+
+    const opt = document.createElement('option');
+    opt.value = 'standalone_stone';
+    opt.textContent = 'Solo Pietra da Collezione (Nessun bracciale presente nello scrigno)';
+    opt.selected = true;
+    select.appendChild(opt);
+  }
+
+  updateAtelierButtonsText();
+}
+
+function updateAtelierButtonsText() {
+  const select = document.getElementById('atelierCartBraceletSelect');
+  const isStandalone = !select || select.value === 'standalone_stone';
+  const selectedItem = select ? state.cart.find(i => i.id === select.value) : null;
+
+  document.querySelectorAll('.btn-atelier-add-stone').forEach(btn => {
+    const stonePrice = btn.dataset.stonePrice;
+    if (isStandalone || !selectedItem) {
+      btn.innerHTML = `<i class="fa-solid fa-plus"></i> Aggiungi Pietra allo Scrigno (€${Number(stonePrice).toFixed(2)})`;
+    } else {
+      const shortTitle = selectedItem.title.length > 22 ? selectedItem.title.substring(0, 20) + '...' : selectedItem.title;
+      btn.innerHTML = `<i class="fa-solid fa-gem"></i> Incastona su ${shortTitle} (+€${Number(stonePrice).toFixed(2)})`;
+    }
+  });
+}
+
+function onAtelierBraceletSelectChange(value) {
+  updateAtelierButtonsText();
+}
+
+function renderAtelierStonesGrid() {
+  const grid = document.getElementById('atelierStonesGrid');
+  if (!grid || !state.stones) return;
+
+  grid.innerHTML = state.stones.map(stone => `
+    <div class="atelier-stone-card" id="atelierStoneCard_${stone.id}">
+      <div class="atelier-stone-img-wrap">
+        <img src="${stone.immagine_locale}" alt="${stone.nome}" onerror="this.src='${stone.immagine_remota}'" loading="lazy">
+        <span class="atelier-stone-price-tag">Solo Pietra: €${Number(stone.prezzo_vendita).toFixed(2)}</span>
+      </div>
+      <div class="atelier-stone-body">
+        <div class="atelier-stone-title-row">
+          <h4 class="atelier-stone-name">${stone.nome}</h4>
+        </div>
+        <div class="atelier-stone-badges">
+          <span class="atelier-pill"><i class="fa-solid fa-sun"></i> ${stone.chakra}</span>
+          <span class="atelier-pill"><i class="fa-solid fa-water"></i> ${stone.elemento}</span>
+        </div>
+        <p class="atelier-stone-desc">${stone.proprieta}</p>
+        <div class="atelier-stone-meta">
+          <span style="font-size: 0.74rem; color: var(--text-muted);"><i class="fa-solid fa-ruler"></i> ${stone.dimensioni || 'Minerale naturale'}</span>
+        </div>
+        <button type="button" class="btn-primary btn-atelier-add-stone" 
+                data-stone-id="${stone.id}" 
+                data-stone-price="${stone.prezzo_vendita}" 
+                onclick="addStoneFromAtelier('${stone.id}')">
+          <i class="fa-solid fa-plus"></i> Aggiungi Pietra allo Scrigno (€${Number(stone.prezzo_vendita).toFixed(2)})
+        </button>
+      </div>
+    </div>
+  `).join('');
+
+  updateAtelierButtonsText();
+}
+
+function addStoneFromAtelier(stoneId) {
+  const stone = (state.stones || []).find(s => s.id === stoneId);
+  if (!stone) return;
+
+  const select = document.getElementById('atelierCartBraceletSelect');
+  const targetId = select ? select.value : 'standalone_stone';
+
+  if (targetId !== 'standalone_stone') {
+    const targetBracelet = state.cart.find(i => i.id === targetId);
+    if (targetBracelet) {
+      if (!targetBracelet.custom_stones) targetBracelet.custom_stones = [];
+      targetBracelet.custom_stones.push({
+        id: stone.id,
+        nome: stone.nome,
+        prezzo_vendita: Number(stone.prezzo_vendita),
+        immagine_locale: stone.immagine_locale,
+        chakra: stone.chakra,
+        elemento: stone.elemento
+      });
+      saveCart();
+      showToast(`Pietra ${stone.nome} incastonata su ${targetBracelet.title}!`);
+      openCart();
+      populateAtelierCartBraceletSelect(targetId);
+      return;
+    }
+  }
+
+  // Altrimenti aggiungi come pietra/burattato singolo
+  state.cart.push({
+    id: `standalone_stone_${stone.id}_${Date.now()}`,
+    title: `Pietra Naturale Didoni: ${stone.nome}`,
+    basePrice: Number(stone.prezzo_vendita),
+    price: Number(stone.prezzo_vendita),
+    image_url: stone.immagine_locale,
+    quantity: 1,
+    is_standalone_stone: true,
+    stone: {
+      id: stone.id,
+      name: stone.nome,
+      price: Number(stone.prezzo_vendita)
+    }
+  });
+
+  saveCart();
+  showToast(`Pietra ${stone.nome} aggiunta allo scrigno!`);
+  openCart();
+  populateAtelierCartBraceletSelect();
+}
+
+// ==============================================================================
+// EDGE CASE B: MODAL DI CONFERMA RIMOZIONE BRACCIALE CON PIETRE
+// ==============================================================================
+function openStoneRemoveConfirmModal() {
+  const modal = document.getElementById('stoneRemoveConfirmModalBackdrop');
+  if (modal) {
+    modal.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+}
+
+function closeStoneRemoveConfirmModal() {
+  const modal = document.getElementById('stoneRemoveConfirmModalBackdrop');
+  if (modal) {
+    modal.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  state.pendingRemoveItemId = null;
+}
+
+function confirmRemoveBraceletAndStones() {
+  if (!state.pendingRemoveItemId) return;
+  state.cart = state.cart.filter(item => item.id !== state.pendingRemoveItemId);
+  state.pendingRemoveItemId = null;
+  saveCart();
+  closeStoneRemoveConfirmModal();
+  showToast('Bracciale e pietre rimossi dallo scrigno');
+}
+
+function confirmKeepStonesAsStandalone() {
+  if (!state.pendingRemoveItemId) return;
+  const item = state.cart.find(i => i.id === state.pendingRemoveItemId);
+  if (item) {
+    const stones = item.custom_stones && item.custom_stones.length > 0 
+      ? [...item.custom_stones] 
+      : (item.stone ? [{
+          id: item.stone.id,
+          nome: item.stone.name,
+          prezzo_vendita: Number(item.stone.price),
+          immagine_locale: item.stone.image || 'assets/pietre/acquamarina_s.jpg'
+        }] : []);
+
+    state.cart = state.cart.filter(i => i.id !== state.pendingRemoveItemId);
+
+    stones.forEach(stone => {
+      state.cart.push({
+        id: `standalone_stone_${stone.id}_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
+        title: `Pietra Naturale Didoni: ${stone.nome}`,
+        basePrice: Number(stone.prezzo_vendita),
+        price: Number(stone.prezzo_vendita),
+        image_url: stone.immagine_locale || 'assets/pietre/acquamarina_s.jpg',
+        quantity: 1,
+        is_standalone_stone: true,
+        stone: {
+          id: stone.id,
+          name: stone.nome,
+          price: Number(stone.prezzo_vendita)
+        }
+      });
+    });
+
+    state.pendingRemoveItemId = null;
+    saveCart();
+    closeStoneRemoveConfirmModal();
+    showToast('Bracciale rimosso: pietre conservate come minerali singoli nello scrigno!');
+  }
+}
+
+function removeSingleStoneFromCartItem(cartItemId, stoneIndex) {
+  const item = state.cart.find(i => i.id === cartItemId);
+  if (!item || !item.custom_stones) return;
+  const removed = item.custom_stones.splice(stoneIndex, 1)[0];
+  saveCart();
+  showToast(`Pietra ${removed.nome} rimossa dal bracciale`);
+}
+
+// Bind stone workshop functions to window
+window.onStoneSelectChange = onStoneSelectChange;
+window.selectStoneChip = selectStone;
+window.onStoneBraceletChange = onStoneBraceletChange;
+window.addStoneCustomToCart = addStoneCustomToCart;
+window.handleStoneCustomizationSubmit = handleStoneCustomizationSubmit;
+window.customizeCurrentModalBracelet = customizeCurrentModalBracelet;
+window.customizeBraceletWithStone = customizeBraceletWithStone;
+
+// Bind new Prompt Modal, Atelier, and Removal functions to window
+window.openStonePromptModal = openStonePromptModal;
+window.closeStonePromptModal = closeStonePromptModal;
+window.renderStoneMiniCarousel = renderStoneMiniCarousel;
+window.selectPromptStone = selectPromptStone;
+window.confirmPromptAddStone = confirmPromptAddStone;
+window.exploreFullAtelierFromPrompt = exploreFullAtelierFromPrompt;
+window.skipPromptToCart = skipPromptToCart;
+window.scrollStoneCarousel = scrollStoneCarousel;
+window.populateAtelierCartBraceletSelect = populateAtelierCartBraceletSelect;
+window.onAtelierBraceletSelectChange = onAtelierBraceletSelectChange;
+window.renderAtelierStonesGrid = renderAtelierStonesGrid;
+window.addStoneFromAtelier = addStoneFromAtelier;
+window.openStoneRemoveConfirmModal = openStoneRemoveConfirmModal;
+window.closeStoneRemoveConfirmModal = closeStoneRemoveConfirmModal;
+window.confirmRemoveBraceletAndStones = confirmRemoveBraceletAndStones;
+window.confirmKeepStonesAsStandalone = confirmKeepStonesAsStandalone;
+window.removeSingleStoneFromCartItem = removeSingleStoneFromCartItem;
+window.getItemUnitPrice = getItemUnitPrice;
+
+
 
