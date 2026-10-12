@@ -1915,6 +1915,54 @@ function removeSingleStoneFromCartItem(cartItemId, stoneIndex) {
   showToast(`Pietra ${removed.nome} rimossa dal bracciale`);
 }
 
+// ==============================================================================
+// LUXURY MOBILE NAVIGATION DRAWER CONTROLLER
+// ==============================================================================
+function toggleMobileMenu() {
+  const drawer = document.getElementById('mobileNavDrawer');
+  if (!drawer) return;
+  if (drawer.classList.contains('open')) {
+    closeMobileMenu();
+  } else {
+    openMobileMenu();
+  }
+}
+
+function openMobileMenu() {
+  const drawer = document.getElementById('mobileNavDrawer');
+  const backdrop = document.getElementById('mobileNavBackdrop');
+  const icon = document.getElementById('mobileMenuIcon');
+  if (!drawer) return;
+  drawer.classList.add('open');
+  if (backdrop) backdrop.classList.add('open');
+  if (icon) {
+    icon.classList.remove('fa-bars');
+    icon.classList.add('fa-xmark');
+  }
+  document.body.style.overflow = 'hidden';
+}
+
+function closeMobileMenu() {
+  const drawer = document.getElementById('mobileNavDrawer');
+  const backdrop = document.getElementById('mobileNavBackdrop');
+  const icon = document.getElementById('mobileMenuIcon');
+  if (!drawer) return;
+  drawer.classList.remove('open');
+  if (backdrop) backdrop.classList.remove('open');
+  if (icon) {
+    icon.classList.remove('fa-xmark');
+    icon.classList.add('fa-bars');
+  }
+  document.body.style.overflow = '';
+}
+
+// Close mobile menu on ESC
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    closeMobileMenu();
+  }
+});
+
 // Bind stone workshop functions to window
 window.onStoneSelectChange = onStoneSelectChange;
 window.selectStoneChip = selectStone;
@@ -1943,6 +1991,12 @@ window.confirmRemoveBraceletAndStones = confirmRemoveBraceletAndStones;
 window.confirmKeepStonesAsStandalone = confirmKeepStonesAsStandalone;
 window.removeSingleStoneFromCartItem = removeSingleStoneFromCartItem;
 window.getItemUnitPrice = getItemUnitPrice;
+
+// Bind mobile navigation functions to window
+window.toggleMobileMenu = toggleMobileMenu;
+window.openMobileMenu = openMobileMenu;
+window.closeMobileMenu = closeMobileMenu;
+
 
 
 

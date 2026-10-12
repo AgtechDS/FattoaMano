@@ -71,12 +71,86 @@
       <div class="header-actions">
         <button class="cart-trigger-btn" id="openCartBtn" aria-label="Apri Carrello">
           <i class="fa-solid fa-bag-shopping" style="color: var(--copper-light);"></i>
-          <span>Carrello</span>
+          <span class="cart-btn-label">Carrello</span>
           <span class="cart-badge" id="cartCountBadge">0</span>
+        </button>
+        <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Menu di Navigazione" onclick="toggleMobileMenu()">
+          <i class="fa-solid fa-bars" id="mobileMenuIcon"></i>
         </button>
       </div>
     </div>
   </header>
+
+  <!-- ============================================================================
+       MOBILE NAVIGATION DRAWER (#mobileNavDrawer)
+       ============================================================================ -->
+  <div class="mobile-nav-backdrop" id="mobileNavBackdrop" onclick="closeMobileMenu()"></div>
+  <aside class="mobile-nav-drawer" id="mobileNavDrawer" aria-label="Menu Mobile">
+    <div class="mobile-nav-header">
+      <div class="brand-wrapper">
+        <div class="brand-symbol" style="width: 38px; height: 38px;">
+          <i class="fa-solid fa-gem" style="color: #fff; font-size: 0.95rem;"></i>
+        </div>
+        <div class="brand-text-group">
+          <span class="brand-title" style="font-size: 1.35rem;">Fatto a Mano</span>
+          <span class="brand-subtitle" style="font-size: 0.55rem;">Atelier del Rame Puro</span>
+        </div>
+      </div>
+      <button class="mobile-nav-close-btn" id="closeMobileNavBtn" aria-label="Chiudi Menu" onclick="closeMobileMenu()">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <ul class="mobile-nav-links">
+      <li>
+        <a href="#prontaconsegna" class="mobile-nav-link" onclick="closeMobileMenu()">
+          <i class="fa-solid fa-bolt" style="color: var(--copper-light);"></i>
+          <span>Pronta Consegna</span>
+        </a>
+      </li>
+      <li>
+        <a href="#collezione" class="mobile-nav-link" onclick="closeMobileMenu()">
+          <i class="fa-solid fa-layer-group" style="color: var(--copper-light);"></i>
+          <span>Collezione Bracciali</span>
+        </a>
+      </li>
+      <li>
+        <a href="#bottega-pietre" class="mobile-nav-link" onclick="closeMobileMenu()">
+          <i class="fa-solid fa-gem" style="color: var(--copper-light);"></i>
+          <span>Bottega delle Pietre Didoni</span>
+        </a>
+      </li>
+      <li>
+        <a href="#filosofia" class="mobile-nav-link" onclick="closeMobileMenu()">
+          <i class="fa-solid fa-fire-burner" style="color: var(--copper-light);"></i>
+          <span>La Forgiatura</span>
+        </a>
+      </li>
+      <li>
+        <a href="#proprieta" class="mobile-nav-link" onclick="closeMobileMenu()">
+          <i class="fa-solid fa-atom" style="color: var(--copper-light);"></i>
+          <span>Proprietà del Rame</span>
+        </a>
+      </li>
+      <li>
+        <a href="#garanzia" class="mobile-nav-link" onclick="closeMobileMenu()">
+          <i class="fa-solid fa-shield-halved" style="color: var(--copper-light);"></i>
+          <span>Autenticità & Garanzia</span>
+        </a>
+      </li>
+    </ul>
+
+    <div class="mobile-nav-footer">
+      <div class="mobile-nav-shipping">
+        <i class="fa-solid fa-truck-fast" style="color: var(--copper-primary);"></i>
+        <span>Spedizione <strong>€6,00 tutta Italia</strong> (3/5 gg)</span>
+      </div>
+      <div class="mobile-nav-purity">
+        <i class="fa-solid fa-certificate" style="color: #38a169;"></i>
+        <span>100% Puro Rame 99.9% Forgiato a Mano</span>
+      </div>
+    </div>
+  </aside>
 
   <!-- ============================================================================
        HERO EDITORIAL SECTION
@@ -378,7 +452,7 @@
         </p>
       </div>
 
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem;">
+      <div class="method-steps-grid">
         <div style="background: var(--bg-card); padding: 2rem; border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
           <i class="fa-solid fa-hand-holding-hand" style="font-size: 2rem; color: var(--copper-light); margin-bottom: 1.25rem;"></i>
           <h3 style="font-family: var(--font-serif); font-size: 1.35rem; margin-bottom: 0.5rem;">Pezzo Unico Irripetibile</h3>
