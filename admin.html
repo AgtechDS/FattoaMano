@@ -108,11 +108,11 @@
       </div>
 
       <div class="admin-header-right">
-        <a href="index.html" target="_blank" class="btn-admin-secondary">
-          <i class="fa-solid fa-arrow-up-right-from-square"></i> Vedi Shop Live
+        <a href="index.html" target="_blank" class="btn-admin-secondary header-btn-shop" title="Vedi Shop Live">
+          <i class="fa-solid fa-arrow-up-right-from-square"></i> <span class="header-btn-text">Vedi Shop</span>
         </a>
-        <button class="btn-admin-danger" onclick="logoutAdmin()">
-          <i class="fa-solid fa-right-from-bracket"></i> Esci
+        <button class="btn-admin-danger header-btn-logout" onclick="logoutAdmin()" title="Disconnetti Sessione Admin">
+          <i class="fa-solid fa-right-from-bracket"></i> <span class="header-btn-text">Esci</span>
         </button>
       </div>
     </header>
@@ -440,33 +440,37 @@
   <!-- ============================================================================
        3. MODAL: AGGIUNGI / MODIFICA PRODOTTO
        ============================================================================ -->
-  <div class="admin-modal-backdrop" id="productModal" style="display: none;">
+  <div class="admin-modal-backdrop" id="productModal" style="display: none;" onclick="handleBackdropClick(event)">
     <div class="admin-modal-card">
       <div class="modal-head">
         <h3 id="productModalTitle"><i class="fa-solid fa-gem" style="color: var(--copper-light);"></i> Nuova Opera in Rame</h3>
-        <button class="modal-close-btn" onclick="closeProductModal()"><i class="fa-solid fa-xmark"></i></button>
+        <button type="button" class="modal-close-btn" onclick="closeProductModal()" aria-label="Chiudi finestra"><i class="fa-solid fa-xmark"></i></button>
       </div>
 
-      <form id="productEditForm" onsubmit="handleProductFormSubmit(event)">
+      <form id="productEditForm" class="modal-edit-form" onsubmit="handleProductFormSubmit(event)">
         <input type="hidden" id="editProductId">
 
         <div class="modal-body-grid">
           <!-- Left: Photo Upload & Preview -->
           <div class="photo-upload-section">
             <label class="field-label">Foto dell'Opera *</label>
-            <div class="drop-zone" id="imageDropZone" onclick="document.getElementById('productImageFileInput').click()">
-              <input type="file" id="productImageFileInput" accept="image/jpeg,image/png,image/webp" style="display: none;" onchange="handleFileSelect(event)">
+            <label for="productImageFileInput" class="drop-zone" id="imageDropZone">
+              <input type="file" id="productImageFileInput" accept="image/jpeg,image/png,image/webp" style="position: absolute; opacity: 0; width: 1px; height: 1px; pointer-events: none;" onchange="handleFileSelect(event)">
               <div id="dropZoneContent">
-                <i class="fa-solid fa-cloud-arrow-up drop-icon"></i>
-                <div class="drop-title">Trascina o clicca per caricare</div>
-                <div class="drop-hint">JPG, PNG o WEBP (massimo 10MB)</div>
+                <i class="fa-solid fa-camera-retro drop-icon"></i>
+                <div class="drop-title">Scatta o carica foto</div>
+                <div class="drop-hint">Fotocamera smartphone o JPG/PNG (auto-ottimizzata)</div>
               </div>
               <img id="imagePreview" class="photo-preview-img" style="display: none;" alt="Anteprima">
-            </div>
+            </label>
+
+            <button type="button" class="btn-clear-photo" id="btnClearPhoto" style="display: none;" onclick="clearSelectedPhoto()">
+              <i class="fa-solid fa-trash-can"></i> Rimuovi foto
+            </button>
 
             <div class="form-field" style="margin-top: 0.75rem;">
               <label for="editImageUrl" style="font-size: 0.75rem;">Oppure inserisci URL immagine esistente:</label>
-              <input type="text" id="editImageUrl" class="admin-input" placeholder="assets/... o https://...">
+              <input type="text" id="editImageUrl" class="admin-input" placeholder="assets/... o https://..." oninput="handleManualImageUrlInput(this.value)">
             </div>
           </div>
 
@@ -489,7 +493,7 @@
 
               <div class="form-field" style="flex: 1;">
                 <label for="editPrice">Prezzo (€) *</label>
-                <input type="number" step="0.5" min="1" id="editPrice" class="admin-input" required placeholder="30.00">
+                <input type="number" step="0.5" min="1" id="editPrice" class="admin-input" required placeholder="30.00" inputmode="decimal">
               </div>
             </div>
 

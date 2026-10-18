@@ -2331,7 +2331,7 @@ body {
 }
 
 /* ==============================================================================
-   BOTTEGA DELLE PIETRE & INCASTONATURA ARTIGIANALE (#bottega-pietre)
+   BOTTEGA DELLE PIETRE & INCASTONATURA FATTO A MANO (#bottega-pietre)
    DARK LUXURY ATELIER SYSTEM • EXCLUSIVE COPPER PALETTE
    ============================================================================== */
 .bottega-pietre-section {
@@ -4463,6 +4463,850 @@ body {
   }
   .shop-filter-pills-row {
     flex-wrap: nowrap;
+  }
+}
+
+/* ==============================================================================
+   CINEMATOGRAPHIC SITE DESIGN — BRANDING TECNICA INTRECCIO
+   ANAMORPHIC CHIAROSCURO • CHARCOAL EMBER GLOW • COPPER DUST SYSTEM
+   ============================================================================== */
+
+/* Section Framing */
+.cinematic-technique-section {
+  position: relative;
+  padding: 4.5rem 0;
+  background: radial-gradient(ellipse at 50% 0%, rgba(200, 125, 85, 0.12) 0%, rgba(10, 10, 12, 0.98) 70%);
+  border-top: 1px solid rgba(200, 125, 85, 0.15);
+  border-bottom: 1px solid rgba(200, 125, 85, 0.15);
+  overflow: hidden;
+}
+
+.cinematic-card-wrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+  position: relative;
+}
+
+/* Interactive Gateway Component (Acts as button / trigger) */
+.cinematic-card {
+  display: grid;
+  grid-template-columns: 1.15fr 1fr;
+  background: linear-gradient(145deg, #121217 0%, #0a0a0e 100%);
+  border: 1px solid rgba(200, 125, 85, 0.28);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.8), 0 0 35px rgba(200, 125, 85, 0.15);
+  overflow: hidden;
+  position: relative;
+  cursor: pointer;
+  outline: none;
+  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.cinematic-card:hover,
+.cinematic-card:focus-visible {
+  transform: translateY(-4px);
+  border-color: rgba(230, 152, 112, 0.65);
+  box-shadow: 0 32px 80px rgba(0, 0, 0, 0.9), 0 0 55px rgba(200, 125, 85, 0.35);
+}
+
+.cinematic-card:focus-visible {
+  outline: 2px solid var(--copper-light);
+  outline-offset: 4px;
+}
+
+/* Cinematic Viewfinder HUD Overlay */
+.cinematic-hud {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 4;
+}
+
+.hud-corner {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border-color: rgba(200, 125, 85, 0.45);
+}
+
+.hud-corner.top-left {
+  top: 14px;
+  left: 14px;
+  border-top: 2px solid rgba(200, 125, 85, 0.45);
+  border-left: 2px solid rgba(200, 125, 85, 0.45);
+}
+
+.hud-corner.top-right {
+  top: 14px;
+  right: 14px;
+  border-top: 2px solid rgba(200, 125, 85, 0.45);
+  border-right: 2px solid rgba(200, 125, 85, 0.45);
+}
+
+.hud-corner.bottom-left {
+  bottom: 14px;
+  left: 14px;
+  border-bottom: 2px solid rgba(200, 125, 85, 0.45);
+  border-left: 2px solid rgba(200, 125, 85, 0.45);
+}
+
+.hud-corner.bottom-right {
+  bottom: 14px;
+  right: 14px;
+  border-bottom: 2px solid rgba(200, 125, 85, 0.45);
+  border-right: 2px solid rgba(200, 125, 85, 0.45);
+}
+
+.hud-tag {
+  position: absolute;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.14em;
+  color: var(--copper-light);
+  text-transform: uppercase;
+  background: rgba(10, 10, 14, 0.7);
+  padding: 0.25rem 0.55rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(200, 125, 85, 0.2);
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.hud-rec {
+  top: 16px;
+  left: 36px;
+}
+
+.hud-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #e53e3e;
+  box-shadow: 0 0 8px #e53e3e;
+  animation: hudBlink 1.4s infinite ease-in-out;
+}
+
+@keyframes hudBlink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+.hud-spec {
+  bottom: 16px;
+  left: 36px;
+}
+
+/* Ambient Floating Ember & Copper Dust Micro-Particles */
+.cinematic-dust-field {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+  overflow: hidden;
+}
+
+.dust-sparkle {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #ffdec8 0%, #c87d55 70%, transparent 100%);
+  box-shadow: 0 0 6px rgba(230, 152, 112, 0.85);
+  animation: floatCopperDust 7s infinite ease-in-out;
+}
+
+.spark-1 { left: 15%; top: 75%; animation-duration: 6.2s; animation-delay: 0s; }
+.spark-2 { left: 32%; top: 85%; animation-duration: 7.8s; animation-delay: 1.5s; width: 4px; height: 4px; }
+.spark-3 { left: 45%; top: 60%; animation-duration: 5.5s; animation-delay: 0.8s; }
+.spark-4 { left: 68%; top: 80%; animation-duration: 8.5s; animation-delay: 2.2s; width: 4px; height: 4px; }
+.spark-5 { left: 82%; top: 70%; animation-duration: 6.8s; animation-delay: 3s; }
+.spark-6 { left: 24%; top: 40%; animation-duration: 9.1s; animation-delay: 1.1s; }
+
+@keyframes floatCopperDust {
+  0% {
+    transform: translateY(0) translateX(0) scale(0.6);
+    opacity: 0;
+  }
+  30% {
+    opacity: 0.9;
+  }
+  70% {
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateY(-80px) translateX(25px) scale(1.1);
+    opacity: 0;
+  }
+}
+
+/* Media Container with Anamorphic Chiaroscuro */
+.cinematic-media-container {
+  position: relative;
+  overflow: hidden;
+  min-height: 440px;
+  background: #08080a;
+}
+
+.cinematic-media-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.85s cubic-bezier(0.16, 1, 0.3, 1),
+              filter 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+  filter: contrast(108%) brightness(96%);
+}
+
+.cinematic-card:hover .cinematic-media-img {
+  transform: scale(1.06);
+  filter: contrast(112%) brightness(102%);
+}
+
+.cinematic-vignette-overlay {
+  position: absolute;
+  inset: 0;
+  background: 
+    linear-gradient(to right, transparent 50%, rgba(18, 18, 23, 0.95) 100%),
+    linear-gradient(to top, rgba(10, 10, 14, 0.85) 0%, transparent 40%),
+    radial-gradient(circle at center, transparent 35%, rgba(8, 8, 10, 0.65) 100%);
+  pointer-events: none;
+}
+
+.cinematic-lens-flare {
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(230, 152, 112, 0.18), rgba(255, 235, 220, 0.35), transparent);
+  transform: skewX(-25deg);
+  pointer-events: none;
+  transition: left 0.75s ease;
+}
+
+.cinematic-card:hover .cinematic-lens-flare {
+  left: 200%;
+}
+
+/* Editorial Content Body */
+.cinematic-card-body {
+  padding: 3rem 2.75rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+  z-index: 3;
+}
+
+.cinematic-kicker-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.85rem;
+  background: rgba(200, 125, 85, 0.12);
+  border: 1px solid rgba(200, 125, 85, 0.3);
+  border-radius: var(--radius-full);
+  font-size: 0.74rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--copper-light);
+  margin-bottom: 1.25rem;
+  width: fit-content;
+}
+
+.cinematic-card-title {
+  font-family: var(--font-serif);
+  font-size: 2.35rem;
+  line-height: 1.22;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+}
+
+.cinematic-card-title em {
+  font-style: italic;
+  color: var(--copper-light);
+  background: linear-gradient(135deg, #f5efe6 20%, #e69870 60%, #c87d55 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.cinematic-card-desc {
+  font-size: 0.96rem;
+  color: var(--text-secondary);
+  line-height: 1.75;
+  margin-bottom: 1.85rem;
+}
+
+/* Specification Chips Row */
+.cinematic-specs-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+  margin-bottom: 2rem;
+  padding-bottom: 1.75rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.cinematic-spec-chip {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  background: rgba(255, 255, 255, 0.02);
+  padding: 0.65rem 0.75rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(200, 125, 85, 0.15);
+}
+
+.cinematic-spec-chip i {
+  color: var(--copper-primary);
+  font-size: 0.95rem;
+  margin-top: 2px;
+}
+
+.cinematic-spec-chip strong {
+  display: block;
+  font-size: 0.82rem;
+  color: var(--text-primary);
+  line-height: 1.3;
+}
+
+.cinematic-spec-chip span {
+  display: block;
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
+/* Interactive Card Actions */
+.cinematic-card-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.cinematic-play-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.play-icon-glow {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: var(--copper-gradient);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 1.1rem;
+  box-shadow: 0 0 20px rgba(200, 125, 85, 0.45);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  flex-shrink: 0;
+}
+
+.cinematic-card:hover .play-icon-glow {
+  transform: scale(1.12);
+  box-shadow: 0 0 30px rgba(230, 152, 112, 0.7);
+}
+
+.play-headline {
+  display: block;
+  font-weight: 600;
+  font-size: 0.94rem;
+  color: var(--text-primary);
+  transition: color 0.2s ease;
+}
+
+.cinematic-card:hover .play-headline {
+  color: var(--copper-light);
+}
+
+.play-subline {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.cinematic-direct-gallery-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.7rem 1.15rem;
+  border-radius: var(--radius-full);
+  background: rgba(200, 125, 85, 0.12);
+  border: 1px solid rgba(200, 125, 85, 0.35);
+  color: var(--copper-light);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.cinematic-direct-gallery-btn:hover {
+  background: var(--copper-primary);
+  color: #fff;
+  border-color: var(--copper-light);
+  transform: translateX(3px);
+  box-shadow: 0 4px 16px rgba(200, 125, 85, 0.35);
+}
+
+/* ==============================================================================
+   CINEMATIC TECHNIQUE MODAL SYSTEM
+   ============================================================================== */
+.cinematic-modal-backdrop {
+  z-index: 10000;
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  background: rgba(6, 6, 8, 0.88);
+}
+
+.cinematic-modal-container {
+  max-width: 1080px;
+  width: 95%;
+  max-height: 92vh;
+  background: linear-gradient(175deg, #121218 0%, #08080b 100%);
+  border: 1px solid rgba(200, 125, 85, 0.35);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 32px 100px rgba(0, 0, 0, 0.95), 0 0 60px rgba(200, 125, 85, 0.25);
+  padding: 0;
+  overflow-y: auto;
+  position: relative;
+  animation: cinematicFadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes cinematicFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Modal Top Bar */
+.cinematic-modal-top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.75rem;
+  background: rgba(10, 10, 14, 0.9);
+  border-bottom: 1px solid rgba(200, 125, 85, 0.2);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  backdrop-filter: blur(12px);
+}
+
+.cinematic-tape-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  color: var(--copper-light);
+}
+
+.tape-rec-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #e53e3e;
+  box-shadow: 0 0 10px #e53e3e;
+  animation: hudBlink 1.4s infinite ease-in-out;
+}
+
+.cinematic-meta-tags {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.meta-tag {
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  padding: 0.2rem 0.55rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(200, 125, 85, 0.25);
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+}
+
+.cinematic-close-btn {
+  position: static;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(200, 125, 85, 0.3);
+  color: var(--text-primary);
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cinematic-close-btn:hover {
+  background: var(--copper-primary);
+  color: #fff;
+  transform: rotate(90deg);
+}
+
+/* Master Stage Frame */
+.cinematic-stage {
+  padding: 1.5rem 1.75rem 0 1.75rem;
+}
+
+.cinematic-stage-frame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  max-height: 480px;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1px solid rgba(200, 125, 85, 0.3);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.8);
+  background: #08080a;
+}
+
+.cinematic-stage-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.cinematic-stage-ember-overlay {
+  position: absolute;
+  inset: 0;
+  background: 
+    radial-gradient(circle at 60% 70%, rgba(200, 125, 85, 0.25) 0%, transparent 60%),
+    linear-gradient(to top, rgba(8, 8, 10, 0.85) 0%, transparent 40%),
+    radial-gradient(ellipse at center, transparent 40%, rgba(8, 8, 10, 0.65) 100%);
+  pointer-events: none;
+}
+
+.cinematic-stage-dust-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.floating-speck {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fff 0%, #e69870 60%, transparent 100%);
+  box-shadow: 0 0 10px rgba(230, 152, 112, 0.9);
+  animation: floatCopperDust 6s infinite ease-in-out;
+}
+
+.floating-speck.s1 { width: 4px; height: 4px; left: 25%; top: 70%; animation-duration: 5.5s; }
+.floating-speck.s2 { width: 5px; height: 5px; left: 55%; top: 80%; animation-duration: 7s; animation-delay: 1s; }
+.floating-speck.s3 { width: 3px; height: 3px; left: 75%; top: 65%; animation-duration: 6.2s; animation-delay: 2s; }
+.floating-speck.s4 { width: 4px; height: 4px; left: 40%; top: 55%; animation-duration: 8s; animation-delay: 0.5s; }
+
+.cinematic-lens-hud {
+  position: absolute;
+  bottom: 14px;
+  right: 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  color: rgba(255, 230, 215, 0.8);
+  background: rgba(10, 10, 14, 0.65);
+  padding: 0.35rem 0.65rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(200, 125, 85, 0.25);
+  pointer-events: none;
+}
+
+/* Interactive Hotspots */
+.cinematic-hotspot-group {
+  position: absolute;
+  inset: 0;
+}
+
+.cinematic-hotspot {
+  position: absolute;
+  width: 26px;
+  height: 26px;
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+}
+
+.hotspot-pip {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: var(--copper-gradient);
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 16px rgba(200, 125, 85, 0.85);
+  z-index: 2;
+  transition: transform 0.2s ease;
+}
+
+.hotspot-pulse {
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  border: 2px solid var(--copper-light);
+  animation: hotspotWave 2s infinite ease-out;
+  pointer-events: none;
+}
+
+@keyframes hotspotWave {
+  0% { transform: scale(0.8); opacity: 1; }
+  100% { transform: scale(1.8); opacity: 0; }
+}
+
+.cinematic-hotspot:hover .hotspot-pip {
+  transform: scale(1.2);
+}
+
+.hotspot-tooltip {
+  position: absolute;
+  bottom: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%) translateY(6px);
+  width: 240px;
+  background: rgba(18, 18, 24, 0.95);
+  border: 1px solid rgba(200, 125, 85, 0.4);
+  border-radius: var(--radius-sm);
+  padding: 0.65rem 0.85rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 10;
+}
+
+.hotspot-tooltip strong {
+  display: block;
+  font-size: 0.82rem;
+  color: var(--copper-light);
+  margin-bottom: 2px;
+}
+
+.hotspot-tooltip p {
+  font-size: 0.74rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+  margin: 0;
+}
+
+.cinematic-hotspot:hover .hotspot-tooltip {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* Modal Body */
+.cinematic-modal-body {
+  padding: 2rem 2.25rem 2.5rem 2.25rem;
+}
+
+.cinematic-chapter {
+  display: inline-block;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  color: var(--copper-light);
+  text-transform: uppercase;
+  margin-bottom: 0.4rem;
+}
+
+.cinematic-modal-headline {
+  font-family: var(--font-serif);
+  font-size: 2.2rem;
+  line-height: 1.25;
+  color: var(--text-primary);
+  margin-bottom: 0.85rem;
+}
+
+.cinematic-modal-headline em {
+  font-style: italic;
+  color: var(--copper-light);
+}
+
+.cinematic-modal-lead {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  line-height: 1.8;
+  max-width: 900px;
+  margin-bottom: 2.25rem;
+}
+
+/* 3-Phase Process Grid */
+.cinematic-process-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.25rem;
+  margin-bottom: 2.25rem;
+}
+
+.process-card {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(200, 125, 85, 0.2);
+  border-radius: var(--radius-md);
+  padding: 1.35rem 1.25rem;
+  position: relative;
+  transition: border-color 0.3s ease, transform 0.3s ease;
+}
+
+.process-card:hover {
+  border-color: rgba(230, 152, 112, 0.5);
+  transform: translateY(-2px);
+}
+
+.process-number {
+  font-family: var(--font-serif);
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--copper-light);
+  margin-bottom: 0.5rem;
+  line-height: 1;
+}
+
+.process-card h4 {
+  font-size: 1.05rem;
+  color: var(--text-primary);
+  margin-bottom: 0.45rem;
+}
+
+.process-card p {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* Modal Bottom CTA Box */
+.cinematic-modal-cta-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  background: linear-gradient(135deg, rgba(200, 125, 85, 0.12) 0%, rgba(25, 20, 24, 0.6) 100%);
+  border: 1px solid rgba(200, 125, 85, 0.35);
+  border-radius: var(--radius-md);
+  padding: 1.5rem 1.75rem;
+  flex-wrap: wrap;
+}
+
+.cta-box-info h4 {
+  font-family: var(--font-serif);
+  font-size: 1.35rem;
+  color: var(--text-primary);
+  margin-bottom: 0.25rem;
+}
+
+.cta-box-info p {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.btn-cinematic-gateway {
+  padding: 0.85rem 1.65rem;
+  font-size: 0.95rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  border-radius: var(--radius-full);
+  box-shadow: 0 8px 24px rgba(200, 125, 85, 0.35);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+/* Responsive Media Queries for Cinematic System */
+@media (max-width: 992px) {
+  .cinematic-card {
+    grid-template-columns: 1fr;
+  }
+  .cinematic-media-container {
+    min-height: 320px;
+  }
+  .cinematic-vignette-overlay {
+    background: 
+      linear-gradient(to top, rgba(18, 18, 23, 0.95) 0%, transparent 50%),
+      radial-gradient(circle at center, transparent 35%, rgba(8, 8, 10, 0.65) 100%);
+  }
+  .cinematic-card-body {
+    padding: 2rem 1.75rem;
+  }
+  .cinematic-process-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .cinematic-technique-section {
+    padding: 3rem 0;
+  }
+  .cinematic-card-title {
+    font-size: 1.85rem;
+  }
+  .cinematic-specs-row {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+  .cinematic-card-actions {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .cinematic-direct-gallery-btn {
+    width: 100%;
+    justify-content: center;
+    min-height: 48px;
+  }
+  .cinematic-meta-tags {
+    display: none;
+  }
+  .cinematic-stage {
+    padding: 1rem 1rem 0 1rem;
+  }
+  .cinematic-stage-frame {
+    aspect-ratio: 4 / 3;
+  }
+  .cinematic-modal-body {
+    padding: 1.5rem 1.25rem 2rem 1.25rem;
+  }
+  .cinematic-modal-headline {
+    font-size: 1.65rem;
+  }
+  .cinematic-modal-cta-box {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 1.25rem;
+  }
+  .btn-cinematic-gateway {
+    width: 100%;
+    justify-content: center;
+    min-height: 48px;
+  }
+  .hotspot-tooltip {
+    width: 190px;
+    font-size: 0.7rem;
   }
 }
 

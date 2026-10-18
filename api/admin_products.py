@@ -162,7 +162,14 @@ class handler(BaseHTTPRequestHandler):
             return
 
         title = str(item.get("title", "")).strip()
-        price = float(item.get("price", 30.0))
+        raw_price = item.get("price")
+        try:
+            if isinstance(raw_price, str):
+                raw_price = raw_price.replace(",", ".").strip()
+            price = float(raw_price) if raw_price is not None else 30.0
+        except (ValueError, TypeError):
+            price = 30.0
+
         if not title:
             self.send_json(400, {"error": "Il titolo dell'opera è obbligatorio"})
             return
@@ -246,6 +253,15 @@ class handler(BaseHTTPRequestHandler):
         if not prod_id:
             self.send_json(400, {"error": "ID prodotto mancante"})
             return
+
+        if "price" in item and item["price"] is not None:
+            try:
+                raw_p = item["price"]
+                if isinstance(raw_p, str):
+                    raw_p = raw_p.replace(",", ".").strip()
+                item["price"] = float(raw_p)
+            except (ValueError, TypeError):
+                pass
 
         # Se c'è una nuova immagine caricata
         if "image_base64" in item and item["image_base64"]:

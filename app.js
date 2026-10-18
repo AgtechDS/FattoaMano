@@ -999,8 +999,17 @@ function setupEventListeners() {
       closeProductModal();
       closePrivacyModal();
       closeCheckoutModal();
+      closeTechniqueModal();
     }
   });
+
+  // Cinematic Technique Modal Backdrop Click
+  const techniqueModalBackdrop = document.getElementById('techniqueModalBackdrop');
+  if (techniqueModalBackdrop) {
+    techniqueModalBackdrop.addEventListener('click', (e) => {
+      if (e.target === techniqueModalBackdrop) closeTechniqueModal();
+    });
+  }
 
   // Pre-checkout Shipping Modal triggers
   if (stripeCheckoutBtn) {
@@ -1051,7 +1060,7 @@ window.closeCart = closeCart;
 window.addToCartById = addToCartById;
 
 // ==============================================================================
-// BOTTEGA DELLE PIETRE & INCASTONATURA ARTIGIANALE (DIDONI STORE)
+// BOTTEGA DELLE PIETRE & INCASTONATURA FATTO A MANO (DIDONI STORE)
 // ==============================================================================
 
 const DEFAULT_STONES_FALLBACK = [
@@ -1341,7 +1350,7 @@ function selectStone(stoneId) {
       supplierNoteEl.innerHTML = `Costo fornitore Didoni: <strong>€${Number(stone.prezzo_fornitore).toFixed(2)}</strong> • Tariffa standard fissa <strong>€10.00</strong> (include minerale selezionato e incastonatura manuale in rame).`;
     } else {
       const extra = (stone.prezzo_vendita - stone.prezzo_fornitore).toFixed(2);
-      supplierNoteEl.innerHTML = `Costo minerale grezzo fornitore Didoni: <strong>€${Number(stone.prezzo_fornitore).toFixed(2)}</strong> + <strong>€${extra}</strong> (lavorazione artigianale ad incudine, fascetta di sicurezza in rame e garanzia).`;
+      supplierNoteEl.innerHTML = `Costo minerale grezzo fornitore Didoni: <strong>€${Number(stone.prezzo_fornitore).toFixed(2)}</strong> + <strong>€${extra}</strong> (forgiatura fatta a mano ad incudine, fascetta di sicurezza in rame e garanzia).`;
     }
   }
 
@@ -2267,7 +2276,7 @@ function renderAtelierShopFullGrid() {
 
           <div class="stone-compatible-box">
             <div class="stone-compatible-title">
-              <i class="fa-solid fa-shield-halved"></i> Montatura artigianale per:
+              <i class="fa-solid fa-shield-halved"></i> Montatura fatta a mano per:
             </div>
             <div class="stone-compatible-models">
               <span class="compatible-tag">3 Filamenti</span>
@@ -2381,6 +2390,74 @@ window.resetAllStoneFilters = resetAllStoneFilters;
 window.renderAtelierShopFullGrid = renderAtelierShopFullGrid;
 window.addStoneFromShopCard = addStoneFromShopCard;
 window.onShopCardTargetChange = onShopCardTargetChange;
+
+// ==============================================================================
+// CINEMATIC TECHNIQUE MODAL & GALLERY JUMP CONTROLLER
+// ==============================================================================
+function openTechniqueModal(techniqueId = 'intrecciati') {
+  const backdrop = document.getElementById('techniqueModalBackdrop');
+  if (!backdrop) return;
+  backdrop.classList.add('open');
+  backdrop.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+
+  const card = document.getElementById('cinematicTechniqueCard');
+  if (card) card.setAttribute('aria-expanded', 'true');
+}
+
+function closeTechniqueModal() {
+  const backdrop = document.getElementById('techniqueModalBackdrop');
+  if (!backdrop) return;
+  backdrop.classList.remove('open');
+  backdrop.style.display = 'none';
+  document.body.style.overflow = '';
+
+  const card = document.getElementById('cinematicTechniqueCard');
+  if (card) card.setAttribute('aria-expanded', 'false');
+}
+
+function handleTechniqueCardKey(event) {
+  if (event.key === 'Enter' || event.key === ' ') {
+    event.preventDefault();
+    openTechniqueModal('intrecciati');
+  }
+}
+
+function goToDedicatedPhotoGallery(category = 'Intrecciati', event = null) {
+  if (event) {
+    event.stopPropagation();
+  }
+  closeTechniqueModal();
+
+  // 1. Aggiorna stato filtro categoria
+  state.activeFilter = category;
+
+  // 2. Aggiorna classe active nei pulsanti filtro della sezione #collezione
+  const catFiltersEl = document.getElementById('categoryFilters');
+  if (catFiltersEl) {
+    catFiltersEl.querySelectorAll('.filter-btn').forEach(btn => {
+      const match = btn.dataset.filter === category;
+      btn.classList.toggle('active', match);
+    });
+  }
+
+  // 3. Renderizza la griglia filtrata con i pezzi della tecnica richiesta
+  renderProducts();
+
+  // 4. Scroll fluido cinematografico verso la sezione dedicata
+  const targetSection = document.getElementById('collezione');
+  if (targetSection) {
+    targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  // 5. Toast elegante
+  showToast(`Galleria Fotografica attivata: ${category}`);
+}
+
+window.openTechniqueModal = openTechniqueModal;
+window.closeTechniqueModal = closeTechniqueModal;
+window.handleTechniqueCardKey = handleTechniqueCardKey;
+window.goToDedicatedPhotoGallery = goToDedicatedPhotoGallery;
 
 
 

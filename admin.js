@@ -361,28 +361,38 @@ async function toggleProntaConsegna(productId, currentVal) {
 // ==============================================================================
 // 5. PRODUCT MODAL & IMAGE UPLOAD
 // ==============================================================================
+// ==============================================================================
+// 5. PRODUCT MODAL & IMAGE UPLOAD (WITH CLIENT-SIDE CANVAS COMPRESSION)
+// ==============================================================================
 function openProductModal(prod = null) {
   const modal = document.getElementById('productModal');
   const titleEl = document.getElementById('productModalTitle');
   const form = document.getElementById('productEditForm');
+  const btnClearPhoto = document.getElementById('btnClearPhoto');
+  const fileInput = document.getElementById('productImageFileInput');
 
   adminState.selectedImageBase64 = null;
   adminState.selectedImageFilename = null;
+  if (fileInput) fileInput.value = '';
+  if (btnClearPhoto) btnClearPhoto.style.display = 'none';
 
   // Reset anteprima
   const preview = document.getElementById('imagePreview');
   const dropContent = document.getElementById('dropZoneContent');
-  preview.style.display = 'none';
-  dropContent.style.display = 'flex';
+  if (preview) {
+    preview.src = '';
+    preview.style.display = 'none';
+  }
+  if (dropContent) dropContent.style.display = 'flex';
 
   if (prod) {
-    titleEl.innerHTML = `<i class="fa-solid fa-pen-to-square" style="color: var(--copper-light);"></i> Modifica: ${prod.title}`;
-    document.getElementById('editProductId').value = prod.id;
+    titleEl.innerHTML = `<i class="fa-solid fa-pen-to-square" style="color: var(--copper-light);"></i> Modifica: ${prod.title || 'Opera'}`;
+    document.getElementById('editProductId').value = prod.id || '';
     document.getElementById('editTitle').value = prod.title || '';
     document.getElementById('editCategory').value = prod.category || 'Intrecciati';
-    document.getElementById('editPrice').value = Number(prod.price || 30.0);
+    document.getElementById('editPrice').value = prod.price !== undefined ? Number(prod.price).toFixed(2) : '30.00';
     document.getElementById('editProntaConsegna').checked = Boolean(prod.pronta_consegna);
-    document.getElementById('editStockQty').value = prod.stock_qty || 1;
+    document.getElementById('editStockQty').value = prod.stock_qty !== undefined ? prod.stock_qty : 1;
     document.getElementById('editDescription').value = prod.description || '';
     document.getElementById('editDetails').value = prod.details || '';
     document.getElementById('editImageUrl').value = prod.image_url || '';
@@ -391,22 +401,82 @@ function openProductModal(prod = null) {
       preview.src = prod.image_url;
       preview.style.display = 'block';
       dropContent.style.display = 'none';
+      if (btnClearPhoto) btnClearPhoto.style.display = 'inline-flex';
     }
   } else {
     titleEl.innerHTML = `<i class="fa-solid fa-gem" style="color: var(--copper-light);"></i> Nuova Opera in Rame`;
-    form.reset();
+    if (form) form.reset();
     document.getElementById('editProductId').value = '';
+    document.getElementById('editTitle').value = '';
     document.getElementById('editPrice').value = '30.00';
     document.getElementById('editStockQty').value = '1';
     document.getElementById('editCategory').value = 'Intrecciati';
     document.getElementById('editProntaConsegna').checked = false;
+    document.getElementById('editDescription').value = '';
+    document.getElementById('editDetails').value = '';
+    document.getElementById('editImageUrl').value = '';
   }
 
   modal.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
 }
 
 function closeProductModal() {
-  document.getElementById('productModal').style.display = 'none';
+  const modal = document.getElementById('productModal');
+  if (modal) modal.style.display = 'none';
+  document.body.style.overflow = '';
+}
+
+function handleBackdropClick(event) {
+  if (event && event.target && event.target.id === 'productModal') {
+    closeProductModal();
+  }
+}
+
+function clearSelectedPhoto() {
+  adminState.selectedImageBase64 = null;
+  adminState.selectedImageFilename = null;
+
+  const preview = document.getElementById('imagePreview');
+  const dropContent = document.getElementById('dropZoneContent');
+  const fileInput = document.getElementById('productImageFileInput');
+  const urlInput = document.getElementById('editImageUrl');
+  const btnClear = document.getElementById('btnClearPhoto');
+
+  if (preview) {
+    preview.src = '';
+    preview.style.display = 'none';
+  }
+  if (dropContent) dropContent.style.display = 'flex';
+  if (fileInput) fileInput.value = '';
+  if (urlInput) urlInput.value = '';
+  if (btnClear) btnClear.style.display = 'none';
+
+  showToast('Foto rimossa');
+}
+
+function handleManualImageUrlInput(url) {
+  const preview = document.getElementById('imagePreview');
+  const dropContent = document.getElementById('dropZoneContent');
+  const btnClear = document.getElementById('btnClearPhoto');
+  const trimmed = (url || '').trim();
+
+  if (trimmed) {
+    adminState.selectedImageBase64 = null;
+    adminState.selectedImageFilename = null;
+    if (preview) {
+      preview.src = trimmed;
+      preview.style.display = 'block';
+    }
+    if (dropContent) dropContent.style.display = 'none';
+    if (btnClear) btnClear.style.display = 'inline-flex';
+  } else {
+    if (!adminState.selectedImageBase64) {
+      if (preview) preview.style.display = 'none';
+      if (dropContent) dropContent.style.display = 'flex';
+      if (btnClear) btnClear.style.display = 'none';
+    }
+  }
 }
 
 function editProduct(productId) {
@@ -451,38 +521,108 @@ function handleFileSelect(event) {
   }
 }
 
+/**
+ * Ridimensiona e comprime via Canvas prima dell'upload.
+ * Elimina alla radice l'errore HTTP 413 (Payload Too Large) di Vercel
+ * e consente scatti diretti da smartphone (5-15MB) senza blocchi.
+ */
 function processSelectedFile(file) {
-  if (!file.type.startsWith('image/')) {
+  if (!file || !file.type.startsWith('image/')) {
     showToast('Carica solo file immagine (JPG, PNG, WEBP)', 'error');
     return;
   }
 
-  adminState.selectedImageFilename = file.name;
+  adminState.selectedImageFilename = file.name || 'foto_opera.jpg';
+  showToast('Ottimizzazione foto in corso...', 'info');
+
   const reader = new FileReader();
   reader.onload = (e) => {
-    adminState.selectedImageBase64 = e.target.result;
-    const preview = document.getElementById('imagePreview');
-    const dropContent = document.getElementById('dropZoneContent');
-    preview.src = e.target.result;
-    preview.style.display = 'block';
-    dropContent.style.display = 'none';
-    showToast(`Foto caricata: ${file.name}`);
+    const img = new Image();
+    img.onload = () => {
+      // Limite dimensionale max 1600px sul lato maggiore
+      const MAX_DIM = 1600;
+      let width = img.width;
+      let height = img.height;
+
+      if (width > MAX_DIM || height > MAX_DIM) {
+        if (width > height) {
+          height = Math.round((height * MAX_DIM) / width);
+          width = MAX_DIM;
+        } else {
+          width = Math.round((width * MAX_DIM) / height);
+          height = MAX_DIM;
+        }
+      }
+
+      const canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, width, height);
+
+      // Comprimi in JPEG alta definizione (qualità 0.85, tipicamente 250-450KB)
+      const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.85);
+      adminState.selectedImageBase64 = compressedDataUrl;
+
+      const preview = document.getElementById('imagePreview');
+      const dropContent = document.getElementById('dropZoneContent');
+      const btnClear = document.getElementById('btnClearPhoto');
+      const urlInput = document.getElementById('editImageUrl');
+
+      if (urlInput) urlInput.value = '';
+      if (preview) {
+        preview.src = compressedDataUrl;
+        preview.style.display = 'block';
+      }
+      if (dropContent) dropContent.style.display = 'none';
+      if (btnClear) btnClear.style.display = 'inline-flex';
+
+      const approxKb = Math.round((compressedDataUrl.length * 3 / 4) / 1024);
+      showToast(`Foto ottimizzata (${width}x${height}px, ${approxKb}KB)`, 'success');
+    };
+
+    img.onerror = () => {
+      showToast('Errore lettura immagine', 'error');
+    };
+
+    img.src = e.target.result;
   };
+
+  reader.onerror = () => {
+    showToast('Errore lettura file dal dispositivo', 'error');
+  };
+
   reader.readAsDataURL(file);
 }
 
 async function handleProductFormSubmit(event) {
-  event.preventDefault();
+  if (event) event.preventDefault();
 
   const id = document.getElementById('editProductId').value.trim();
   const title = document.getElementById('editTitle').value.trim();
   const category = document.getElementById('editCategory').value;
-  const price = parseFloat(document.getElementById('editPrice').value);
+  const rawPrice = document.getElementById('editPrice').value;
   const pronta = document.getElementById('editProntaConsegna').checked;
   const stockQty = parseInt(document.getElementById('editStockQty').value, 10) || 1;
   const description = document.getElementById('editDescription').value.trim();
   const details = document.getElementById('editDetails').value.trim();
   const manualImageUrl = document.getElementById('editImageUrl').value.trim();
+
+  // Validazione Titolo
+  if (!title) {
+    showToast('Il titolo dell\'opera è obbligatorio', 'error');
+    document.getElementById('editTitle').focus();
+    return;
+  }
+
+  // Validazione Prezzo con tolleranza virgola/punto
+  const cleanPriceStr = String(rawPrice).replace(',', '.').trim();
+  const price = parseFloat(cleanPriceStr);
+  if (isNaN(price) || price <= 0) {
+    showToast('Inserire un prezzo valido in Euro (es. 30.00)', 'error');
+    document.getElementById('editPrice').focus();
+    return;
+  }
 
   const btnSave = document.getElementById('saveProductBtn');
   btnSave.disabled = true;
@@ -522,14 +662,14 @@ async function handleProductFormSubmit(event) {
 
     const data = await res.json();
     if (res.ok && data.success) {
-      showToast(isEdit ? 'Opera aggiornata con successo!' : 'Nuova opera aggiunta al catalogo!');
+      showToast(isEdit ? 'Opera aggiornata con successo!' : 'Nuova opera aggiunta al catalogo!', 'success');
       closeProductModal();
       loadAdminCatalog();
     } else {
       showToast(data.error || 'Errore durante il salvataggio', 'error');
     }
   } catch (err) {
-    showToast('Errore di comunicazione col server', 'error');
+    showToast('Errore di comunicazione col server (verifica connessione)', 'error');
   } finally {
     btnSave.disabled = false;
     btnSave.innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i> Salva su Supabase & Catalogo';
@@ -801,3 +941,6 @@ window.updateOrderStatus = updateOrderStatus;
 window.rebuildLocalCache = rebuildLocalCache;
 window.filterCatalogTable = filterCatalogTable;
 window.logoutAdmin = logoutAdmin;
+window.handleBackdropClick = handleBackdropClick;
+window.clearSelectedPhoto = clearSelectedPhoto;
+window.handleManualImageUrlInput = handleManualImageUrlInput;
