@@ -160,7 +160,7 @@
         </div>
 
         <p class="atelier-head-lead">
-          Esplora l'intero catalogo di <strong>35 minerali autentici</strong> grezzi e burattati selezionati da <em>Didoni Store</em>. Puoi <strong>filtrare le pietre in base al modello di bracciale scelto nello shop</strong>, personalizzare una creazione presente nel tuo scrigno oppure acquistare la gemma come minerale singolo da meditazione.
+          Esplora l'intero catalogo di <strong>35 minerali autentici</strong> grezzi e burattati selezionati da <em>Didoni Store</em>. Puoi <strong>filtrare le pietre in base al centro energetico (Chakra)</strong>, personalizzare una creazione in rame vivo oppure scegliere la gemma come minerale singolo da meditazione.
         </p>
 
         <div class="atelier-head-trust-badges">
@@ -182,15 +182,16 @@
       </div>
 
       <!-- ============================================================================
-           INTERACTIVE FILTER TOOLBAR (FILTRO OGGETTI IN SHOP + CARRELLO + PROPRIETÀ)
+           INTERACTIVE FILTER TOOLBAR (I 7 CHAKRA MASTER FILTER + CRISTALLOTERAPIA)
+           Stile nobiliare modulo tecnica intrecciati • Dati e collegamenti reali 100%
            ============================================================================ -->
-      <section class="stone-shop-toolbar" id="atelierShopToolbar" aria-label="Filtri Pietre">
+      <section class="stone-shop-toolbar" id="atelierShopToolbar" aria-label="Filtri Pietre e Chakra">
         <div class="filter-section-title">
           <div class="filter-title-label">
-            <i class="fa-solid fa-sliders" style="color: var(--copper-light);"></i>
-            <span>Filtra Pietre per Oggetto nello Shop &amp; Proprietà</span>
+            <i class="fa-solid fa-gem" style="color: var(--copper-light);"></i>
+            <span>Filtra le 35 Pietre per Centro Energetico &amp; Chakra (Didoni Store)</span>
           </div>
-          <div style="display: flex; align-items: center; gap: 0.75rem;">
+          <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
             <span id="stoneResultsCount" class="stone-counter-badge">Caricamento 35 gemme...</span>
             <button type="button" class="btn-reset-filters" id="btnResetAllFilters" onclick="resetAllStoneFilters()">
               <i class="fa-solid fa-rotate-left"></i> Azzera Filtri
@@ -198,76 +199,63 @@
           </div>
         </div>
 
-        <!-- 1. FILTRO PER OGGETTI PRESENTI IN SHOP (BRACCIALI) -->
-        <div class="filter-group-block">
+        <!-- 1. FILTRO PRIMARIO & PROMINENTE: I 7 CHAKRA -->
+        <div class="filter-group-block chakra-filter-block">
           <div class="filter-group-header">
             <span class="filter-group-label">
-              <i class="fa-solid fa-hand-holding-hand"></i> Filtra in base agli Oggetti presenti in Shop:
+              <i class="fa-solid fa-sun" style="color: var(--copper-primary);"></i> 1. Seleziona Centro Energetico (Chakra):
             </span>
-            <button type="button" class="filter-cart-btn" id="filterByCartBraceletBtn" onclick="toggleCartBraceletFilter()">
-              <i class="fa-solid fa-bag-shopping"></i>
-              <span>Mostra solo per il bracciale nel carrello</span>
-              <span id="cartFilterCountBadge" class="pill-count" style="display:none;">0</span>
-            </button>
+            <span style="font-size: 0.76rem; color: var(--text-muted); letter-spacing: 0.05em;">Clicca un chakra per visualizzare le gemme corrispondenti</span>
           </div>
 
-          <div class="shop-filter-pills-row" id="shopModelFilterPills">
-            <button type="button" class="shop-filter-pill active" data-model="all" onclick="filterByShopModel('all')">
-              <i class="fa-solid fa-shapes"></i> Tutti gli Oggetti <span class="pill-count">35</span>
+          <div class="shop-filter-pills-row" id="shopChakraFilterPills">
+            <button type="button" class="shop-filter-pill active" data-chakra="all" onclick="filterByChakra('all')">
+              <i class="fa-solid fa-shapes"></i> Tutti i 7 Chakra <span class="pill-count">35</span>
             </button>
-            <button type="button" class="shop-filter-pill" data-model="prod_rame_001" onclick="filterByShopModel('prod_rame_001')">
-              <i class="fa-solid fa-hammer"></i> 3 Filamenti Torciti (€30)
+            <button type="button" class="shop-filter-pill" data-chakra="radice" onclick="filterByChakra('radice')">
+              <i class="fa-solid fa-shield-halved"></i> 1° Radice (Muladhara) <span class="pill-count">8</span>
             </button>
-            <button type="button" class="shop-filter-pill" data-model="prod_intr_cuff_bottega" onclick="filterByShopModel('prod_intr_cuff_bottega')">
-              <i class="fa-solid fa-gem"></i> Cuff Bottega (€30)
+            <button type="button" class="shop-filter-pill" data-chakra="sacrale" onclick="filterByChakra('sacrale')">
+              <i class="fa-solid fa-fire-flame-simple"></i> 2° Sacrale (Svadhisthana) <span class="pill-count">6</span>
             </button>
-            <button type="button" class="shop-filter-pill" data-model="prod_intr_corona_regale" onclick="filterByShopModel('prod_intr_corona_regale')">
-              <i class="fa-solid fa-crown"></i> Corona Regale (€35)
+            <button type="button" class="shop-filter-pill" data-chakra="plesso" onclick="filterByChakra('plesso')">
+              <i class="fa-solid fa-sun"></i> 3° Plesso Solare (Manipura) <span class="pill-count">6</span>
             </button>
-            <button type="button" class="shop-filter-pill" data-model="prod_intr_modello_2" onclick="filterByShopModel('prod_intr_modello_2')">
-              <i class="fa-solid fa-dna"></i> Spirale Modello 2 (€30)
+            <button type="button" class="shop-filter-pill" data-chakra="cuore" onclick="filterByChakra('cuore')">
+              <i class="fa-solid fa-heart"></i> 4° Cuore (Anahata) <span class="pill-count">12</span>
             </button>
-            <button type="button" class="shop-filter-pill" data-model="prod_intr_massiccio_spina" onclick="filterByShopModel('prod_intr_massiccio_spina')">
-              <i class="fa-solid fa-shield"></i> Spina Massiccia (€35)
+            <button type="button" class="shop-filter-pill" data-chakra="gola" onclick="filterByChakra('gola')">
+              <i class="fa-solid fa-comment-dots"></i> 5° Gola (Vishuddha) <span class="pill-count">6</span>
             </button>
-            <button type="button" class="shop-filter-pill" data-model="prod_intr_trama_nobile" onclick="filterByShopModel('prod_intr_trama_nobile')">
-              <i class="fa-solid fa-feather"></i> Trama Nobile (€35)
+            <button type="button" class="shop-filter-pill" data-chakra="terzo" onclick="filterByChakra('terzo')">
+              <i class="fa-solid fa-eye"></i> 6° Terzo Occhio (Ajna) <span class="pill-count">7</span>
             </button>
-            <button type="button" class="shop-filter-pill" data-model="prod_intr_spiga_polso" onclick="filterByShopModel('prod_intr_spiga_polso')">
-              <i class="fa-solid fa-wheat-awn"></i> Spiga in Rame (€35)
-            </button>
-            <button type="button" class="shop-filter-pill" data-model="prod_rame_002" onclick="filterByShopModel('prod_rame_002')">
-              <i class="fa-solid fa-fire"></i> Cuff Martellato (€45)
-            </button>
-            <button type="button" class="shop-filter-pill" data-model="prod_rame_003" onclick="filterByShopModel('prod_rame_003')">
-              <i class="fa-solid fa-circle-notch"></i> Bangle Minimal (€25)
-            </button>
-            <button type="button" class="shop-filter-pill" data-model="prod_pronta_intrecciato" onclick="filterByShopModel('prod_pronta_intrecciato')">
-              <i class="fa-solid fa-bolt"></i> Pronta Consegna (€30)
+            <button type="button" class="shop-filter-pill" data-chakra="corona" onclick="filterByChakra('corona')">
+              <i class="fa-solid fa-crown"></i> 7° Corona (Sahasrara) <span class="pill-count">6</span>
             </button>
           </div>
         </div>
 
-        <!-- 2. FILTRI SECONDARI: RICERCA, TIPOLOGIA MINERALE, CHAKRA & ELEMENTO -->
+        <!-- 2. FILTRI SECONDARI: RICERCA LIBERA, TIPOLOGIA, ELEMENTO, INTENTO & ORDINAMENTO -->
         <div class="filter-secondary-row">
           <div class="filter-search-box">
             <i class="fa-solid fa-magnifying-glass"></i>
             <input type="text" id="stoneShopSearchInput" class="luxury-input filter-search-input" 
-                   placeholder="Cerca per nome (es. Sodalite, Ametista, Acquamarina) o beneficio..." 
+                   placeholder="Cerca pietra (es. Sodalite, Ametista, Pirite), chakra o virtù..." 
                    oninput="onStoneSearchInput(this.value)">
           </div>
 
           <div>
             <select id="stoneTypeFilterSelect" class="luxury-input" onchange="onStoneTypeFilterChange(this.value)" style="width: 100%;">
               <option value="all">Tutte le Tipologie</option>
-              <option value="burattato">Pietre Burattate Levigate (€10.00)</option>
+              <option value="burattato">Pietre Burattate (€10.00)</option>
               <option value="grezzo">Grezzi Rari di Miniera</option>
             </select>
           </div>
 
-          <div>
-            <select id="stoneChakraFilterSelect" class="luxury-input" onchange="onStoneChakraFilterChange(this.value)" style="width: 100%;">
-              <option value="all">Tutti i Chakra</option>
+          <div style="display: none;">
+            <select id="stoneChakraFilterSelect" class="luxury-input" onchange="onStoneChakraFilterChange(this.value)">
+              <option value="all">Tutti i 7 Chakra</option>
               <option value="radice">1° Radice (Muladhara)</option>
               <option value="sacrale">2° Sacrale (Svadhisthana)</option>
               <option value="plesso">3° Plesso Solare (Manipura)</option>
@@ -281,11 +269,30 @@
           <div>
             <select id="stoneElementFilterSelect" class="luxury-input" onchange="onStoneElementFilterChange(this.value)" style="width: 100%;">
               <option value="all">Tutti gli Elementi</option>
-              <option value="terra">Terra</option>
-              <option value="acqua">Acqua</option>
-              <option value="fuoco">Fuoco</option>
-              <option value="aria">Aria</option>
-              <option value="etere">Etere</option>
+              <option value="terra">Elemento Terra</option>
+              <option value="acqua">Elemento Acqua</option>
+              <option value="fuoco">Elemento Fuoco</option>
+              <option value="aria">Elemento Aria</option>
+              <option value="etere">Elemento Etere</option>
+            </select>
+          </div>
+
+          <div>
+            <select id="stoneIntentFilterSelect" class="luxury-input" onchange="onStoneIntentFilterChange(this.value)" style="width: 100%;">
+              <option value="all">Tutti i Benefici / Intenti</option>
+              <option value="calma">Calma, Relax &amp; Sonno</option>
+              <option value="protezione">Protezione &amp; Schermatura</option>
+              <option value="chiarezza">Chiarezza &amp; Intuizione</option>
+              <option value="amore">Amore &amp; Armonia Cuore</option>
+              <option value="vitalita">Vitalità &amp; Coraggio</option>
+            </select>
+          </div>
+
+          <div>
+            <select id="stoneSortSelect" class="luxury-input" onchange="onStoneSortChange(this.value)" style="width: 100%;">
+              <option value="default">Ordinamento Predefinito</option>
+              <option value="name_asc">Nome: A &rarr; Z</option>
+              <option value="name_desc">Nome: Z &rarr; A</option>
             </select>
           </div>
         </div>
@@ -303,7 +310,7 @@
           <div class="no-stones-icon"><i class="fa-solid fa-gem"></i></div>
           <h3 style="font-family: var(--font-serif); font-size: 1.6rem; margin-bottom: 0.5rem;">Nessuna pietra trovata con questi filtri</h3>
           <p style="color: var(--text-secondary); max-width: 500px; margin: 0 auto 1.5rem auto;">
-            Prova a selezionare un altro modello di bracciale o azzera i parametri di ricerca per visualizzare l'intera collezione.
+            Prova a selezionare un altro centro energetico (Chakra) o azzera i parametri di ricerca per visualizzare l'intera collezione.
           </p>
           <button type="button" class="btn btn-primary" onclick="resetAllStoneFilters()">
             <i class="fa-solid fa-rotate-left"></i> Mostra Tutte le 35 Gemme

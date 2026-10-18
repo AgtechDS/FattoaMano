@@ -18,7 +18,7 @@
   <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
 
   <!-- Favicon & Stylesheet -->
-  <link rel="stylesheet" href="style.css?v=20261001-07">
+  <link rel="stylesheet" href="style.css?v=20261001-09">
   
   <!-- Font Awesome for luxury micro-icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -60,7 +60,7 @@
       <nav>
         <ul class="nav-links">
           <li><a href="#prontaconsegna" class="nav-link"><i class="fa-solid fa-bolt" style="color: var(--copper-light); font-size: 0.75rem; margin-right: 4px;"></i>Pronta Consegna</a></li>
-          <li><a href="#tecnica-intreccio" class="nav-link"><i class="fa-solid fa-fire" style="color: var(--copper-light); font-size: 0.75rem; margin-right: 4px;"></i>Tecnica Intreccio</a></li>
+          <li><a href="#tecniche-forgiatura" class="nav-link"><i class="fa-solid fa-fire" style="color: var(--copper-light); font-size: 0.75rem; margin-right: 4px;"></i>Metodi di Forgiatura</a></li>
           <li><a href="#collezione" class="nav-link active">Collezione</a></li>
           <li><a href="#bottega-pietre" class="nav-link"><i class="fa-solid fa-gem" style="color: var(--copper-light); font-size: 0.75rem; margin-right: 4px;"></i>Bottega Pietre</a></li>
           <li><a href="atelier-pietre.html" class="nav-link" style="color: var(--copper-light); font-weight: 600;"><i class="fa-solid fa-store" style="color: var(--copper-light); font-size: 0.75rem; margin-right: 4px;"></i>Atelier Shop</a></li>
@@ -111,9 +111,9 @@
         </a>
       </li>
       <li>
-        <a href="#tecnica-intreccio" class="mobile-nav-link" onclick="closeMobileMenu()">
+        <a href="#tecniche-forgiatura" class="mobile-nav-link" onclick="closeMobileMenu()">
           <i class="fa-solid fa-fire" style="color: var(--copper-light);"></i>
-          <span>Tecnica Intreccio (Brace &amp; Carbone)</span>
+          <span>I 4 Metodi di Forgiatura</span>
         </a>
       </li>
       <li>
@@ -238,112 +238,230 @@
   </section>
 
   <!-- ============================================================================
-       CINEMATIC TECHNIQUE BRANDING SHOWCASE (#tecnica-intreccio)
-       Tecnica d'Intreccio ad Incudine: Rame Puro 99.9%, Brace e Carbone
-       Modulo grafico e interattivo che funge da trigger per il modale e la galleria
+       I QUATTRO METODI DI FORGIATURA FATTO A MANO — CAROSELLO ORIZZONTALE (#tecniche-forgiatura)
+       Moduli interattivi per tutte le tecniche presenti nel sito:
+       1. Intrecciati (Trefoli ritorti a caldo)
+       2. Martellati (Battitura a penna & ossidazione termica)
+       3. Rigidi (Calandratura a massello pieno 99.9%)
+       4. Incastonatura (Pietre autentiche Didoni Store & rame puro)
+       Ciascun componente funge da pulsante interattivo per aprire il rispettivo
+       modale di lavorazione e navigare direttamente alla galleria fotografica.
        ============================================================================ -->
-  <section class="cinematic-technique-section" id="tecnica-intreccio" aria-label="Tecnica di Forgiatura Intrecciati">
+  <section class="techniques-carousel-section" id="tecniche-forgiatura" aria-label="I Quattro Metodi di Forgiatura Fatto a Mano">
     <div class="container">
-      <div class="cinematic-card-wrapper">
-        <!-- Interactive Cinematic Card (Acts as trigger / button) -->
-        <article class="cinematic-card" id="cinematicTechniqueCard" role="button" tabindex="0" aria-haspopup="dialog" aria-expanded="false" onclick="openTechniqueModal('intrecciati')" onkeydown="handleTechniqueCardKey(event)" title="Clicca per aprire la visione cinematografica della tecnica d'intreccio">
-          
-          <!-- Cinematic Viewfinder HUD Overlay (Cinematographic Site Design) -->
-          <div class="cinematic-hud" aria-hidden="true">
-            <div class="hud-corner top-left"></div>
-            <div class="hud-corner top-right"></div>
-            <div class="hud-corner bottom-left"></div>
-            <div class="hud-corner bottom-right"></div>
-            <div class="hud-tag hud-rec">
-              <span class="hud-dot"></span>
-              <span>CINEMA 4K • 5600K</span>
-            </div>
-            <div class="hud-tag hud-spec">
-              <span>FORGIATURA 01 // INTRECCIO A CALDO</span>
-            </div>
-            <div class="hud-crosshair center-crosshair"></div>
+      
+      <!-- Section Header -->
+      <div class="techniques-section-header">
+        <div class="techniques-header-left">
+          <div class="techniques-kicker">
+            <span class="pulse-dot"></span>
+            <span>Tradizione Metallurgica • Puro Rame 99.9%</span>
           </div>
+          <h2 class="techniques-main-title">
+            I Metodi di Forgiatura: <em>Quattro Tecniche ad Incudine</em>
+          </h2>
+          <p class="techniques-main-subtitle">
+            Dall'intreccio dei trefoli alla battitura a martello e alla sagomatura a massello: esplora le tecniche con cui plasmiamo il rame purissimo ad incudine, senza l'ausilio di saldature industriali né leghe chimiche.
+          </p>
+        </div>
 
-          <!-- Ambient Ember & Copper Dust Micro-Particles (Pure CSS GPU-accelerated) -->
-          <div class="cinematic-dust-field" aria-hidden="true">
-            <span class="dust-sparkle spark-1"></span>
-            <span class="dust-sparkle spark-2"></span>
-            <span class="dust-sparkle spark-3"></span>
-            <span class="dust-sparkle spark-4"></span>
-            <span class="dust-sparkle spark-5"></span>
-            <span class="dust-sparkle spark-6"></span>
+        <!-- Carousel Nav Controls -->
+        <div class="techniques-carousel-controls">
+          <div class="carousel-counter" id="carouselCounter" aria-live="polite">
+            <span class="counter-current" id="counterCurrent">01</span>
+            <span class="counter-sep">/</span>
+            <span class="counter-total">04</span>
           </div>
-
-          <!-- Media Container with Anamorphic Chiaroscuro -->
-          <div class="cinematic-media-container">
-            <img src="assets/branding_tecnica_intrecciati.jpg" alt="Lavorazione Bracciale Intrecciato in Rame Puro 99.9% su Brace di Carbone" class="cinematic-media-img" loading="eager">
-            <!-- Filmic Vignette & Chiaroscuro Shading -->
-            <div class="cinematic-vignette-overlay"></div>
-            <!-- Anamorphic Lens Flare Shimmer Effect on Hover -->
-            <div class="cinematic-lens-flare" aria-hidden="true"></div>
+          <div class="carousel-arrows">
+            <button type="button" class="carousel-arrow-btn" id="carouselPrevBtn" onclick="navigateTechniqueSlide(-1)" aria-label="Tecnica Precedente">
+              <i class="fa-solid fa-arrow-left"></i>
+            </button>
+            <button type="button" class="carousel-arrow-btn" id="carouselNextBtn" onclick="navigateTechniqueSlide(1)" aria-label="Tecnica Successiva">
+              <i class="fa-solid fa-arrow-right"></i>
+            </button>
           </div>
-
-          <!-- Editorial Content Body Inside the Interactive Component -->
-          <div class="cinematic-card-body">
-            <div class="cinematic-kicker-pill">
-              <i class="fa-solid fa-fire-flame-curved"></i>
-              <span>Tecnica Primordiale • Rame Puro 99.9%</span>
-            </div>
-
-            <h2 class="cinematic-card-title">
-              L'Intreccio dei Trefoli: <em>Brace, Carbone e Rame</em>
-            </h2>
-
-            <p class="cinematic-card-desc">
-              Dalla fusione termica del metallo nativo alla battitura ad incudine: tre trefoli di puro rame 99.9% ritorti a caldo senza saldature industriali. Una scultura viva plasmata dal calore della brace e forgiata dalla perizia del maestro ramaio, avvolta dalla polvere di rame.
-            </p>
-
-            <!-- Technical Specification Highlights -->
-            <div class="cinematic-specs-row">
-              <div class="cinematic-spec-chip">
-                <i class="fa-solid fa-shield-halved"></i>
-                <div>
-                  <strong>Purezza 99.9%</strong>
-                  <span>Zero Leghe Tossiche</span>
-                </div>
-              </div>
-              <div class="cinematic-spec-chip">
-                <i class="fa-solid fa-fire"></i>
-                <div>
-                  <strong>Brace di Carbone</strong>
-                  <span>Ricottura a Fuoco Vivo</span>
-                </div>
-              </div>
-              <div class="cinematic-spec-chip">
-                <i class="fa-solid fa-hammer"></i>
-                <div>
-                  <strong>Forgiatura a Caldo</strong>
-                  <span>Torsione ad Incudine</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- Interactive Trigger Actions -->
-            <div class="cinematic-card-actions">
-              <div class="cinematic-play-btn">
-                <span class="play-icon-glow">
-                  <i class="fa-solid fa-film"></i>
-                </span>
-                <div class="play-text-group">
-                  <span class="play-headline">Apri Visione Tecnica &amp; Dettagli</span>
-                  <span class="play-subline">Tocca per esplorare le fasi di lavorazione</span>
-                </div>
-              </div>
-
-              <button type="button" class="cinematic-direct-gallery-btn" onclick="goToDedicatedPhotoGallery('Intrecciati', event)" title="Vai direttamente alla galleria fotografica dei bracciali intrecciati">
-                <span>Galleria Bracciali Intrecciati</span>
-                <i class="fa-solid fa-arrow-right"></i>
-              </button>
-            </div>
-          </div>
-
-        </article>
+        </div>
       </div>
+
+      <!-- Horizontal Carousel Viewport & Track -->
+      <div class="techniques-carousel-viewport" id="techniquesCarouselViewport">
+        <div class="techniques-carousel-track" id="techniquesCarouselTrack">
+
+          <!-- SLIDE 1: INTRECCIATI -->
+          <article class="technique-carousel-card is-active-slide" id="techCardIntrecciati" role="button" tabindex="0" onclick="openTechniqueModal('intrecciati')" onkeydown="handleTechniqueSlideKey(event, 'intrecciati')" aria-label="Metodo 01: Intreccio dei Trefoli su Brace e Carbone">
+            <div class="technique-card-media">
+              <img src="assets/branding_tecnica_intrecciati.jpg" alt="Lavorazione Bracciale Intrecciato su Brace e Carbone" loading="eager">
+              <div class="technique-media-vignette"></div>
+              <div class="cinematic-dust-field" aria-hidden="true">
+                <span class="dust-sparkle spark-1"></span>
+                <span class="dust-sparkle spark-2"></span>
+                <span class="dust-sparkle spark-3"></span>
+                <span class="dust-sparkle spark-4"></span>
+                <span class="dust-sparkle spark-5"></span>
+                <span class="dust-sparkle spark-6"></span>
+              </div>
+              <div class="cinematic-lens-flare" aria-hidden="true"></div>
+              <div class="technique-media-badge">
+                <span class="technique-badge-dot"></span>
+                <span>Metodo 01 • Rame Vivo</span>
+              </div>
+            </div>
+            <div class="technique-card-content">
+              <span class="technique-kicker-pill"><i class="fa-solid fa-fire"></i> Trefoli Ritorti a Caldo</span>
+              <h3 class="technique-title">L'Intreccio dei Trefoli: <em>Brace, Carbone e Rame</em></h3>
+              <p class="technique-desc">Tre trefoli di puro rame 99.9% battuti e ritorti a caldo senza saldature industriali. Una scultura viva plasmata dal calore della brace e forgiata dalla perizia del maestro ramaio.</p>
+              <div class="technique-specs-mini">
+                <div class="mini-spec"><i class="fa-solid fa-shield-halved"></i><span>Rame 99.9%</span></div>
+                <div class="mini-spec"><i class="fa-solid fa-fire-burner"></i><span>Ricottura a Brace</span></div>
+                <div class="mini-spec"><i class="fa-solid fa-hammer"></i><span>Torsione ad Incudine</span></div>
+              </div>
+              <div class="technique-card-cta-group">
+                <div class="technique-trigger-pill">
+                  <span class="trigger-icon"><i class="fa-solid fa-magnifying-glass-plus"></i></span>
+                  <span>Esplora Lavorazione</span>
+                </div>
+                <button type="button" class="technique-direct-link" onclick="goToDedicatedPhotoGallery('Intrecciati', event)">
+                  <span>Galleria Bracciali</span>
+                  <i class="fa-solid fa-arrow-right"></i>
+                </button>
+              </div>
+            </div>
+          </article>
+
+          <!-- SLIDE 2: MARTELLATI -->
+          <article class="technique-carousel-card" id="techCardMartellati" role="button" tabindex="0" onclick="openTechniqueModal('martellati')" onkeydown="handleTechniqueSlideKey(event, 'martellati')" aria-label="Metodo 02: Martellatura a Caldo e Ossidazione Termica">
+            <div class="technique-card-media">
+              <img src="assets/branding_tecnica_martellati.jpg" alt="Battitura ad Incudine con Martello Sagomato" loading="lazy">
+              <div class="technique-media-vignette"></div>
+              <div class="cinematic-dust-field" aria-hidden="true">
+                <span class="dust-sparkle spark-1"></span>
+                <span class="dust-sparkle spark-2"></span>
+                <span class="dust-sparkle spark-3"></span>
+                <span class="dust-sparkle spark-4"></span>
+                <span class="dust-sparkle spark-5"></span>
+                <span class="dust-sparkle spark-6"></span>
+              </div>
+              <div class="cinematic-lens-flare" aria-hidden="true"></div>
+              <div class="technique-media-badge">
+                <span class="technique-badge-dot"></span>
+                <span>Metodo 02 • Battitura</span>
+              </div>
+            </div>
+            <div class="technique-card-content">
+              <span class="technique-kicker-pill"><i class="fa-solid fa-hammer"></i> Battitura a Penna d'Incudine</span>
+              <h3 class="technique-title">La Martellatura a Caldo: <em>Sfaccettature &amp; Ossidazione</em></h3>
+              <p class="technique-desc">Fascia in rame massiccio forgiata ad incudine con colpi cadenzati di martello a penna. Ogni singola bozza cattura la luce, sigillata a caldo con cera vergine d'api per un'ossidazione nobile nel tempo.</p>
+              <div class="technique-specs-mini">
+                <div class="mini-spec"><i class="fa-solid fa-shield-halved"></i><span>Massello 2.5 mm</span></div>
+                <div class="mini-spec"><i class="fa-solid fa-hand-fist"></i><span>Texture a Bozze</span></div>
+                <div class="mini-spec"><i class="fa-solid fa-certificate"></i><span>Cera Vergine d'Api</span></div>
+              </div>
+              <div class="technique-card-cta-group">
+                <div class="technique-trigger-pill">
+                  <span class="trigger-icon"><i class="fa-solid fa-magnifying-glass-plus"></i></span>
+                  <span>Esplora Lavorazione</span>
+                </div>
+                <button type="button" class="technique-direct-link" onclick="goToDedicatedPhotoGallery('Martellati', event)">
+                  <span>Galleria Bracciali</span>
+                  <i class="fa-solid fa-arrow-right"></i>
+                </button>
+              </div>
+            </div>
+          </article>
+
+          <!-- SLIDE 3: RIGIDI -->
+          <article class="technique-carousel-card" id="techCardRigidi" role="button" tabindex="0" onclick="openTechniqueModal('rigidi')" onkeydown="handleTechniqueSlideKey(event, 'rigidi')" aria-label="Metodo 03: Calandratura Continua a Massello Pieno">
+            <div class="technique-card-media">
+              <img src="assets/branding_tecnica_rigidi.jpg" alt="Curvatura a Caldo di Massello Pieno su Mandrino d'Acciaio" loading="lazy">
+              <div class="technique-media-vignette"></div>
+              <div class="cinematic-dust-field" aria-hidden="true">
+                <span class="dust-sparkle spark-1"></span>
+                <span class="dust-sparkle spark-2"></span>
+                <span class="dust-sparkle spark-3"></span>
+                <span class="dust-sparkle spark-4"></span>
+                <span class="dust-sparkle spark-5"></span>
+                <span class="dust-sparkle spark-6"></span>
+              </div>
+              <div class="cinematic-lens-flare" aria-hidden="true"></div>
+              <div class="technique-media-badge">
+                <span class="technique-badge-dot"></span>
+                <span>Metodo 03 • Massello Pieno</span>
+              </div>
+            </div>
+            <div class="technique-card-content">
+              <span class="technique-kicker-pill"><i class="fa-solid fa-circle-notch"></i> Calandratura su Mandrino</span>
+              <h3 class="technique-title">Il Bangle a Massello Pieno: <em>Calandratura Continua</em></h3>
+              <p class="technique-desc">Profilo scultoreo ricavato da un'unica barra di rame elettrolitico pieno, curvato a caldo attorno al mandrino d'acciaio. Una linea pura con bordi smussati a specchio e micro-cesellature perimetrali.</p>
+              <div class="technique-specs-mini">
+                <div class="mini-spec"><i class="fa-solid fa-shield-halved"></i><span>Barra Monolitica</span></div>
+                <div class="mini-spec"><i class="fa-solid fa-ring"></i><span>Mandrino Acciaio</span></div>
+                <div class="mini-spec"><i class="fa-solid fa-wand-magic-sparkles"></i><span>Terminali Smussati</span></div>
+              </div>
+              <div class="technique-card-cta-group">
+                <div class="technique-trigger-pill">
+                  <span class="trigger-icon"><i class="fa-solid fa-magnifying-glass-plus"></i></span>
+                  <span>Esplora Lavorazione</span>
+                </div>
+                <button type="button" class="technique-direct-link" onclick="goToDedicatedPhotoGallery('Rigidi', event)">
+                  <span>Galleria Bracciali</span>
+                  <i class="fa-solid fa-arrow-right"></i>
+                </button>
+              </div>
+            </div>
+          </article>
+
+          <!-- SLIDE 4: INCASTONATURA GEMME -->
+          <article class="technique-carousel-card" id="techCardIncastonatura" role="button" tabindex="0" onclick="openTechniqueModal('incastonatura')" onkeydown="handleTechniqueSlideKey(event, 'incastonatura')" aria-label="Metodo 04: Incastonatura a Caldo di Cristalli Didoni">
+            <div class="technique-card-media">
+              <img src="assets/branding_tecnica_incastonatura.jpg" alt="Incastonatura ad Incudine di Cristallo Didoni su Rame Puro" loading="lazy">
+              <div class="technique-media-vignette"></div>
+              <div class="cinematic-dust-field" aria-hidden="true">
+                <span class="dust-sparkle spark-1"></span>
+                <span class="dust-sparkle spark-2"></span>
+                <span class="dust-sparkle spark-3"></span>
+                <span class="dust-sparkle spark-4"></span>
+                <span class="dust-sparkle spark-5"></span>
+                <span class="dust-sparkle spark-6"></span>
+              </div>
+              <div class="cinematic-lens-flare" aria-hidden="true"></div>
+              <div class="technique-media-badge">
+                <span class="technique-badge-dot"></span>
+                <span>Metodo 04 • Cristalloterapia</span>
+              </div>
+            </div>
+            <div class="technique-card-content">
+              <span class="technique-kicker-pill"><i class="fa-solid fa-gem"></i> Incastonatura ad Incudine</span>
+              <h3 class="technique-title">Incastonatura su Rame: <em>Gemme Autentiche Didoni</em></h3>
+              <p class="technique-desc">Fusione minerale tra il metallo nativo e gemme autentiche burattate o grezze. Il castone e le griffe in rame puro 99.9% vengono forgiati sull'esatta sagoma del cristallo, senza colle né saldature.</p>
+              <div class="technique-specs-mini">
+                <div class="mini-spec"><i class="fa-solid fa-gem"></i><span>35 Cristalli Didoni</span></div>
+                <div class="mini-spec"><i class="fa-solid fa-hand-holding-hand"></i><span>Griffe Forgiate</span></div>
+                <div class="mini-spec"><i class="fa-solid fa-ban"></i><span>Zero Collanti Chimici</span></div>
+              </div>
+              <div class="technique-card-cta-group">
+                <div class="technique-trigger-pill">
+                  <span class="trigger-icon"><i class="fa-solid fa-magnifying-glass-plus"></i></span>
+                  <span>Esplora Lavorazione</span>
+                </div>
+                <button type="button" class="technique-direct-link" onclick="jumpToBottegaPietre(event)">
+                  <span>Bottega delle Pietre</span>
+                  <i class="fa-solid fa-arrow-right"></i>
+                </button>
+              </div>
+            </div>
+          </article>
+
+        </div>
+      </div>
+
+      <!-- Pagination Indicators / Dots -->
+      <div class="techniques-carousel-dots" id="techniquesCarouselDots">
+        <button type="button" class="carousel-dot active" onclick="goToTechniqueSlide(0)" aria-label="Vai a Metodo 01: Intrecciati"></button>
+        <button type="button" class="carousel-dot" onclick="goToTechniqueSlide(1)" aria-label="Vai a Metodo 02: Martellati"></button>
+        <button type="button" class="carousel-dot" onclick="goToTechniqueSlide(2)" aria-label="Vai a Metodo 03: Rigidi"></button>
+        <button type="button" class="carousel-dot" onclick="goToTechniqueSlide(3)" aria-label="Vai a Metodo 04: Incastonatura Gemme"></button>
+      </div>
+
     </div>
   </section>
 
@@ -992,35 +1110,35 @@
   </div>
 
   <!-- ============================================================================
-       CINEMATIC TECHNIQUE MODAL (#techniqueModalBackdrop)
-       Visione cinematografica macro: tecnica bracciale intrecciato in lavorazione
-       Effetto brace, carbone e polvere di rame con navigazione diretta alla galleria
+       DYNAMIC TECHNIQUE MODAL (#techniqueModalBackdrop)
+       Visione macro della tecnica selezionata (Intrecciati, Martellati, Rigidi, Incastonatura)
+       Aggiornato dinamicamente via app.js
        ============================================================================ -->
   <div class="modal-backdrop cinematic-modal-backdrop" id="techniqueModalBackdrop" role="dialog" aria-modal="true" aria-labelledby="techniqueModalTitle">
     <div class="modal-container cinematic-modal-container" id="techniqueModal">
       
-      <!-- Filmic Viewfinder Header & Close Button -->
+      <!-- Top Bar: Pure Atelier Credentials (No camera/cinema tags) -->
       <div class="cinematic-modal-top-bar">
         <div class="cinematic-tape-badge">
-          <span class="tape-rec-dot"></span>
-          <span>MASTERCLASS METALLURGICA // SCENA 01</span>
+          <i class="fa-solid fa-hammer" style="color: var(--copper-light); margin-right: 4px;"></i>
+          <span id="modalTechniqueBadgeTitle">METODO DI FORGIATURA • FATTO A MANO</span>
         </div>
         <div class="cinematic-meta-tags">
-          <span class="meta-tag">FUSIONE A CALDO</span>
-          <span class="meta-tag">PURO RAME 99.9%</span>
-          <span class="meta-tag">BRACE &amp; CARBONE</span>
+          <span class="meta-tag" id="modalMetaTag1">PURO RAME 99.9%</span>
+          <span class="meta-tag" id="modalMetaTag2">FORGIATURA AD INCUDINE</span>
+          <span class="meta-tag" id="modalMetaTag3">SENZA SALDATURE</span>
         </div>
-        <button class="modal-close-btn cinematic-close-btn" id="closeTechniqueModalBtn" onclick="closeTechniqueModal()" aria-label="Chiudi Finestra Cinematografica">
+        <button class="modal-close-btn cinematic-close-btn" id="closeTechniqueModalBtn" onclick="closeTechniqueModal()" aria-label="Chiudi Finestra Tecnica">
           <i class="fa-solid fa-xmark"></i>
         </button>
       </div>
 
-      <!-- Cinema Master Visual Stage -->
+      <!-- Master Visual Stage -->
       <div class="cinematic-stage">
         <div class="cinematic-stage-frame">
-          <img src="assets/branding_tecnica_intrecciati.jpg" alt="Macro Cinematografica Intreccio Rame Puro su Brace e Carbone" class="cinematic-stage-image">
+          <img src="assets/branding_tecnica_intrecciati.jpg" alt="Macro Forgiatura Rame Puro" class="cinematic-stage-image" id="modalStageImage">
           
-          <!-- Cinematic Atmosphere Overlays: Brace, Carbone & Rame Polvere -->
+          <!-- Atmosphere Overlays: Brace, Carbone & Rame Polvere -->
           <div class="cinematic-stage-ember-overlay" aria-hidden="true"></div>
           <div class="cinematic-stage-dust-overlay" aria-hidden="true">
             <span class="floating-speck s1"></span>
@@ -1029,14 +1147,8 @@
             <span class="floating-speck s4"></span>
           </div>
 
-          <!-- Cinematic Lens HUD Metadata Overlay -->
-          <div class="cinematic-lens-hud" aria-hidden="true">
-            <span class="lens-hud-item">CAM 01 • ANAMORPHIC MACRO 85mm</span>
-            <span class="lens-hud-item">f/1.8 • 1/50s • ISO 100</span>
-          </div>
-
           <!-- Hotspot Callouts Embedded on the Stage Photo -->
-          <div class="cinematic-hotspot-group">
+          <div class="cinematic-hotspot-group" id="modalHotspotsGroup">
             <div class="cinematic-hotspot spot-1" style="left: 20%; top: 38%;">
               <span class="hotspot-pulse"></span>
               <span class="hotspot-pip">1</span>
@@ -1067,20 +1179,20 @@
         </div>
       </div>
 
-      <!-- Filmic Story & Technical Narrative (Zero Forbidden Synonyms) -->
+      <!-- Story & Technical Narrative -->
       <div class="cinematic-modal-body">
         <div class="cinematic-narrative-header">
-          <span class="cinematic-chapter">CAPITOLO I • IL METALLO E LA FIAMMA</span>
+          <span class="cinematic-chapter" id="modalNarrativeKicker">METODO 01 • RAME VIVO E BRACE</span>
           <h3 id="techniqueModalTitle" class="cinematic-modal-headline">
             La Nascita del Bracciale Intrecciato: <em>Dalla Brace all'Incudine</em>
           </h3>
-          <p class="cinematic-modal-lead">
+          <p class="cinematic-modal-lead" id="modalTechniqueLead">
             L'opera prende forma sul letto di carboni ardenti. I cavi in puro rame al 99.9% vengono portati a incandescenza sfumata: il calore della brace addomestica il metallo, consentendo al maestro ramaio di torcere i trefoli senza l'ausilio di saldature chimiche. La polvere di rame che si sprigiona durante la battitura è la firma tangibile di una lavorazione interamente compiuta a mano.
           </p>
         </div>
 
-        <!-- 3-Phase Filmic Blueprint Grid -->
-        <div class="cinematic-process-grid">
+        <!-- 3-Phase Blueprint Grid -->
+        <div class="cinematic-process-grid" id="modalProcessGrid">
           <div class="process-card">
             <div class="process-number">01</div>
             <h4>Trafilatura dei Trefoli</h4>
@@ -1098,19 +1210,22 @@
           </div>
         </div>
 
-        <!-- Dedicated Section Navigation Button (Fulfills the prompt core requirement) -->
+        <!-- Dedicated Section Navigation Button -->
         <div class="cinematic-modal-cta-box">
           <div class="cta-box-info">
-            <h4>Vuoi ammirare i manufatti finiti?</h4>
-            <p>Esplora la sezione fotografica con tutte le varianti di bracciali intrecciati pronti per il tuo polso.</p>
+            <h4 id="modalCtaBoxTitle">Vuoi ammirare i manufatti finiti?</h4>
+            <p id="modalCtaBoxDesc">Esplora la sezione fotografica con tutte le varianti di creazioni pronte per il tuo polso.</p>
           </div>
-          <button type="button" class="btn-primary btn-cinematic-gateway" onclick="goToDedicatedPhotoGallery('Intrecciati')">
+          <button type="button" class="btn-primary btn-cinematic-gateway" id="modalGatewayBtn" onclick="onModalGatewayClick()">
             <i class="fa-solid fa-layer-group"></i>
-            <span>Accedi alla Galleria Fotografica &quot;Intrecciati&quot;</span>
+            <span id="modalGatewayBtnText">Accedi alla Galleria Fotografica &quot;Intrecciati&quot;</span>
             <i class="fa-solid fa-arrow-right"></i>
           </button>
         </div>
       </div>
+
+    </div>
+  </div>
 
     </div>
   </div>
@@ -1275,6 +1390,6 @@
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 
   <!-- Modular Application Logic -->
-  <script src="app.js?v=20261001-07"></script>
+  <script src="app.js?v=20261001-09"></script>
 </body>
 </html>

@@ -2004,14 +2004,31 @@ window.openMobileMenu = openMobileMenu;
 window.closeMobileMenu = closeMobileMenu;
 
 // ==============================================================================
-// DEDICATED ATELIER PIETRE SHOP PAGE LOGIC & FILTERING ENGINE
+// DEDICATED ATELIER PIETRE SHOP PAGE LOGIC & ADVANCED FILTERING ENGINE
+// Stile nobiliare modulo tecnica intrecciati • Dati e collegamenti reali 100%
 // ==============================================================================
+const REAL_SHOP_BRACELETS = [
+  { id: 'prod_rame_001', title: 'Bracciale Intrecciato 3 Filamenti', price: 30.0, category: 'Intrecciati' },
+  { id: 'prod_intr_cuff_bottega', title: 'Bracciale Cuff Intrecciato Bottega', price: 30.0, category: 'Intrecciati' },
+  { id: 'prod_intr_corona_regale', title: 'Bracciale Intrecciato Corona Regale', price: 35.0, category: 'Intrecciati' },
+  { id: 'prod_intr_modello_2', title: 'Bracciale Intrecciato Modello 2', price: 30.0, category: 'Intrecciati' },
+  { id: 'prod_intr_massiccio_spina', title: 'Bracciale Intrecciato Spina Massiccia', price: 35.0, category: 'Intrecciati' },
+  { id: 'prod_intr_trama_nobile', title: 'Bracciale Intrecciato Trama Nobile', price: 35.0, category: 'Intrecciati' },
+  { id: 'prod_intr_spiga_polso', title: 'Bracciale a Spiga in Rame Vivo', price: 35.0, category: 'Intrecciati' },
+  { id: 'prod_rame_002', title: 'Cuff Martellato Ossidato', price: 45.0, category: 'Martellati' },
+  { id: 'prod_rame_003', title: 'Bangle Minimal Chisel', price: 25.0, category: 'Rigidi' },
+  { id: 'prod_pronta_intrecciato', title: 'Bracciale Intrecciato in Pronta Consegna', price: 30.0, category: 'Intrecciati' }
+];
+
 const stoneShopState = {
   selectedModel: 'all',
+  selectedTechnique: 'all',
   cartFilterActive: false,
   typeFilter: 'all',
   chakraFilter: 'all',
   elementFilter: 'all',
+  intentFilter: 'all',
+  sortBy: 'default',
   searchQuery: '',
   selectedTargets: {}
 };
@@ -2027,7 +2044,36 @@ function initAtelierShopPage() {
 function updateShopModelCounts() {
   const stones = state.stones || [];
   
-  // Count compatibility for each model pill
+  // 0. Conteggio pietre per ciascuna pillola dei 7 Chakra
+  document.querySelectorAll('#shopChakraFilterPills .shop-filter-pill').forEach(pill => {
+    const chakraKey = pill.dataset.chakra;
+    let countEl = pill.querySelector('.pill-count');
+    if (!countEl) {
+      countEl = document.createElement('span');
+      countEl.className = 'pill-count';
+      pill.appendChild(countEl);
+    }
+
+    if (chakraKey === 'all') {
+      countEl.textContent = stones.length;
+    } else {
+      const q = (chakraKey || '').toLowerCase();
+      const count = stones.filter(s => {
+        const sc = (s.chakra || '').toLowerCase();
+        if (q === 'radice') return sc.includes('radice') || sc.includes('1°') || sc.includes('1');
+        if (q === 'sacrale') return sc.includes('sacrale') || sc.includes('2°') || sc.includes('2');
+        if (q === 'plesso') return sc.includes('plesso') || sc.includes('3°') || sc.includes('3') || sc.includes('solare');
+        if (q === 'cuore') return sc.includes('cuore') || sc.includes('4°') || sc.includes('4') || sc.includes('anahata');
+        if (q === 'gola') return sc.includes('gola') || sc.includes('5°') || sc.includes('5') || sc.includes('vishuddha');
+        if (q === 'terzo') return sc.includes('terzo') || sc.includes('6°') || sc.includes('6') || sc.includes('ajna');
+        if (q === 'corona') return sc.includes('corona') || sc.includes('7°') || sc.includes('7') || sc.includes('sahasrara');
+        return sc.includes(q);
+      }).length;
+      countEl.textContent = count;
+    }
+  });
+
+  // 1. Conteggio compatibilità per ciascuna pillola di modello bracciale
   document.querySelectorAll('#shopModelFilterPills .shop-filter-pill').forEach(pill => {
     const model = pill.dataset.model;
     let countEl = pill.querySelector('.pill-count');
@@ -2048,7 +2094,28 @@ function updateShopModelCounts() {
     }
   });
 
-  // Cart filter button badge
+  // 2. Conteggio compatibilità per pillole macro-tecnica
+  document.querySelectorAll('#shopTechniqueFilterPills .shop-filter-pill').forEach(pill => {
+    const tech = pill.dataset.tech;
+    let countEl = pill.querySelector('.pill-count');
+    if (!countEl) {
+      countEl = document.createElement('span');
+      countEl.className = 'pill-count';
+      pill.appendChild(countEl);
+    }
+
+    if (tech === 'all' || tech === 'standalone') {
+      countEl.textContent = stones.length;
+    } else if (tech === 'pronta_consegna') {
+      const count = stones.filter(s => s.compatibilita_bracciali && s.compatibilita_bracciali.includes('prod_pronta_intrecciato')).length;
+      countEl.textContent = count;
+    } else {
+      const count = stones.filter(s => s.tecniche_compatibili && s.tecniche_compatibili.includes(tech)).length;
+      countEl.textContent = count;
+    }
+  });
+
+  // 3. Cart filter button badge
   const cartBracelets = (state.cart || []).filter(i => !i.is_standalone_stone);
   const badge = document.getElementById('cartFilterCountBadge');
   if (badge) {
@@ -2059,6 +2126,27 @@ function updateShopModelCounts() {
       badge.style.display = 'none';
     }
   }
+}
+
+function filterByTechnique(techId) {
+  stoneShopState.selectedTechnique = techId;
+  stoneShopState.selectedModel = 'all';
+  stoneShopState.cartFilterActive = false;
+
+  const cartBtn = document.getElementById('filterByCartBraceletBtn');
+  if (cartBtn) cartBtn.classList.remove('active');
+
+  // Aggiorna stato pillole tecnica
+  document.querySelectorAll('#shopTechniqueFilterPills .shop-filter-pill').forEach(pill => {
+    pill.classList.toggle('active', pill.dataset.tech === techId);
+  });
+
+  // Resetta pillole modelli a 'all'
+  document.querySelectorAll('#shopModelFilterPills .shop-filter-pill').forEach(pill => {
+    pill.classList.toggle('active', pill.dataset.model === 'all');
+  });
+
+  renderAtelierShopFullGrid();
 }
 
 function filterByShopModel(modelId) {
@@ -2090,7 +2178,11 @@ function toggleCartBraceletFilter() {
     document.querySelectorAll('#shopModelFilterPills .shop-filter-pill').forEach(pill => {
       pill.classList.toggle('active', pill.dataset.model === 'all');
     });
+    document.querySelectorAll('#shopTechniqueFilterPills .shop-filter-pill').forEach(pill => {
+      pill.classList.toggle('active', pill.dataset.tech === 'all');
+    });
     stoneShopState.selectedModel = 'all';
+    stoneShopState.selectedTechnique = 'all';
     showToast(`Filtro attivo: gemme adatte al bracciale nel tuo scrigno!`);
   }
 
@@ -2102,14 +2194,41 @@ function onStoneSearchInput(query) {
   renderAtelierShopFullGrid();
 }
 
+function filterByChakra(chakraKey) {
+  stoneShopState.chakraFilter = chakraKey || 'all';
+
+  // Aggiorna stato attivo dei pulsanti pillola Chakra
+  document.querySelectorAll('#shopChakraFilterPills .shop-filter-pill').forEach(pill => {
+    pill.classList.toggle('active', pill.dataset.chakra === chakraKey);
+  });
+
+  // Mantieni sincronizzato il select se presente
+  const select = document.getElementById('stoneChakraFilterSelect');
+  if (select) select.value = chakraKey;
+
+  renderAtelierShopFullGrid();
+
+  const labels = {
+    all: 'Tutti i 7 Chakra',
+    radice: '1° Radice (Muladhara)',
+    sacrale: '2° Sacrale (Svadhisthana)',
+    plesso: '3° Plesso Solare (Manipura)',
+    cuore: '4° Cuore (Anahata)',
+    gola: '5° Gola (Vishuddha)',
+    terzo: '6° Terzo Occhio (Ajna)',
+    corona: '7° Corona (Sahasrara)'
+  };
+  const label = labels[chakraKey] || chakraKey;
+  showToast(`Filtro Chakra attivo: ${label}`);
+}
+
 function onStoneTypeFilterChange(type) {
   stoneShopState.typeFilter = type;
   renderAtelierShopFullGrid();
 }
 
 function onStoneChakraFilterChange(chakra) {
-  stoneShopState.chakraFilter = chakra;
-  renderAtelierShopFullGrid();
+  filterByChakra(chakra);
 }
 
 function onStoneElementFilterChange(element) {
@@ -2117,12 +2236,25 @@ function onStoneElementFilterChange(element) {
   renderAtelierShopFullGrid();
 }
 
+function onStoneIntentFilterChange(intent) {
+  stoneShopState.intentFilter = intent;
+  renderAtelierShopFullGrid();
+}
+
+function onStoneSortChange(sortBy) {
+  stoneShopState.sortBy = sortBy;
+  renderAtelierShopFullGrid();
+}
+
 function resetAllStoneFilters() {
   stoneShopState.selectedModel = 'all';
+  stoneShopState.selectedTechnique = 'all';
   stoneShopState.cartFilterActive = false;
   stoneShopState.typeFilter = 'all';
   stoneShopState.chakraFilter = 'all';
   stoneShopState.elementFilter = 'all';
+  stoneShopState.intentFilter = 'all';
+  stoneShopState.sortBy = 'default';
   stoneShopState.searchQuery = '';
 
   const searchInput = document.getElementById('stoneShopSearchInput');
@@ -2133,11 +2265,21 @@ function resetAllStoneFilters() {
   if (chakraSelect) chakraSelect.value = 'all';
   const elementSelect = document.getElementById('stoneElementFilterSelect');
   if (elementSelect) elementSelect.value = 'all';
+  const intentSelect = document.getElementById('stoneIntentFilterSelect');
+  if (intentSelect) intentSelect.value = 'all';
+  const sortSelect = document.getElementById('stoneSortSelect');
+  if (sortSelect) sortSelect.value = 'default';
   const cartBtn = document.getElementById('filterByCartBraceletBtn');
   if (cartBtn) cartBtn.classList.remove('active');
 
+  document.querySelectorAll('#shopChakraFilterPills .shop-filter-pill').forEach(pill => {
+    pill.classList.toggle('active', pill.dataset.chakra === 'all');
+  });
   document.querySelectorAll('#shopModelFilterPills .shop-filter-pill').forEach(pill => {
     pill.classList.toggle('active', pill.dataset.model === 'all');
+  });
+  document.querySelectorAll('#shopTechniqueFilterPills .shop-filter-pill').forEach(pill => {
+    pill.classList.toggle('active', pill.dataset.tech === 'all');
   });
 
   renderAtelierShopFullGrid();
@@ -2147,7 +2289,16 @@ function resetAllStoneFilters() {
 function getFilteredStones() {
   let stones = state.stones || [];
 
-  // Filter 1: Shop Model Filter
+  // 1. Filtro Macro-Tecnica
+  if (stoneShopState.selectedTechnique !== 'all') {
+    if (stoneShopState.selectedTechnique === 'pronta_consegna') {
+      stones = stones.filter(s => s.compatibilita_bracciali && s.compatibilita_bracciali.includes('prod_pronta_intrecciato'));
+    } else if (stoneShopState.selectedTechnique !== 'standalone') {
+      stones = stones.filter(s => s.tecniche_compatibili && s.tecniche_compatibili.includes(stoneShopState.selectedTechnique));
+    }
+  }
+
+  // 2. Filtro per Modello Bracciale dello Shop
   if (stoneShopState.selectedModel !== 'all') {
     stones = stones.filter(s => {
       if (!s.compatibilita_bracciali) return true;
@@ -2155,7 +2306,7 @@ function getFilteredStones() {
     });
   }
 
-  // Filter 2: Smart Cart Filter
+  // 3. Filtro Smart Cart (bracciali nello scrigno)
   if (stoneShopState.cartFilterActive) {
     const cartBracelets = (state.cart || []).filter(i => !i.is_standalone_stone);
     if (cartBracelets.length > 0) {
@@ -2168,7 +2319,7 @@ function getFilteredStones() {
     }
   }
 
-  // Filter 3: Type Filter
+  // 4. Filtro Tipologia Minerale
   if (stoneShopState.typeFilter !== 'all') {
     if (stoneShopState.typeFilter === 'burattato') {
       stones = stones.filter(s => (s.tipo || '').toLowerCase().includes('burattato'));
@@ -2177,19 +2328,47 @@ function getFilteredStones() {
     }
   }
 
-  // Filter 4: Chakra Filter
-  if (stoneShopState.chakraFilter !== 'all') {
+  // 5. Filtro Chakra (Robusto, Multi-term e 100% Preciso)
+  if (stoneShopState.chakraFilter && stoneShopState.chakraFilter !== 'all') {
     const q = stoneShopState.chakraFilter.toLowerCase();
-    stones = stones.filter(s => (s.chakra || '').toLowerCase().includes(q));
+    stones = stones.filter(s => {
+      const sc = (s.chakra || '').toLowerCase();
+      if (q === 'radice') return sc.includes('radice') || sc.includes('1°') || sc.includes('1') || sc.includes('muladhara');
+      if (q === 'sacrale') return sc.includes('sacrale') || sc.includes('2°') || sc.includes('2') || sc.includes('svadhisthana');
+      if (q === 'plesso') return sc.includes('plesso') || sc.includes('3°') || sc.includes('3') || sc.includes('solare') || sc.includes('manipura');
+      if (q === 'cuore') return sc.includes('cuore') || sc.includes('4°') || sc.includes('4') || sc.includes('anahata');
+      if (q === 'gola') return sc.includes('gola') || sc.includes('5°') || sc.includes('5') || sc.includes('vishuddha');
+      if (q === 'terzo') return sc.includes('terzo') || sc.includes('6°') || sc.includes('6') || sc.includes('ajna');
+      if (q === 'corona') return sc.includes('corona') || sc.includes('7°') || sc.includes('7') || sc.includes('sahasrara');
+      return sc.includes(q);
+    });
   }
 
-  // Filter 5: Element Filter
+  // 6. Filtro Elemento
   if (stoneShopState.elementFilter !== 'all') {
     const q = stoneShopState.elementFilter.toLowerCase();
     stones = stones.filter(s => (s.elemento || '').toLowerCase().includes(q));
   }
 
-  // Filter 6: Search Query
+  // 7. Filtro Intento Energetico / Beneficio
+  if (stoneShopState.intentFilter !== 'all') {
+    const intentMap = {
+      calma: ['calma', 'serenità', 'pace', 'sonno', 'distensione', 'rilassamento', 'armonia', 'stress'],
+      protezione: ['protezione', 'schermatura', 'scudo', 'negativ', 'purificazione', 'radicamento'],
+      chiarezza: ['chiarezza', 'lucidità', 'mente', 'concentrazione', 'intuito', 'verità', 'terzo occhio'],
+      amore: ['amore', 'cuore', 'compassione', 'armonia', 'relazioni', 'empatia', 'dolcezza'],
+      vitalita: ['vitalità', 'forza', 'coraggio', 'energia', 'volontà', 'passione', 'azione']
+    };
+    const keywords = intentMap[stoneShopState.intentFilter] || [];
+    if (keywords.length > 0) {
+      stones = stones.filter(s => {
+        const text = `${s.nome} ${s.proprieta} ${s.chakra}`.toLowerCase();
+        return keywords.some(k => text.includes(k));
+      });
+    }
+  }
+
+  // 8. Ricerca Libera Testuale
   if (stoneShopState.searchQuery) {
     const q = stoneShopState.searchQuery;
     stones = stones.filter(s => 
@@ -2199,6 +2378,13 @@ function getFilteredStones() {
       (s.elemento || '').toLowerCase().includes(q) ||
       (s.tipo || '').toLowerCase().includes(q)
     );
+  }
+
+  // 9. Ordinamento
+  if (stoneShopState.sortBy === 'name_asc') {
+    stones = [...stones].sort((a, b) => (a.nome || '').localeCompare(b.nome || ''));
+  } else if (stoneShopState.sortBy === 'name_desc') {
+    stones = [...stones].sort((a, b) => (b.nome || '').localeCompare(a.nome || ''));
   }
 
   return stones;
@@ -2226,13 +2412,14 @@ function renderAtelierShopFullGrid() {
   if (noMsg) noMsg.style.display = 'none';
 
   const cartBracelets = (state.cart || []).filter(i => !i.is_standalone_stone);
+  const availableBracelets = (state.products && state.products.length > 0) ? state.products : REAL_SHOP_BRACELETS;
 
   fullGrid.innerHTML = filtered.map(stone => {
     const isGrezzo = (stone.tipo || '').toLowerCase().includes('grezzo') || (stone.nome || '').toLowerCase().includes('grezza');
-    const typeLabel = isGrezzo ? 'Grezzo di Miniera' : 'Burattato Levigato';
+    const typeLabel = isGrezzo ? 'Grezzo Raro di Miniera' : 'Burattato Levigato';
     const currentTarget = stoneShopState.selectedTargets[stone.id] || (cartBracelets.length > 0 ? cartBracelets[0].id : 'standalone');
 
-    // Build target selector options
+    // 1. Costruzione Opzioni Dropdown Destinazione
     let targetOptionsHtml = '';
     if (cartBracelets.length > 0) {
       targetOptionsHtml += '<optgroup label="Bracciali nel tuo Scrigno">';
@@ -2242,51 +2429,94 @@ function renderAtelierShopFullGrid() {
       });
       targetOptionsHtml += '</optgroup>';
       targetOptionsHtml += '<optgroup label="Opzione Minerale Singolo">';
-      targetOptionsHtml += `<option value="standalone" ${currentTarget === 'standalone' ? 'selected' : ''}>Pietra Singola da Collezione (€${Number(stone.prezzo_vendita).toFixed(2)})</option>`;
+      targetOptionsHtml += `<option value="standalone" ${currentTarget === 'standalone' ? 'selected' : ''}>Solo Pietra da Collezione (€${Number(stone.prezzo_vendita).toFixed(2)})</option>`;
+      targetOptionsHtml += '</optgroup>';
+      targetOptionsHtml += '<optgroup label="Aggiungi con Nuovo Bracciale">';
+      availableBracelets.forEach(prod => {
+        const titleShort = prod.title.length > 28 ? prod.title.substring(0, 26) + '...' : prod.title;
+        targetOptionsHtml += `<option value="combo_${prod.id}" ${currentTarget === 'combo_' + prod.id ? 'selected' : ''}>+ ${titleShort} (€${Number(prod.price).toFixed(0)})</option>`;
+      });
       targetOptionsHtml += '</optgroup>';
     } else {
-      targetOptionsHtml += `<option value="standalone" ${currentTarget === 'standalone' ? 'selected' : ''}>Pietra Singola da Collezione (€${Number(stone.prezzo_vendita).toFixed(2)})</option>`;
+      targetOptionsHtml += `<option value="standalone" ${currentTarget === 'standalone' ? 'selected' : ''}>Solo Pietra da Collezione (€${Number(stone.prezzo_vendita).toFixed(2)})</option>`;
       targetOptionsHtml += '<optgroup label="Aggiungi con Bracciale dello Shop">';
-      targetOptionsHtml += `<option value="combo_prod_rame_001" ${currentTarget === 'combo_prod_rame_001' ? 'selected' : ''}>+ Bracciale 3 Filamenti Torciti (€30)</option>`;
-      targetOptionsHtml += `<option value="combo_prod_rame_002" ${currentTarget === 'combo_prod_rame_002' ? 'selected' : ''}>+ Cuff Martellato Ossidato (€45)</option>`;
-      targetOptionsHtml += `<option value="combo_prod_rame_003" ${currentTarget === 'combo_prod_rame_003' ? 'selected' : ''}>+ Bangle Minimal Chisel (€25)</option>`;
+      availableBracelets.forEach(prod => {
+        const titleShort = prod.title.length > 28 ? prod.title.substring(0, 26) + '...' : prod.title;
+        targetOptionsHtml += `<option value="combo_${prod.id}" ${currentTarget === 'combo_' + prod.id ? 'selected' : ''}>+ ${titleShort} (€${Number(prod.price).toFixed(0)})</option>`;
+      });
       targetOptionsHtml += '</optgroup>';
     }
 
+    // 2. Testo Pulsante
     const buttonLabel = (currentTarget && currentTarget.startsWith('combo_'))
       ? `<i class="fa-solid fa-plus"></i> Ordina con Bracciale`
       : (cartBracelets.length > 0 && currentTarget !== 'standalone')
         ? `<i class="fa-solid fa-gem"></i> Incastona nel Bracciale`
         : `<i class="fa-solid fa-plus"></i> Aggiungi allo Scrigno`;
 
+    // 3. Tecniche compatibili per il badge
+    const techBadges = (stone.tecniche_compatibili || ['Intrecciati', 'Martellati', 'Rigidi']).map(t => {
+      const icon = t === 'Intrecciati' ? 'fa-fire' : (t === 'Martellati' ? 'fa-hammer' : 'fa-circle-notch');
+      return `<span class="compatible-tag"><i class="fa-solid ${icon}"></i> ${t}</span>`;
+    }).join(' ');
+
     return `
       <article class="stone-shop-card" id="shopCard_${stone.id}">
+        <!-- Media Frame con Chiaroscuro e Badge Modulo Tecnica -->
         <div class="stone-shop-media">
-          <img src="${stone.immagine_locale}" alt="${stone.nome}" onerror="this.src='${stone.immagine_remota}'" loading="lazy">
-          <span class="stone-shop-price-badge">€${Number(stone.prezzo_vendita).toFixed(2)}</span>
-          <span class="stone-shop-type-badge">${typeLabel}</span>
-        </div>
-        <div class="stone-shop-content">
-          <h3 class="stone-shop-title">${stone.nome}</h3>
-          <div class="stone-shop-badges">
-            <span class="stone-shop-pill"><i class="fa-solid fa-sun"></i> ${stone.chakra}</span>
-            <span class="stone-shop-pill"><i class="fa-solid fa-water"></i> ${stone.elemento}</span>
+          <img src="${stone.immagine_locale}" alt="${stone.nome} - Didoni Store" onerror="this.src='${stone.immagine_remota}'" loading="lazy">
+          <div class="technique-media-vignette"></div>
+          <div class="technique-media-badge">
+            <span class="technique-badge-dot"></span>
+            <span>Didoni Store • ${typeLabel}</span>
           </div>
+          <span class="stone-shop-price-badge">€${Number(stone.prezzo_vendita).toFixed(2)}</span>
+        </div>
+
+        <!-- Corpo Contenuto Ispirato al Modulo Tecnica Intrecciati -->
+        <div class="stone-shop-content">
+          <div class="technique-kicker-pill" style="margin-bottom: 0.45rem;">
+            <i class="fa-solid fa-sun"></i> ${stone.chakra}
+          </div>
+          <h3 class="stone-shop-title">${stone.nome}</h3>
+          
+          <div class="stone-shop-badges">
+            <span class="stone-shop-pill"><i class="fa-solid fa-water"></i> ${stone.elemento}</span>
+            <span class="stone-shop-pill"><i class="fa-solid fa-shield-halved"></i> Rame 99.9%</span>
+          </div>
+          
           <p class="stone-shop-desc">${stone.proprieta}</p>
 
-          <div class="stone-compatible-box">
-            <div class="stone-compatible-title">
-              <i class="fa-solid fa-shield-halved"></i> Montatura fatta a mano per:
+          <!-- Mini Specs Grid Nobile (Modulo Tecnica) -->
+          <div class="stone-specs-mini">
+            <div class="mini-spec">
+              <i class="fa-solid fa-cube"></i>
+              <span>Autentico Didoni</span>
             </div>
-            <div class="stone-compatible-models">
-              <span class="compatible-tag">3 Filamenti</span>
-              <span class="compatible-tag">Intrecciati</span>
-              <span class="compatible-tag">Cuff Battuto</span>
-              ${!isGrezzo ? '<span class="compatible-tag">Bangle Rigido</span>' : ''}
+            <div class="mini-spec">
+              <i class="fa-solid fa-hammer"></i>
+              <span>Griffe ad Incudine</span>
+            </div>
+            <div class="mini-spec">
+              <i class="fa-solid fa-hand-holding-heart"></i>
+              <span>Senza Collanti</span>
             </div>
           </div>
 
-          <label style="font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 0.35rem; display: block;">
+          <!-- Box Compatibilità con Link Reale allo Shop -->
+          <div class="stone-compatible-box">
+            <div class="stone-compatible-title">
+              <i class="fa-solid fa-shield-halved"></i> Tecniche &amp; Modelli Compatibili:
+            </div>
+            <div class="stone-compatible-models">
+              ${techBadges}
+              <a href="index.html#collezione" class="compatible-tag link-tag" title="Visualizza creazioni in collezione">
+                <i class="fa-solid fa-arrow-up-right-from-square"></i> Vedi in Collezione
+              </a>
+            </div>
+          </div>
+
+          <label style="font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.35rem; display: block;">
             Destinazione Lavorazione:
           </label>
           <select class="luxury-input stone-shop-target-select" id="selectTarget_${stone.id}" onchange="onShopCardTargetChange('${stone.id}', this.value)">
@@ -2379,30 +2609,356 @@ function addStoneFromShopCard(stoneId) {
 }
 
 // Bind dedicated stone shop functions to window
+window.REAL_SHOP_BRACELETS = REAL_SHOP_BRACELETS;
 window.initAtelierShopPage = initAtelierShopPage;
+window.filterByChakra = filterByChakra;
+window.filterByTechnique = filterByTechnique;
 window.filterByShopModel = filterByShopModel;
 window.toggleCartBraceletFilter = toggleCartBraceletFilter;
 window.onStoneSearchInput = onStoneSearchInput;
 window.onStoneTypeFilterChange = onStoneTypeFilterChange;
 window.onStoneChakraFilterChange = onStoneChakraFilterChange;
 window.onStoneElementFilterChange = onStoneElementFilterChange;
+window.onStoneIntentFilterChange = onStoneIntentFilterChange;
+window.onStoneSortChange = onStoneSortChange;
 window.resetAllStoneFilters = resetAllStoneFilters;
 window.renderAtelierShopFullGrid = renderAtelierShopFullGrid;
 window.addStoneFromShopCard = addStoneFromShopCard;
 window.onShopCardTargetChange = onShopCardTargetChange;
 
 // ==============================================================================
-// CINEMATIC TECHNIQUE MODAL & GALLERY JUMP CONTROLLER
+// I QUATTRO METODI DI FORGIATURA — DATA DICTIONARY & DYNAMIC CONTROLLER
+// Metodi: Intrecciati, Martellati, Rigidi, Incastonatura Gemme Didoni
+// Zero parole/sinonimi vietati • Puro stile nobile fatto a mano
+// ==============================================================================
+const TECHNIQUES_DATA = {
+  intrecciati: {
+    id: 'intrecciati',
+    badge: 'METODO 01 • RAME VIVO E BRACE',
+    metaTags: ['PURO RAME 99.9%', 'FORGIATURA AD INCUDINE', 'SENZA SALDATURE'],
+    image: 'assets/branding_tecnica_intrecciati.jpg',
+    alt: 'Macro Forgiatura Intreccio Rame Puro su Brace e Carbone',
+    kicker: 'METODO 01 • TREFOLI RITORTI A CALDO',
+    title: 'La Nascita del Bracciale Intrecciato: <em>Dalla Brace all\'Incudine</em>',
+    lead: 'L\'opera prende forma sul letto di carboni ardenti. I cavi in puro rame al 99.9% vengono portati a incandescenza sfumata: il calore della brace addomestica il metallo, consentendo al maestro ramaio di torcere i trefoli senza l\'ausilio di saldature chimiche. La polvere di rame che si sprigiona durante la battitura è la firma tangibile di una lavorazione interamente compiuta a mano.',
+    hotspots: [
+      { pip: 1, left: '20%', top: '38%', title: 'Torsione a Caldo', desc: 'Trefoli intrecciati a mano a 650°C senza collanti industriali.' },
+      { pip: 2, left: '52%', top: '64%', title: 'Ricottura su Brace', desc: 'Letto di carboni ardenti che rigenera la duttilità molecolare del rame puro.' },
+      { pip: 3, left: '78%', top: '42%', title: 'Polvere di Rame Nativo', desc: 'Micro-frammenti nobili rilasciati dalla battitura ad incudine.' }
+    ],
+    phases: [
+      { num: '01', title: 'Trafilatura dei Trefoli', desc: 'Selezione di barre monolitiche in rame 99.9%, trafilate per calibrare la corretta risposta elastica.' },
+      { num: '02', title: 'Incandescenza su Brace', desc: 'Riscaldamento sui carboni di legna per eliminare le tensioni interne della materia viva.' },
+      { num: '03', title: 'Torsione Manuale', desc: 'Chiusura dei trefoli a spirale con pinze a becchi tondi e battitura cadenzata sui terminali d\'appoggio.' }
+    ],
+    targetGallery: 'Intrecciati',
+    ctaTitle: 'Vuoi ammirare i manufatti finiti?',
+    ctaDesc: 'Esplora la galleria fotografica con tutte le varianti di bracciali intrecciati forgiati ad incudine.',
+    btnText: 'Accedi alla Galleria Fotografica "Intrecciati"'
+  },
+  martellati: {
+    id: 'martellati',
+    badge: 'METODO 02 • BATTITURA AD INCUDINE',
+    metaTags: ['MASSELLO 2.5 MM', 'BOZZE IRREGOLARI', 'CERA D\'API VERGINE'],
+    image: 'assets/branding_tecnica_martellati.jpg',
+    alt: 'Macro Battitura ad Incudine con Martello Sagomato',
+    kicker: 'METODO 02 • BATTITURA A PENNA',
+    title: 'La Martellatura a Caldo: <em>Sfaccettature &amp; Ossidazione Termica</em>',
+    lead: 'Ogni colpo di martello a penna imprime una sfaccettatura irripetibile sulla lamina di rame massiccio. La fiamma viva ossida la superficie creando riflessi bruni e sfumature metalliche calde, successivamente stabilizzate e protette a caldo con pura cera vergine d\'api.',
+    hotspots: [
+      { pip: 1, left: '25%', top: '45%', title: 'Impronta a Penna', desc: 'Micro-bozze battute manualmente con ritmo cadenzato ad incudine.' },
+      { pip: 2, left: '55%', top: '35%', title: 'Bordo Arrotondato', desc: 'Smussatura ad incudine per il massimo comfort e aderenza cutanea.' },
+      { pip: 3, left: '75%', top: '65%', title: 'Sigillatura a Cera', desc: 'Trattamento termico con cera d\'api vergine protettiva a caldo.' }
+    ],
+    phases: [
+      { num: '01', title: 'Formatura della Fascia', desc: 'Taglio e calandratura della lastra in rame ad alto spessore massiccio (2.5 mm).' },
+      { num: '02', title: 'Battitura Ritmata', desc: 'Centinaia di colpi d\'incudine impressi a caldo per creare la texture prismatica cangiante.' },
+      { num: '03', title: 'Ossidazione a Fiamma', desc: 'Brunitura naturale controllata a fuoco vivo e lucidatura selettiva compiuta a mano.' }
+    ],
+    targetGallery: 'Martellati',
+    ctaTitle: 'Scopri i bracciali martellati',
+    ctaDesc: 'Ammira i modelli cuff aperti con sfaccettature prismatiche forgiati ad incudine.',
+    btnText: 'Accedi alla Galleria Fotografica "Martellati"'
+  },
+  rigidi: {
+    id: 'rigidi',
+    badge: 'METODO 03 • MASSELLO PIENO 99.9%',
+    metaTags: ['BARRA MONOLITICA', 'CALANDRATURA CONTINUA', 'ZERO SALDATURE'],
+    image: 'assets/branding_tecnica_rigidi.jpg',
+    alt: 'Macro Curvatura Barra di Rame su Mandrino d\'Acciaio',
+    kicker: 'METODO 03 • MONOLITE CALANDRATO',
+    title: 'Il Bangle a Massello Pieno: <em>Calandratura Continua a Caldo</em>',
+    lead: 'Nessun giunto né saldatura: il bracciale rigido nasce da una singola barra di rame monolitico. Scaldata alla forgia e piegata con precisione attorno a un mandrino tronco-conico in acciaio, la barra mantiene una densità molecolare compatta che garantisce un\'elasticità di memoria perenne.',
+    hotspots: [
+      { pip: 1, left: '30%', top: '50%', title: 'Barra Elettrolitica', desc: 'Puro rame 99.9% a sezione piena ad alta densità molecolare.' },
+      { pip: 2, left: '60%', top: '30%', title: 'Memoria Elastica', desc: 'Curvatura a caldo che mantiene la tensione perenne senza deformarsi.' },
+      { pip: 3, left: '80%', top: '60%', title: 'Terminali a Specchio', desc: 'Micro-cesellatura manuale e bisellatura satinata anti-attrito.' }
+    ],
+    phases: [
+      { num: '01', title: 'Calibrazione Barra', desc: 'Misurazione e taglio della barra massiccia in base alla circonferenza richiesta.' },
+      { num: '02', title: 'Curvatura su Mandrino', desc: 'Sagomatura progressiva a caldo per ottenere l\'ovale perfetto del polso.' },
+      { num: '03', title: 'Finitura Satinata', desc: 'Lappatura compiuta a mano dei terminali e lucidatura a secco priva di acidi.' }
+    ],
+    targetGallery: 'Rigidi',
+    ctaTitle: 'Esplora i bangle rigidi',
+    ctaDesc: 'Scopri la collezione di bracciali monolitici aperti e minimali forgiati a massello pieno.',
+    btnText: 'Accedi alla Galleria Fotografica "Rigidi"'
+  },
+  incastonatura: {
+    id: 'incastonatura',
+    badge: 'METODO 04 • FUSIONE MINERALE DIDONI',
+    metaTags: ['35 GEMME NATURALI', 'GRIFFE AD INCUDINE', 'ZERO COLLANTI'],
+    image: 'assets/branding_tecnica_incastonatura.jpg',
+    alt: 'Macro Incastonatura Cristallo Didoni su Montatura Rame Puro',
+    kicker: 'METODO 04 • CRISTALLOTERAPIA &amp; RAME',
+    title: 'Incastonatura su Rame: <em>Gemme Autentiche Didoni Store</em>',
+    lead: 'La fusione tra la conduttività bio-energetica del rame puro 99.9% e le frequenze vibrazionali dei cristalli autentici Didoni. La montatura viene sagomata ad incudine direttamente attorno alla conformazione geologica della pietra prescelta, serrando le griffe con precisione millimetrica senza l\'uso di colle o resine sintetiche.',
+    hotspots: [
+      { pip: 1, left: '42%', top: '48%', title: 'Cristallo Didoni Autentico', desc: 'Gemma 100% naturale, grezza o burattata, certificata Didoni Store.' },
+      { pip: 2, left: '22%', top: '32%', title: 'Griffe Forgiate a Mano', desc: 'Trefoli in rame battuti a caldo per avvolgere la gemma in totale sicurezza.' },
+      { pip: 3, left: '72%', top: '62%', title: 'Zero Collanti Sintetici', desc: 'Tenuta meccanica solida ottenuta solo per pressione metallurgica.' }
+    ],
+    phases: [
+      { num: '01', title: 'Scelta della Gemma', desc: 'Selezione del minerale naturale in base a proprietà cristalloterapiche e chakra.' },
+      { num: '02', title: 'Bocciolo di Rame', desc: 'Forgiatura della sede su misura direttamente sulla superficie del bracciale.' },
+      { num: '03', title: 'Serraggio Meccanico', desc: 'Battitura delle griffe attorno al minerale per una tenuta perenne e naturale.' }
+    ],
+    targetGallery: 'bottega-pietre',
+    ctaTitle: 'Personalizza con un Cristallo',
+    ctaDesc: 'Esplora la Bottega delle Pietre con 35 gemme e trova la combinazione ideale per il tuo bracciale.',
+    btnText: 'Entra nella Bottega delle Pietre'
+  }
+};
+
+let currentTechniqueSlideIndex = 0;
+let activeModalTechniqueId = 'intrecciati';
+let techniqueAutoSlideInterval = null;
+const AUTO_SLIDE_DELAY = 5000;
+
+// ==============================================================================
+// HORIZONTAL CAROUSEL CONTROLLER (CINEMATIC SCROLL DX/SX • UN FORM ALLA VOLTA • AUTO)
+// ==============================================================================
+function initTechniquesCarousel() {
+  const viewport = document.getElementById('techniquesCarouselViewport');
+  const track = document.getElementById('techniquesCarouselTrack');
+  const section = document.getElementById('tecniche-forgiatura');
+  if (!viewport || !track) return;
+
+  // Touch Swipe Gestures (dx / sx)
+  let touchStartX = 0;
+  let touchEndX = 0;
+
+  viewport.addEventListener('touchstart', (e) => {
+    touchStartX = e.changedTouches[0].screenX;
+    stopTechniqueAutoSlide();
+  }, { passive: true });
+
+  viewport.addEventListener('touchend', (e) => {
+    touchEndX = e.changedTouches[0].screenX;
+    const diff = touchStartX - touchEndX;
+    if (Math.abs(diff) > 40) {
+      if (diff > 0) {
+        // Swipe verso sinistra -> avanza verso destra (dx)
+        navigateTechniqueSlide(1);
+      } else {
+        // Swipe verso destra -> retrocede verso sinistra (sx)
+        navigateTechniqueSlide(-1);
+      }
+    }
+    startTechniqueAutoSlide();
+  }, { passive: true });
+
+  // Pausa automatica su hover o focus
+  if (section) {
+    section.addEventListener('mouseenter', stopTechniqueAutoSlide);
+    section.addEventListener('mouseleave', startTechniqueAutoSlide);
+    section.addEventListener('focusin', stopTechniqueAutoSlide);
+    section.addEventListener('focusout', startTechniqueAutoSlide);
+  }
+
+  // Posiziona il primo modulo con transizione iniziale
+  goToTechniqueSlide(0, true);
+  startTechniqueAutoSlide();
+}
+
+function startTechniqueAutoSlide() {
+  stopTechniqueAutoSlide();
+  techniqueAutoSlideInterval = setInterval(() => {
+    navigateTechniqueSlide(1, true);
+  }, AUTO_SLIDE_DELAY);
+}
+
+function stopTechniqueAutoSlide() {
+  if (techniqueAutoSlideInterval) {
+    clearInterval(techniqueAutoSlideInterval);
+    techniqueAutoSlideInterval = null;
+  }
+}
+
+function resetTechniqueAutoSlide() {
+  stopTechniqueAutoSlide();
+  startTechniqueAutoSlide();
+}
+
+function navigateTechniqueSlide(direction, isAuto = false) {
+  const track = document.getElementById('techniquesCarouselTrack');
+  if (!track) return;
+
+  const cards = track.querySelectorAll('.technique-carousel-card');
+  const total = cards.length || 4;
+  
+  let targetIndex = currentTechniqueSlideIndex + direction;
+  // Scorrimento cinematografico a ciclo continuo dx sx
+  if (targetIndex >= total) targetIndex = 0;
+  if (targetIndex < 0) targetIndex = total - 1;
+
+  goToTechniqueSlide(targetIndex, isAuto);
+}
+
+function goToTechniqueSlide(index, isAuto = false) {
+  const track = document.getElementById('techniquesCarouselTrack');
+  const viewport = document.getElementById('techniquesCarouselViewport');
+  if (!track) return;
+
+  const cards = track.querySelectorAll('.technique-carousel-card');
+  if (!cards.length) return;
+
+  const total = cards.length;
+  let targetIndex = index;
+  if (targetIndex >= total) targetIndex = 0;
+  if (targetIndex < 0) targetIndex = total - 1;
+
+  currentTechniqueSlideIndex = targetIndex;
+
+  // Effetto cinematografico di scorrimento orizzontale dx sx (100% viewport: un form alla volta)
+  track.style.transform = `translateX(-${targetIndex * 100}%)`;
+
+  // Previene qualsiasi scroll nativo residuo per garantire transizione GPU pura
+  if (viewport) {
+    viewport.scrollLeft = 0;
+  }
+
+  updateTechniqueCarouselUI();
+
+  if (!isAuto) {
+    resetTechniqueAutoSlide();
+  }
+}
+
+function updateTechniqueCarouselUI() {
+  // Aggiorna contatore numerico
+  const counterEl = document.getElementById('counterCurrent');
+  if (counterEl) {
+    counterEl.textContent = String(currentTechniqueSlideIndex + 1).padStart(2, '0');
+  }
+
+  // Aggiorna indicatori dots
+  const dots = document.querySelectorAll('#techniquesCarouselDots .carousel-dot');
+  dots.forEach((dot, idx) => {
+    dot.classList.toggle('active', idx === currentTechniqueSlideIndex);
+  });
+
+  // Frecce sempre attive nel ciclo infinito continuo
+  const prevBtn = document.getElementById('carouselPrevBtn');
+  const nextBtn = document.getElementById('carouselNextBtn');
+  if (prevBtn) {
+    prevBtn.style.opacity = '1';
+    prevBtn.style.pointerEvents = 'auto';
+  }
+  if (nextBtn) {
+    nextBtn.style.opacity = '1';
+    nextBtn.style.pointerEvents = 'auto';
+  }
+
+  // Evidenziazione card attiva
+  const track = document.getElementById('techniquesCarouselTrack');
+  if (track) {
+    const cards = track.querySelectorAll('.technique-carousel-card');
+    cards.forEach((card, idx) => {
+      card.classList.toggle('is-active-slide', idx === currentTechniqueSlideIndex);
+    });
+  }
+}
+
+// ==============================================================================
+// DYNAMIC TECHNIQUE MODAL CONTROLLER
 // ==============================================================================
 function openTechniqueModal(techniqueId = 'intrecciati') {
-  const backdrop = document.getElementById('techniqueModalBackdrop');
-  if (!backdrop) return;
-  backdrop.classList.add('open');
-  backdrop.style.display = 'flex';
-  document.body.style.overflow = 'hidden';
+  const data = TECHNIQUES_DATA[techniqueId] || TECHNIQUES_DATA.intrecciati;
+  activeModalTechniqueId = data.id;
 
-  const card = document.getElementById('cinematicTechniqueCard');
-  if (card) card.setAttribute('aria-expanded', 'true');
+  // 1. Populate Top Bar Badge & Meta Tags
+  const badgeTitleEl = document.getElementById('modalTechniqueBadgeTitle');
+  if (badgeTitleEl) badgeTitleEl.textContent = data.badge;
+
+  const tag1 = document.getElementById('modalMetaTag1');
+  const tag2 = document.getElementById('modalMetaTag2');
+  const tag3 = document.getElementById('modalMetaTag3');
+  if (tag1 && data.metaTags[0]) tag1.textContent = data.metaTags[0];
+  if (tag2 && data.metaTags[1]) tag2.textContent = data.metaTags[1];
+  if (tag3 && data.metaTags[2]) tag3.textContent = data.metaTags[2];
+
+  // 2. Populate Macro Visual Stage & Alt
+  const stageImg = document.getElementById('modalStageImage');
+  if (stageImg) {
+    stageImg.src = data.image;
+    stageImg.alt = data.alt;
+  }
+
+  // 3. Populate Interactive Hotspots
+  const hotspotsGroup = document.getElementById('modalHotspotsGroup');
+  if (hotspotsGroup && data.hotspots) {
+    hotspotsGroup.innerHTML = data.hotspots.map((spot, idx) => `
+      <div class="cinematic-hotspot spot-${idx + 1}" style="left: ${spot.left}; top: ${spot.top};" tabindex="0" role="button" aria-label="${spot.title}">
+        <span class="hotspot-pulse"></span>
+        <span class="hotspot-pip">${spot.pip}</span>
+        <div class="hotspot-tooltip">
+          <strong>${spot.title}</strong>
+          <p>${spot.desc}</p>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // 4. Populate Narrative Header
+  const kickerEl = document.getElementById('modalNarrativeKicker');
+  if (kickerEl) kickerEl.innerHTML = data.kicker;
+
+  const titleEl = document.getElementById('techniqueModalTitle');
+  if (titleEl) titleEl.innerHTML = data.title;
+
+  const leadEl = document.getElementById('modalTechniqueLead');
+  if (leadEl) leadEl.innerHTML = data.lead;
+
+  // 5. Populate 3-Phase Process Blueprint Grid
+  const processGrid = document.getElementById('modalProcessGrid');
+  if (processGrid && data.phases) {
+    processGrid.innerHTML = data.phases.map(p => `
+      <div class="process-card">
+        <div class="process-number">${p.num}</div>
+        <h4>${p.title}</h4>
+        <p>${p.desc}</p>
+      </div>
+    `).join('');
+  }
+
+  // 6. Populate CTA Box & Gateway Button
+  const ctaTitleEl = document.getElementById('modalCtaBoxTitle');
+  if (ctaTitleEl) ctaTitleEl.textContent = data.ctaTitle;
+
+  const ctaDescEl = document.getElementById('modalCtaBoxDesc');
+  if (ctaDescEl) ctaDescEl.textContent = data.ctaDesc;
+
+  const btnTextEl = document.getElementById('modalGatewayBtnText');
+  if (btnTextEl) btnTextEl.textContent = data.btnText;
+
+  // 7. Show Modal Backdrop
+  const backdrop = document.getElementById('techniqueModalBackdrop');
+  if (backdrop) {
+    backdrop.classList.add('open');
+    backdrop.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+  }
 }
 
 function closeTechniqueModal() {
@@ -2411,22 +2967,39 @@ function closeTechniqueModal() {
   backdrop.classList.remove('open');
   backdrop.style.display = 'none';
   document.body.style.overflow = '';
-
-  const card = document.getElementById('cinematicTechniqueCard');
-  if (card) card.setAttribute('aria-expanded', 'false');
 }
 
-function handleTechniqueCardKey(event) {
+function onModalGatewayClick() {
+  const data = TECHNIQUES_DATA[activeModalTechniqueId] || TECHNIQUES_DATA.intrecciati;
+  closeTechniqueModal();
+
+  if (data.targetGallery === 'bottega-pietre') {
+    jumpToBottegaPietre();
+  } else {
+    goToDedicatedPhotoGallery(data.targetGallery);
+  }
+}
+
+function jumpToBottegaPietre(event = null) {
+  if (event) event.stopPropagation();
+  closeTechniqueModal();
+
+  const section = document.getElementById('bottega-pietre');
+  if (section) {
+    section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    showToast('Bottega delle Pietre & Incastonatura Didoni attivata');
+  }
+}
+
+function handleTechniqueSlideKey(event, techniqueId) {
   if (event.key === 'Enter' || event.key === ' ') {
     event.preventDefault();
-    openTechniqueModal('intrecciati');
+    openTechniqueModal(techniqueId);
   }
 }
 
 function goToDedicatedPhotoGallery(category = 'Intrecciati', event = null) {
-  if (event) {
-    event.stopPropagation();
-  }
+  if (event) event.stopPropagation();
   closeTechniqueModal();
 
   // 1. Aggiorna stato filtro categoria
@@ -2444,7 +3017,7 @@ function goToDedicatedPhotoGallery(category = 'Intrecciati', event = null) {
   // 3. Renderizza la griglia filtrata con i pezzi della tecnica richiesta
   renderProducts();
 
-  // 4. Scroll fluido cinematografico verso la sezione dedicata
+  // 4. Scroll fluido verso la sezione dedicata
   const targetSection = document.getElementById('collezione');
   if (targetSection) {
     targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -2454,10 +3027,32 @@ function goToDedicatedPhotoGallery(category = 'Intrecciati', event = null) {
   showToast(`Galleria Fotografica attivata: ${category}`);
 }
 
+// Close technique modal on ESC
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    closeTechniqueModal();
+  }
+});
+
+// Auto-initialize carousel on DOMContentLoaded
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initTechniquesCarousel);
+} else {
+  initTechniquesCarousel();
+}
+
+// Window Bindings
+window.TECHNIQUES_DATA = TECHNIQUES_DATA;
 window.openTechniqueModal = openTechniqueModal;
 window.closeTechniqueModal = closeTechniqueModal;
-window.handleTechniqueCardKey = handleTechniqueCardKey;
+window.onModalGatewayClick = onModalGatewayClick;
+window.jumpToBottegaPietre = jumpToBottegaPietre;
+window.handleTechniqueSlideKey = handleTechniqueSlideKey;
+window.navigateTechniqueSlide = navigateTechniqueSlide;
+window.goToTechniqueSlide = goToTechniqueSlide;
+window.updateTechniqueCarouselUI = updateTechniqueCarouselUI;
 window.goToDedicatedPhotoGallery = goToDedicatedPhotoGallery;
+
 
 
 

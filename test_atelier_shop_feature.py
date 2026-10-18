@@ -36,13 +36,16 @@ class TestAtelierShopFeature(unittest.TestCase):
         self.js = self.js_path.read_text(encoding="utf-8")
 
     def test_01_atelier_html_structure(self):
-        """Verifica che atelier-pietre.html esista e contenga la struttura completa dello Shop Pietre."""
+        """Verifica che atelier-pietre.html esista e contenga la struttura focalizzata sui Chakra."""
         self.assertTrue(self.atelier_html_path.exists(), "atelier-pietre.html non trovato")
         self.assertIn('id="mainHeader"', self.atelier_html)
         self.assertIn('class="breadcrumb-wrap"', self.atelier_html)
         self.assertIn('id="atelierShopToolbar"', self.atelier_html)
-        self.assertIn('id="shopModelFilterPills"', self.atelier_html)
-        self.assertIn('id="filterByCartBraceletBtn"', self.atelier_html)
+        self.assertIn('id="shopChakraFilterPills"', self.atelier_html)
+        self.assertIn('data-chakra="radice"', self.atelier_html)
+        # La sezione opzionale destinazione/bracciale è stata rimossa su richiesta esplicita
+        self.assertNotIn('id="shopModelFilterPills"', self.atelier_html)
+        self.assertNotIn('id="filterByCartBraceletBtn"', self.atelier_html)
         self.assertIn('id="stoneShopSearchInput"', self.atelier_html)
         self.assertIn('id="stoneResultsCount"', self.atelier_html)
         self.assertIn('id="atelierShopFullGrid"', self.atelier_html)
@@ -63,7 +66,7 @@ class TestAtelierShopFeature(unittest.TestCase):
         print("\n[Atelier Test 2] Anti-Full Scroll e CTA Atelier Pietre sulla Home validati")
 
     def test_03_filter_by_shop_items(self):
-        """Verifica la presenza dei filtri per gli oggetti presenti nello shop (modelli di bracciali)."""
+        """Verifica la compatibilità dei modelli di bracciali nel catalogo pietre e in app.js."""
         required_models = [
             'prod_rame_001',
             'prod_intr_cuff_bottega',
@@ -77,17 +80,15 @@ class TestAtelierShopFeature(unittest.TestCase):
             'prod_pronta_intrecciato'
         ]
         for model in required_models:
-            self.assertIn(f'data-model="{model}"', self.atelier_html, f"Pill filtro per modello {model} mancante")
+            self.assertIn(f"'{model}'", self.js, f"Modello {model} mancante in REAL_SHOP_BRACELETS")
 
-        print(f"\n[Atelier Test 3] Tutti i {len(required_models)} modelli di bracciali dello shop integrati nei filtri")
+        print(f"\n[Atelier Test 3] Tutti i {len(required_models)} modelli di bracciali dello shop integrati nel motore")
 
     def test_04_smart_cart_filter(self):
-        """Verifica il filtro dinamico per bracciale presente nel carrello."""
-        self.assertIn('id="filterByCartBraceletBtn"', self.atelier_html)
-        self.assertIn('onclick="toggleCartBraceletFilter()"', self.atelier_html)
+        """Verifica le funzioni di gestione carrello e compatibilità in app.js."""
         self.assertIn('function toggleCartBraceletFilter', self.js)
         self.assertIn('window.toggleCartBraceletFilter = toggleCartBraceletFilter', self.js)
-        print("\n[Atelier Test 4] Filtro Smart Cart validato e connesso alle funzioni reattive")
+        print("\n[Atelier Test 4] Funzioni carrello e compatibilità verificate in app.js")
 
     def test_05_js_shop_engine_functions(self):
         """Verifica le funzioni JS in app.js per il motore dello shop."""
@@ -148,6 +149,45 @@ class TestAtelierShopFeature(unittest.TestCase):
 
         print(f"\n[Atelier Test 7] 35 minerali autentici con immagini e compatibilità bracciali validati al 100%")
 
+    def test_08_chakra_filtering_system(self):
+        """Verifica il sistema di filtraggio per i 7 Chakra dell'Atelier Pietre."""
+        # 1. Presenza toolbar pills Chakra
+        self.assertIn('id="shopChakraFilterPills"', self.atelier_html)
+        required_chakras = ['all', 'radice', 'sacrale', 'plesso', 'cuore', 'gola', 'terzo', 'corona']
+        for chk in required_chakras:
+            self.assertIn(f'data-chakra="{chk}"', self.atelier_html, f"Pillola Chakra {chk} mancante in atelier-pietre.html")
+
+        # 2. Funzione JS e window binding
+        self.assertIn('function filterByChakra', self.js)
+        self.assertIn('window.filterByChakra = filterByChakra', self.js)
+        self.assertIn('chakraFilter:', self.js)
+
+        # 3. Catalogo pietre: 100% delle gemme devono avere il campo chakra valido
+        with open(self.catalog_path, "r", encoding="utf-8") as f:
+            stones = json.load(f)
+
+        for s in stones:
+            self.assertIn("chakra", s, f"Campo 'chakra' mancante per la gemma {s.get('id')}")
+            self.assertTrue(len(s["chakra"].strip()) > 0, f"Campo 'chakra' vuoto per {s.get('id')}")
+
+        # 4. Distribuzione: ogni chakra deve avere gemme autentiche associate
+        chakra_counts = {}
+        for q in ['radice', 'sacrale', 'plesso', 'cuore', 'gola', 'terzo', 'corona']:
+            matches = [s for s in stones if (
+                (q == 'radice' and any(k in s['chakra'].lower() for k in ['radice', '1°', '1', 'muladhara'])) or
+                (q == 'sacrale' and any(k in s['chakra'].lower() for k in ['sacrale', '2°', '2', 'svadhisthana'])) or
+                (q == 'plesso' and any(k in s['chakra'].lower() for k in ['plesso', '3°', '3', 'solare', 'manipura'])) or
+                (q == 'cuore' and any(k in s['chakra'].lower() for k in ['cuore', '4°', '4', 'anahata'])) or
+                (q == 'gola' and any(k in s['chakra'].lower() for k in ['gola', '5°', '5', 'vishuddha'])) or
+                (q == 'terzo' and any(k in s['chakra'].lower() for k in ['terzo', '6°', '6', 'ajna'])) or
+                (q == 'corona' and any(k in s['chakra'].lower() for k in ['corona', '7°', '7', 'sahasrara']))
+            )]
+            chakra_counts[q] = len(matches)
+            self.assertGreater(len(matches), 0, f"Nessuna gemma trovata per il chakra {q}")
+
+        print(f"\n[Atelier Test 8] Sistema di filtraggio per i 7 Chakra verificato al 100%: {chakra_counts}")
+
 
 if __name__ == "__main__":
     unittest.main()
+
