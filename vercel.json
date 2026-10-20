@@ -1,7 +1,8 @@
 {
   "version": 2,
-  "cleanUrls": true,
   "rewrites": [
+    { "source": "/googleb34383411bc07a8a.html", "destination": "/googleb34383411bc07a8a.html" },
+    { "source": "/googleb34383411bc07a8a", "destination": "/googleb34383411bc07a8a.html" },
     { "source": "/atelier-pietre", "destination": "/atelier-pietre.html" },
     { "source": "/atelier-pietre/", "destination": "/atelier-pietre.html" },
     { "source": "/admin", "destination": "/admin.html" },
