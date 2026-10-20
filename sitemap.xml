@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  <url>
+    <loc>https://agtechdesigne.shop/</loc>
+    <lastmod>2026-10-20</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://agtechdesigne.shop/assets/Intrecciati/bracciale_3_filamenti.jpg</image:loc>
+      <image:title>Bracciale in Puro Rame 99.9% 3 Filamenti Fatto a Mano</image:title>
+      <image:caption>Bracciale forgiato a mano in puro rame 99.9% finitura artigianale a cera naturale d api</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://agtechdesigne.shop/assets/Intrecciati/bracciale_intrecciato_cuff_bottega.jpg</image:loc>
+      <image:title>Bracciale Intrecciato Cuff Rame Puro Bottega</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://agtechdesigne.shop/assets/Martellati%20ossidati/bracciale_martellato.jpg</image:loc>
+      <image:title>Bracciale Martellato Ossidato in Puro Rame</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://agtechdesigne.shop/assets/rigidi/bracciale_rigido_puro.jpg</image:loc>
+      <image:title>Bracciale Rigido in Puro Rame Forgiato</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://agtechdesigne.shop/atelier-pietre.html</loc>
+    <lastmod>2026-10-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://agtechdesigne.shop/assets/pietre/ametista.jpg</image:loc>
+      <image:title>Ametista Naturale Didoni — Chakra della Corona</image:title>
+      <image:caption>Pietra naturale certificata per bracciali in rame puro Fatto a Mano</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://agtechdesigne.shop/assets/pietre/turchese.jpg</image:loc>
+      <image:title>Turchese Naturale Didoni — Chakra della Gola</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://agtechdesigne.shop/assets/pietre/corniola.jpg</image:loc>
+      <image:title>Corniola Naturale Didoni — Chakra Sacrale</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://agtechdesigne.shop/assets/pietre/diaspro_rosso.jpg</image:loc>
+      <image:title>Diaspro Rosso Didoni — Chakra della Radice</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://agtechdesigne.shop/assets/pietre/occhio_di_tigre.jpg</image:loc>
+      <image:title>Occhio di Tigre Didoni — Chakra del Plesso Solare</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://agtechdesigne.shop/assets/pietre/avventurina_verde.jpg</image:loc>
+      <image:title>Avventurina Verde Didoni — Chakra del Cuore</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://agtechdesigne.shop/assets/pietre/lapislazzuli.jpg</image:loc>
+      <image:title>Lapislazzuli Didoni — Chakra del Terzo Occhio</image:title>
+    </image:image>
+  </url>
+</urlset>

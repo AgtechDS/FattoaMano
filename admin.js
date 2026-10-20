@@ -281,11 +281,13 @@ function renderCatalogTable(filteredItems = null) {
       </td>
       <td style="text-align: right;">
         <div class="action-btn-group">
-          <button class="btn-icon-action" onclick="editProduct('${prod.id}')" title="Modifica opera">
+          <button class="btn-icon-action btn-edit-action" onclick="editProduct('${prod.id}')" title="Modifica opera">
             <i class="fa-solid fa-pen-to-square"></i>
+            <span class="btn-action-label">Modifica Opera</span>
           </button>
-          <button class="btn-icon-action delete" onclick="deleteProduct('${prod.id}', '${encodeURIComponent(prod.title)}')" title="Elimina opera">
+          <button class="btn-icon-action delete btn-delete-action" onclick="deleteProduct('${prod.id}', '${encodeURIComponent(prod.title)}')" title="Elimina opera">
             <i class="fa-solid fa-trash-can"></i>
+            <span class="btn-action-label-delete">Elimina</span>
           </button>
         </div>
       </td>
@@ -428,6 +430,8 @@ function closeProductModal() {
 }
 
 function handleBackdropClick(event) {
+  // On mobile screens (<= 768px), disable closing via backdrop tap to prevent losing input data accidentally
+  if (window.innerWidth <= 768) return;
   if (event && event.target && event.target.id === 'productModal') {
     closeProductModal();
   }

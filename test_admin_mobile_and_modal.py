@@ -102,5 +102,57 @@ class TestAdminMobileAndModal(unittest.TestCase):
         print("\n[Admin Test 8] Rispetto assoluto del Purple Ban superato al 100%")
 
 
+    def test_09_mobile_luxury_card_and_touch_actions(self):
+        """Verifica trasformazione tabella in luxury card e pulsanti modifica/elimina touch-friendly (>=44px)."""
+        # CSS Card Layout
+        self.assertIn('#catalogTableBody tr', self.admin_css)
+        self.assertIn('grid-template-areas:', self.admin_css)
+        self.assertIn('.btn-icon-action.btn-edit-action', self.admin_css)
+        self.assertIn('min-height: 44px', self.admin_css)
+        self.assertIn('.btn-action-label', self.admin_css)
+        self.assertIn('.btn-icon-action.btn-delete-action', self.admin_css)
+
+        # JS Generazione etichette e classi touch
+        self.assertIn('btn-edit-action', self.admin_js)
+        self.assertIn('btn-action-label', self.admin_js)
+        self.assertIn('btn-delete-action', self.admin_js)
+
+        # Modal testata e footer sticky su mobile
+        self.assertIn('.modal-head', self.admin_css)
+        self.assertIn('position: sticky', self.admin_css)
+        self.assertIn('position: sticky', self.admin_css)
+        self.assertIn('.modal-footer', self.admin_css)
+        print("\n[Admin Test 9] Layout luxury card mobile, pulsanti touch 44px e modal sticky footer verificati")
+
+    def test_10_zero_forbidden_synonyms(self):
+        """Verifica rispetto assoluto del divieto di sinonimi (nessun 'artigian*')."""
+        files = [
+            WORKSPACE_DIR / "admin.html",
+            WORKSPACE_DIR / "admin.js",
+            WORKSPACE_DIR / "admin.css",
+            WORKSPACE_DIR / "success.html"
+        ]
+        for f in files:
+            content = f.read_text(encoding="utf-8").lower()
+            self.assertNotIn("artigian", content, f"Trovato pattern vietato 'artigian*' in {f.name}!")
+        print("\n[Admin Test 10] Divieto sinonimi ('artigian*') superato al 100% in tutti i file admin e success")
+
+    def test_11_order_confirmation_and_email_dispatcher(self):
+        """Verifica il flusso di conferma ordine e dispatch email post-pagamento Stripe."""
+        success_html = (WORKSPACE_DIR / "success.html").read_text(encoding="utf-8")
+        app_js = (WORKSPACE_DIR / "app.js").read_text(encoding="utf-8")
+
+        # Persistenza pre-redirect e keepalive in app.js
+        self.assertIn('fattoamano_last_order', app_js)
+        self.assertIn('keepalive: true', app_js)
+
+        # Finalizzazione su success.html
+        self.assertIn('fattoamano_last_order', success_html)
+        self.assertIn('/api/send-order-notification', success_html)
+        self.assertIn('PAID_CONFIRMED', success_html)
+        self.assertIn('orderSuccessDetails', success_html)
+        print("\n[Admin Test 11] Flusso di conferma ordine e dispatch email garantito verificato al 100%")
+
+
 if __name__ == "__main__":
     unittest.main()

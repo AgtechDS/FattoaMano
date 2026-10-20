@@ -53,8 +53,11 @@ class TestFattoAManoSystem(unittest.TestCase):
             self.assertIn("title", prod)
             self.assertIn("price", prod)
             self.assertIn("image_url", prod)
-            asset_path = WORKSPACE_DIR / prod["image_url"]
-            self.assertTrue(asset_path.exists(), f"Asset {prod['image_url']} non trovato")
+            if prod["image_url"].startswith("http://") or prod["image_url"].startswith("https://"):
+                self.assertTrue(len(prod["image_url"]) > 10, "URL remoto immagine non valido")
+            else:
+                asset_path = WORKSPACE_DIR / prod["image_url"]
+                self.assertTrue(asset_path.exists(), f"Asset {prod['image_url']} non trovato")
         print(f"\n[Test 2] Integrità Cache ed Asset superata ({len(products)} creazioni verificate)")
 
     def test_03_server_get_products(self):

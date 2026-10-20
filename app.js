@@ -853,23 +853,33 @@ async function handleShippingFormSubmit(event) {
   const total = subtotal + state.shippingFee;
   const orderId = 'FAM-' + Date.now().toString().slice(-6);
 
-  // 1. Notifica Server-Side garantita ad agtechdesigne@gmail.com (salvata in orders_audit.json e inviata via SMTP)
-  fetch('/api/send-order-notification', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      order_id: orderId,
-      shipping_info: shippingInfo,
-      items: [...state.cart],
-      subtotal: subtotal,
-      shipping_fee: state.shippingFee,
-      total: total
-    })
-  }).then(res => res.json()).then(data => {
-    console.log('[Server Order Dispatcher Notice]:', data);
-  }).catch(err => {
+  // Persistenza dell'ordine completo per garanzia invio email di conferma
+  const orderPayload = {
+    order_id: orderId,
+    shipping_info: shippingInfo,
+    items: [...state.cart],
+    subtotal: subtotal,
+    shipping_fee: state.shippingFee,
+    total: total
+  };
+  localStorage.setItem('fattoamano_last_order', JSON.stringify(orderPayload));
+
+  // 1. Notifica Server-Side garantita a cliente e agtechdesigne@gmail.com con keepalive
+  try {
+    await Promise.race([
+      fetch('/api/send-order-notification', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(orderPayload),
+        keepalive: true
+      }).then(res => res.json()).then(data => {
+        console.log('[Server Order Dispatcher Notice]:', data);
+      }),
+      new Promise(resolve => setTimeout(resolve, 1400))
+    ]);
+  } catch (err) {
     console.warn('[Server Order Dispatcher Error]:', err);
-  });
+  }
 
   // 2. Invio asincrono notifica email di spedizione ad agtechdesigne@gmail.com tramite EmailJS (service_1m1tfyq)
   sendShippingEmailNotification(shippingInfo, [...state.cart], total).catch(err => {

@@ -4,6 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ordine Confermato — Fatto a Mano</title>
+  <meta name="description" content="Conferma ordine e pagamento sicuro per il tuo bracciale in puro rame 99.9% Fatto a Mano.">
+  <meta name="robots" content="noindex, nofollow">
+  <meta property="og:title" content="Ordine Confermato — Fatto a Mano">
+  <meta property="og:type" content="website">
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <style>
@@ -46,8 +50,12 @@
       </p>
 
       <div style="background: rgba(255, 255, 255, 0.02); border: 1px dashed var(--border-subtle); border-radius: var(--radius-sm); padding: 1.25rem; margin-bottom: 2rem; text-align: left;">
-        <div style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.4rem;">SPEDIZIONE ASSICURATA</div>
-        <div style="font-size: 0.95rem; color: var(--text-primary);">Riceverai il tracking postale riservato via email appena il pacco lascerà l'atelier.</div>
+        <div style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.4rem;">SPEDIZIONE ASSICURATA & TRACCIATA</div>
+        <div style="font-size: 0.95rem; color: var(--text-primary);" id="orderSuccessDetails">Riceverai il tracking postale riservato via email appena il pacco lascerà l'atelier.</div>
+        <div id="emailConfirmStatus" style="margin-top: 0.75rem; font-size: 0.88rem; color: var(--copper-primary); display: flex; align-items: center; gap: 0.5rem;">
+          <i class="fa-solid fa-envelope-circle-check"></i>
+          <span>Invio email di conferma in corso...</span>
+        </div>
       </div>
 
       <a href="index.html" class="btn-primary" style="text-decoration: none;">
@@ -57,8 +65,51 @@
   </div>
 
   <script>
-    // Pulisce il carrello locale al completamento dell'acquisto
-    localStorage.removeItem('fattoamano_cart');
+    // Finalizzazione ordine post-pagamento Stripe e dispatch email di riepilogo
+    (async function finalizeOrderOnSuccess() {
+      const lastOrderRaw = localStorage.getItem('fattoamano_last_order');
+      const emailStatusEl = document.getElementById('emailConfirmStatus');
+      const detailsEl = document.getElementById('orderSuccessDetails');
+
+      if (lastOrderRaw) {
+        try {
+          const order = JSON.parse(lastOrderRaw);
+          const customerEmail = (order.shipping_info && order.shipping_info.email) ? order.shipping_info.email : '';
+          const orderId = order.order_id || '';
+
+          if (detailsEl && customerEmail) {
+            detailsEl.innerHTML = `Ordine <strong>#${orderId}</strong> protocollato. Il riepilogo dell'opera e della spedizione tracciata è stato inviato all'indirizzo <strong>${customerEmail}</strong> e alla direzione dell'atelier.`;
+          }
+
+          // Invio conferma garantita server-side con stato PAID_CONFIRMED
+          const res = await fetch('/api/send-order-notification', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              ...order,
+              status: 'PAID_CONFIRMED',
+              payment_status: 'SUCCESS'
+            })
+          });
+
+          if (res.ok) {
+            if (emailStatusEl) {
+              emailStatusEl.innerHTML = '<i class="fa-solid fa-check-double"></i> <span>Email di conferma spedita all\'acquirente e all\'atelier.</span>';
+            }
+          }
+        } catch (e) {
+          console.warn('[Success Order Finalize Notice]:', e);
+        } finally {
+          localStorage.removeItem('fattoamano_cart');
+          localStorage.removeItem('fattoamano_last_order');
+        }
+      } else {
+        localStorage.removeItem('fattoamano_cart');
+        if (emailStatusEl) {
+          emailStatusEl.style.display = 'none';
+        }
+      }
+    })();
   </script>
 </body>
 </html>

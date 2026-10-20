@@ -1,0 +1,36 @@
+# ==============================================================================
+# ROBOTS.TXT — FATTO A MANO (https://agtechdesigne.shop)
+# Atelier del Rame Puro 99.9% • Conforme a Google Search Console, Bing & AI Engines
+# ==============================================================================
+
+User-agent: *
+Allow: /
+Allow: /index.html
+Allow: /atelier-pietre.html
+Allow: /assets/
+Allow: /favicon.svg
+Allow: /favicon.ico
+
+# Pagine private, checkout e API protette dall'indicizzazione
+Disallow: /admin.html
+Disallow: /admin
+Disallow: /success.html
+Disallow: /success
+Disallow: /api/
+Disallow: /*.json$
+
+# Motori di Ricerca Generativa AI (Perplexity, ChatGPT, Claude, Google Gemini)
+User-agent: Google-Extended
+Allow: /
+
+User-agent: GPTBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+# Mappa del Sito Ufficiale XML
+Sitemap: https://agtechdesigne.shop/sitemap.xml

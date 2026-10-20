@@ -15,11 +15,14 @@ import sys
 import json
 import time
 import smtplib
+import ssl
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from pathlib import Path
 from http.server import ThreadingHTTPServer, SimpleHTTPRequestHandler
 import urllib.parse
+import urllib.request
+import urllib.error
 from dotenv import load_dotenv
 
 # Directory di riferimento
@@ -162,6 +165,40 @@ def log_stone_inquiry(data: dict) -> dict:
     return {"success": True, "inquiry_id": inquiry_id, "record": record}
 
 
+def send_telegram_order_alert(order_id: str, shipping_info: dict, items: list, total: float) -> bool:
+    """Invia notifica push istantanea via Telegram al titolare dell'Atelier (zero spam, 100% garantito)."""
+    token = os.getenv("TELEGRAM_BOT_TOKEN", "").strip()
+    owner_id = os.getenv("TELEGRAM_OWNER_ID", "").strip()
+    if not token or not owner_id:
+        return False
+    try:
+        items_txt = "\n".join([f"• {it.get('title') or it.get('name', 'Bracciale Rame')} (x{it.get('quantity', 1)}) - €{float(it.get('price', 0))*int(it.get('quantity', 1)):.2f}" for it in items]) or "1x Bracciale Fatto a Mano"
+        msg = (
+            f"📦 <b>[NUOVO ORDINE FATTO A MANO] #{order_id}</b>\n\n"
+            f"💰 <b>Totale:</b> €{total:.2f}\n"
+            f"👤 <b>Cliente:</b> {shipping_info.get('fullName', 'N/D')}\n"
+            f"📧 <b>Email:</b> {shipping_info.get('email', 'N/D')}\n"
+            f"📞 <b>Cellulare:</b> {shipping_info.get('phone', 'N/D')}\n"
+            f"📏 <b>Misura Polso:</b> <code>{shipping_info.get('wristCm', 'Standard')}</code>\n"
+            f"🚚 <b>Spedizione:</b> {shipping_info.get('address', '')}, {shipping_info.get('cap', '')} {shipping_info.get('city', '')} ({shipping_info.get('province', '')})\n"
+            f"📝 <b>Note:</b> {shipping_info.get('notes', 'Nessuna nota')}\n\n"
+            f"💍 <b>Opere Ordinate:</b>\n{items_txt}\n\n"
+            f"✨ <i>Notifica istantanea Bot Telegram AGOS</i>"
+        )
+        url = f"https://api.telegram.org/bot{token}/sendMessage"
+        payload = json.dumps({"chat_id": owner_id, "text": msg, "parse_mode": "HTML"}).encode("utf-8")
+        req = urllib.request.Request(url, data=payload, headers={"Content-Type": "application/json"})
+        ctx = ssl.create_default_context()
+        with urllib.request.urlopen(req, context=ctx, timeout=10) as r:
+            if r.status in (200, 201):
+                print(f"[Telegram Alert Dispatch] Notifica ordine #{order_id} inviata su Telegram al titolare ({owner_id})")
+                return True
+        return False
+    except Exception as e:
+        print(f"[Telegram Alert Dispatch Notice]: {e}")
+        return False
+
+
 def log_and_dispatch_order(data: dict) -> dict:
     """Registra l'ordine nel registro ordini locale e invia la notifica email ad agtechdesigne@gmail.com."""
     order_id = data.get("order_id") or f"FAM-{int(time.time() * 1000) % 1000000:06d}"
@@ -199,7 +236,7 @@ def log_and_dispatch_order(data: dict) -> dict:
     smtp_port_val = os.getenv("SMTP_PORT", "587").strip()
     smtp_port = int(smtp_port_val) if smtp_port_val.isdigit() else 587
     smtp_user = os.getenv("SMTP_USER", "").strip()
-    smtp_pass = os.getenv("SMTP_PASS", "").strip()
+    smtp_pass = os.getenv("SMTP_PASS", "").strip().replace(" ", "")
     target_email = os.getenv("ORDER_NOTIFICATION_EMAIL", "agtechdesigne@gmail.com").strip()
 
     smtp_sent = False
@@ -253,7 +290,7 @@ def log_and_dispatch_order(data: dict) -> dict:
               </div>
             </div>
             """
-            msg.attach(MIMEText(html_content, "html"))
+            msg.attach(MIMEText(html_content, "html", "utf-8"))
 
             with smtplib.SMTP(smtp_host, smtp_port, timeout=12) as s:
                 s.starttls()
@@ -273,57 +310,105 @@ def log_and_dispatch_order(data: dict) -> dict:
     emailjs_service = os.getenv("EMAILJS_SERVICE_ID", "service_1m1tfyq").strip()
     emailjs_template = os.getenv("EMAILJS_TEMPLATE_ID", "template_i4boqs9").strip()
     emailjs_public = os.getenv("EMAILJS_PUBLIC_KEY", "Ts44-OGlmsSUV73rR").strip()
-    emailjs_private = os.getenv("EMAILJS_PRIVATE_KEY", "").strip()
+    emailjs_private = os.getenv("EMAILJS_PRIVATE_KEY", "Kryxmh9ayPFRn10UMXLO7").strip()
     emailjs_sent = False
 
     if emailjs_service and emailjs_template and emailjs_public:
-        try:
-            payload_js = {
-                "service_id": emailjs_service,
-                "template_id": emailjs_template,
-                "user_id": emailjs_public,
-                "template_params": {
-                    "to_email": target_email,
-                    "email": shipping_info.get("email", target_email),
-                    "order_id": order_id,
-                    "data_ordine": time.strftime("%d/%m/%Y, %H:%M:%S", time.localtime()),
-                    "destinatario_nome": shipping_info.get("fullName", ""),
-                    "destinatario_email": shipping_info.get("email", ""),
-                    "destinatario_telefono": shipping_info.get("phone", ""),
-                    "indirizzo": shipping_info.get("address", ""),
-                    "cap": shipping_info.get("cap", ""),
-                    "citta": shipping_info.get("city", ""),
-                    "provincia": shipping_info.get("province", ""),
-                    "note_consegna": shipping_info.get("notes", "Nessuna istruzione particolare"),
-                    "subtotal": f"{subtotal:.2f}",
-                    "spese_spedizione": f"{shipping_fee:.2f}",
-                    "totale_ordine": f"{total:.2f}"
-                }
-            }
-            if emailjs_private:
-                payload_js["accessToken"] = emailjs_private
+        # Formattazione lista articoli per template EmailJS
+        orders_list = []
+        for it in items:
+            p = float(it.get("price", 30.0))
+            q = int(it.get("quantity", 1))
+            orders_list.append({
+                "name": str(it.get("title") or it.get("name") or "Bracciale in Puro Rame 99.9%"),
+                "units": q,
+                "price": f"{p * q:.2f}"
+            })
+        items_text = "\n".join([f"• {o['name']} (x{o['units']}) - €{o['price']}" for o in orders_list]) or "• 1x Bracciale in Puro Rame 99.9%"
 
-            req = urllib.request.Request(
-                "https://api.emailjs.com/api/v1.0/email/send",
-                data=json.dumps(payload_js).encode("utf-8"),
-                headers={"Content-Type": "application/json", "User-Agent": "Mozilla/5.0"}
-            )
-            with urllib.request.urlopen(req, timeout=8) as r:
-                if r.status in (200, 201):
-                    emailjs_sent = True
-                    notice += " • Inviata via EmailJS"
-                    print(f"[EmailJS Server Dispatch] Notifica inviata con successo via EmailJS ad {target_email}")
-        except urllib.error.HTTPError as he:
-            err_txt = he.read().decode("utf-8", errors="ignore")
-            print(f"[EmailJS Server Dispatch Notice]: HTTP {he.code} ({err_txt.strip()})")
-        except Exception as ee:
-            print(f"[EmailJS Server Exception]: {ee}")
+        base_params = {
+            "order_id": order_id,
+            "data_ordine": time.strftime("%d/%m/%Y, %H:%M:%S", time.localtime()),
+            "destinatario_nome": shipping_info.get("fullName", ""),
+            "customer_name": shipping_info.get("fullName", ""),
+            "destinatario_email": shipping_info.get("email", ""),
+            "customer_email": shipping_info.get("email", ""),
+            "destinatario_telefono": shipping_info.get("phone", ""),
+            "customer_phone": shipping_info.get("phone", ""),
+            "misura_polso": shipping_info.get("wristCm", "Calibratura Standard"),
+            "wrist_cm": shipping_info.get("wristCm", "Calibratura Standard"),
+            "indirizzo": shipping_info.get("address", ""),
+            "cap": shipping_info.get("cap", ""),
+            "citta": shipping_info.get("city", ""),
+            "provincia": shipping_info.get("province", ""),
+            "note_consegna": shipping_info.get("notes", "Nessuna istruzione particolare"),
+            "shipping_notes": shipping_info.get("notes", "Nessuna istruzione particolare"),
+            "subtotal": f"{subtotal:.2f}",
+            "spese_spedizione": f"{shipping_fee:.2f}",
+            "totale_ordine": f"{total:.2f}",
+            "orders": orders_list,
+            "articoli_ordine": items_text,
+            "cost": {
+                "shipping": f"{shipping_fee:.2f}",
+                "tax": "0.00",
+                "total": f"{total:.2f}"
+            }
+        }
+
+        # Invio a entrambi: acquirente (se specificata) e titolare atelier
+        customer_email = (shipping_info.get("email") or "").strip()
+        recipients = []
+        if customer_email and "@" in customer_email:
+            recipients.append(customer_email)
+        if target_email and target_email not in recipients:
+            recipients.append(target_email)
+
+        for rec in recipients:
+            try:
+                p_params = dict(base_params)
+                p_params["email"] = rec
+                p_params["to_email"] = rec
+
+                payload_js = {
+                    "service_id": emailjs_service,
+                    "template_id": emailjs_template,
+                    "user_id": emailjs_public,
+                    "template_params": p_params
+                }
+                if emailjs_private:
+                    payload_js["accessToken"] = emailjs_private
+
+                req = urllib.request.Request(
+                    "https://api.emailjs.com/api/v1.0/email/send",
+                    data=json.dumps(payload_js).encode("utf-8"),
+                    headers={
+                        "Content-Type": "application/json",
+                        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
+                    }
+                )
+                ctx = ssl.create_default_context()
+                with urllib.request.urlopen(req, context=ctx, timeout=15) as r:
+                    if r.status in (200, 201):
+                        emailjs_sent = True
+                        notice += f" • Inviata via EmailJS a {rec}"
+                        print(f"[EmailJS Server Dispatch] Notifica inviata con successo via EmailJS a {rec}")
+            except urllib.error.HTTPError as he:
+                err_txt = he.read().decode("utf-8", errors="ignore")
+                print(f"[EmailJS Server Dispatch Notice to {rec}]: HTTP {he.code} ({err_txt.strip()})")
+            except Exception as ee:
+                print(f"[EmailJS Server Exception to {rec}]: {ee}")
+
+    # Notifica push istantanea via Telegram al titolare (garanzia 100% recapito senza filtri antispam)
+    telegram_sent = send_telegram_order_alert(order_id, shipping_info, items, total)
+    if telegram_sent:
+        notice += " • Inviato alert istantaneo su Telegram"
 
     return {
         "success": True,
         "order_id": order_id,
         "smtp_sent": smtp_sent,
         "emailjs_sent": emailjs_sent,
+        "telegram_sent": telegram_sent,
         "target_email": target_email,
         "message": notice
     }
