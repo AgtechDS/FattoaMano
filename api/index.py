@@ -251,6 +251,42 @@ class handler(SimpleHTTPRequestHandler):
         # API Privacy Request (GDPR / EU AI Act)
         if path == "/api/privacy-request" or path.endswith("/privacy-request"):
             protocol = f"GDPR-REQ-{int(time.time())}"
+            full_name = data.get("fullName", "").strip()
+            email = data.get("email", "").strip()
+            req_type = data.get("requestType", "access")
+            notes = data.get("notes", "").strip()
+
+            # Push alert istantaneo su Telegram al titolare
+            tg_token = os.environ.get("TELEGRAM_BOT_TOKEN", "").strip()
+            tg_owner = os.environ.get("TELEGRAM_OWNER_ID", "").strip()
+            if tg_token and tg_owner:
+                try:
+                    type_labels = {
+                        "erasure": "Cancellazione Dati (Diritto all'Oblio - Art. 17)",
+                        "access": "Accesso ai Dati Trattati (Art. 15)",
+                        "rectification": "Rettifica o Aggiornamento Dati (Art. 16)",
+                        "restriction": "Limitazione od Opposizione (Art. 18/21)"
+                    }
+                    label = type_labels.get(req_type, req_type)
+                    tg_msg = (
+                        f"🛡️ <b>[RICHIESTA FORMALE GDPR REGISTRATA]</b>\n\n"
+                        f"📜 <b>Protocollo:</b> <code>{protocol}</code>\n"
+                        f"👤 <b>Richiedente:</b> {full_name or 'N/D'}\n"
+                        f"📧 <b>Email:</b> {email}\n"
+                        f"⚖️ <b>Tipo Richiesta:</b> {label}\n"
+                        f"📝 <b>Note:</b> {notes or 'Nessuna nota specificata'}\n"
+                        f"⏱️ <b>Termine Legale di Riscontro:</b> Entro 30 giorni (Art. 12.3 GDPR)\n\n"
+                        f"✨ <i>Registro Privacy &amp; AI Act — agtechdesigne.shop</i>"
+                    )
+                    tg_url = f"https://api.telegram.org/bot{tg_token}/sendMessage"
+                    tg_payload = json.dumps({"chat_id": tg_owner, "text": tg_msg, "parse_mode": "HTML"}).encode("utf-8")
+                    tg_req = urllib.request.Request(tg_url, data=tg_payload, headers={"Content-Type": "application/json"})
+                    ctx = ssl.create_default_context()
+                    with urllib.request.urlopen(tg_req, context=ctx, timeout=8):
+                        pass
+                except Exception as tg_err:
+                    print(f"[Vercel Telegram Alert Error]: {tg_err}")
+
             self.send_json(200, {
                 "success": True,
                 "protocol": protocol,

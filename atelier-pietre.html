@@ -548,7 +548,7 @@
         <!-- Privacy & Security Notice -->
         <div class="checkout-security-notice">
           <i class="fa-solid fa-lock" style="color: var(--copper-primary); font-size: 1.1rem; flex-shrink: 0;"></i>
-          <span>I recapiti sono protetti ai sensi del GDPR (UE 2016/679). Cliccando su procedi verrai reindirizzato sui server crittografati a 256-bit di <strong>Stripe</strong> per effettuare il pagamento in totale sicurezza.</span>
+          <span>I tuoi recapiti sono protetti a norma del <button type="button" onclick="openPrivacyModal('gdprTab')" style="color: var(--copper-light); text-decoration: underline; background: none; border: none; padding: 0; font: inherit; cursor: pointer;">GDPR (UE 2016/679)</button>. Cliccando su procedi verrai reindirizzato sui server crittografati a 256-bit di <strong>Stripe</strong> per effettuare il pagamento in totale sicurezza.</span>
         </div>
 
         <!-- Submit Button -->
@@ -631,13 +631,12 @@
       </div>
 
       <div class="footer-col">
-        <h4 class="footer-title">Garanzie &amp; Trasparenza</h4>
+        <h4 class="footer-title">Trasparenza &amp; Normativa UE</h4>
         <ul class="footer-links">
-          <li><a href="index.html#garanzia">Purezza 99.9% Certificata</a></li>
-          <li><a href="index.html#garanzia">Lucidatura con Cera d'Api Naturale</a></li>
-          <li><a href="index.html#garanzia">Pietre Autentiche Didoni Store</a></li>
-          <li><a href="index.html#garanzia">Spedizione Tracciata 3-5 Giorni</a></li>
-          <li><a href="index.html#garanzia">Reso Facile entro 14 Giorni</a></li>
+          <li><button type="button" onclick="openPrivacyModal('gdprTab')" style="background: none; border: none; color: inherit; font: inherit; cursor: pointer; text-align: left; padding: 0; display: flex; align-items: center; gap: 0.5rem;"><i class="fa-solid fa-shield-halved" style="color: var(--copper-light);"></i> Informativa Privacy (GDPR)</button></li>
+          <li><button type="button" onclick="openPrivacyModal('aiActTab')" style="background: none; border: none; color: inherit; font: inherit; cursor: pointer; text-align: left; padding: 0; display: flex; align-items: center; gap: 0.5rem;"><i class="fa-solid fa-microchip" style="color: var(--copper-light);"></i> Trasparenza AI (EU AI Act)</button></li>
+          <li><button type="button" onclick="openPrivacyModal('rightsFormTab')" style="background: none; border: none; color: inherit; font: inherit; cursor: pointer; text-align: left; padding: 0; display: flex; align-items: center; gap: 0.5rem;"><i class="fa-solid fa-user-shield" style="color: var(--copper-light);"></i> Esercizio Diritti GDPR</button></li>
+          <li><button type="button" onclick="openCookieSettings()" style="background: none; border: none; color: inherit; font: inherit; cursor: pointer; text-align: left; padding: 0; display: flex; align-items: center; gap: 0.5rem;"><i class="fa-solid fa-cookie-bite" style="color: var(--copper-light);"></i> Preferenze Cookie</button></li>
         </ul>
       </div>
 
@@ -661,16 +660,124 @@
     <div class="footer-bottom">
       <div class="container footer-bottom-content">
         <p style="margin: 0; font-size: 0.8rem; color: var(--text-muted);">
-          &copy; 2026 Fatto a Mano — Atelier del Rame Puro &amp; Bottega Didoni Store. Tutti i diritti riservati.
+          &copy; 2026 Fatto a Mano — Atelier Orafo di AgtechDesigne &amp; Bottega Didoni Store. Tutti i diritti riservati.
         </p>
         <div style="font-size: 0.78rem; color: var(--text-muted); display: flex; gap: 1rem;">
           <span>100% Forgiato a Mano in Italia</span>
           <span>•</span>
-          <span>Zero Nichel &amp; Zero Vernici Chimiche</span>
+          <span>Conforme al Regolamento UE 2016/679 (GDPR) e Regolamento UE 2024/1689 (EU AI Act)</span>
         </div>
       </div>
     </div>
   </footer>
+
+  <!-- ============================================================================
+       PRIVACY & EU AI ACT COMPLIANCE MODAL (#privacyModalBackdrop)
+       ============================================================================ -->
+  <div class="modal-backdrop" id="privacyModalBackdrop">
+    <div class="modal-container privacy-modal-container" id="privacyModal">
+      <button class="modal-close-btn" id="closePrivacyModalBtn" aria-label="Chiudi Privacy">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <div style="margin-bottom: 1.25rem;">
+        <span class="hero-badge"><i class="fa-solid fa-scale-balanced"></i> Conformità Normativa Europea</span>
+        <h3 style="font-family: var(--font-serif); font-size: 2rem; margin-top: 0.5rem;">Trasparenza, Privacy &amp; Diritti EU</h3>
+      </div>
+
+      <!-- Tabs Navigation -->
+      <div class="privacy-tabs">
+        <button class="privacy-tab-btn active" data-tab="gdprTab">GDPR (Reg. UE 2016/679)</button>
+        <button class="privacy-tab-btn" data-tab="aiActTab">EU AI Act (Reg. UE 2024/1689)</button>
+        <button class="privacy-tab-btn" data-tab="rightsFormTab">Esercizio Diritti GDPR</button>
+      </div>
+
+      <!-- Tab 1: GDPR Policy -->
+      <div class="privacy-tab-content active" id="gdprTab">
+        <h4>Informativa sul Trattamento dei Dati Personali (GDPR)</h4>
+        <p>
+          Ai sensi del Regolamento Generale sulla Protezione dei Dati (GDPR - Regolamento UE 2016/679), <strong>Fatto a Mano — Atelier Orafo di AgtechDesigne</strong> garantisce la massima trasparenza, riservatezza e sicurezza sui dati personali degli utenti e acquirenti.
+        </p>
+        <ul>
+          <li><strong>Titolare del Trattamento:</strong> Fatto a Mano — Atelier Orafo di AgtechDesigne (Email Titolare / Privacy: <a href="mailto:agtechdesigne@gmail.com" style="color: var(--copper-light); text-decoration: underline;">agtechdesigne@gmail.com</a> — Sede Atelier: Italia).</li>
+          <li><strong>Finalità del Trattamento:</strong> Gestione degli ordini, fatturazione, evasione della spedizione postale assicurata con corriere e assistenza post-vendita (Art. 6 par. 1 lett. b GDPR - Esecuzione contrattuale).</li>
+          <li><strong>Pagamenti Sicuri &amp; Zero Dati Bancari:</strong> Tutte le transazioni monetarie avvengono direttamente sui server crittografati a 256-bit certificati PCI-DSS Level 1 di Stripe Payments Europe Ltd. Il nostro sito non memorizza né ha accesso ai numeri completi di carte di credito o conti correnti.</li>
+          <li><strong>Conservazione &amp; Minimizzazione:</strong> I dati di fatturazione e acquisto vengono conservati nei limiti previsti dalle norme civilistiche e fiscali vigenti (10 anni) e non vengono ceduti a terze parti né utilizzati per comunicazioni pubblicitarie non sollecitate (zero spam).</li>
+          <li><strong>Storage Tecnico Locale:</strong> Utilizziamo esclusivamente memorie tecniche locali (localStorage) necessarie a conservare lo stato dello scrigno/carrello e le preferenze di sicurezza, con totale assenza di cookie di profilazione comportamentale o tracciamento terze parti.</li>
+          <li><strong>I tuoi Diritti &amp; Reclamo:</strong> Hai il pieno diritto di richiedere in qualsiasi momento l'accesso (Art. 15), la rettifica (Art. 16), la limitazione (Art. 18) o la cancellazione totale (Diritto all'Oblio, Art. 17 GDPR) dei tuoi dati attraverso la scheda "Esercizio Diritti". Hai altresì diritto di proporre reclamo all'Autorità Garante per la Protezione dei Dati Personali (Piazza Venezia 11, Roma - <a href="https://www.garanteprivacy.it" target="_blank" rel="noopener" style="color: var(--copper-light); text-decoration: underline;">garanteprivacy.it</a>).</li>
+        </ul>
+      </div>
+
+      <!-- Tab 2: EU AI Act Transparency -->
+      <div class="privacy-tab-content" id="aiActTab">
+        <h4>Dichiarazione di Trasparenza — EU Artificial Intelligence Act</h4>
+        <p>
+          In piena conformità con il <strong>Regolamento Europeo sull'Intelligenza Artificiale (EU AI Act - Regolamento UE 2024/1689)</strong>, informiamo con la massima trasparenza gli utenti in merito all'impiego dei sistemi algoritmici e alle garanzie di manifattura:
+        </p>
+        <ul>
+          <li><strong>Classificazione di Rischio:</strong> La piattaforma rientra nella categoria di <em>Rischio Minimo/Basso (Minimal Risk AI)</em> ai sensi dell'Articolo 50 e degli Allegati I e III del Regolamento UE 2024/1689.</li>
+          <li><strong>Trasparenza sui Contenuti Visivi (Art. 50 par. 2):</strong> Talune illustrazioni concettuali, sfondi cinematici e render d'atmosfera sul portale web sono stati realizzati o perfezionati con l'ausilio di modelli di intelligenza artificiale generativa visiva, impiegati per visualizzare la forgiatura, i riflessi del fuoco e l'armonia cromatica tra rame e pietre.</li>
+          <li><strong>Garanzia di Manifattura Fisica al 100% Umana:</strong> Ciascun bracciale o gioiello fisico spedito all'acquirente è forgiato, battuto e rifinito rigorosamente a mano su incudine da maestri orafi umani, utilizzando rame vergine CU-ETP al 99.9% e cristalli autentici certificati Didoni. Nessun gioiello fisico viene fabbricato mediante procedimenti automatizzati o sintetici.</li>
+          <li><strong>Zero Profilazione Comportamentale &amp; Pratiche Vietate:</strong> È escluso qualsiasi impiego di sistemi di categorizzazione biometrica, scoring sociale o algoritmi predittivi volti a manipolare le decisioni del consumatore (piena aderenza all'Articolo 5 EU AI Act).</li>
+          <li><strong>Supervisione Umana Totale (Human-in-the-loop):</strong> Ogni singolo ordine, richiesta di personalizzazione energetica dei chakra e confezionamento dello scrigno viene eseguito, verificato e deliberato da persone reali.</li>
+        </ul>
+      </div>
+
+      <!-- Tab 3: Rights Request Form -->
+      <div class="privacy-tab-content" id="rightsFormTab">
+        <h4>Modulo Esercizio Diritti dell'Interessato (Art. 15-22 GDPR)</h4>
+        <p>Compila questo modulo per esercitare i tuoi diritti legali. La richiesta verrà registrata e protocollata all'istante.</p>
+        
+        <form id="gdprRequestForm" onsubmit="handleGdprSubmit(event)">
+          <div class="privacy-form-group">
+            <label for="gdprFullName">Nome e Cognome *</label>
+            <input type="text" id="gdprFullName" class="privacy-input" required placeholder="Mario Rossi">
+          </div>
+
+          <div class="privacy-form-group">
+            <label for="gdprEmail">Indirizzo Email Associato agli Ordini *</label>
+            <input type="email" id="gdprEmail" class="privacy-input" required placeholder="mario.rossi@example.com">
+          </div>
+
+          <div class="privacy-form-group">
+            <label for="gdprRequestType">Tipo di Richiesta GDPR *</label>
+            <select id="gdprRequestType" class="privacy-select" required>
+              <option value="erasure">Cancellazione Completa dei Dati (Diritto all'Oblio - Art. 17)</option>
+              <option value="access">Accesso ai Dati Trattati (Art. 15)</option>
+              <option value="rectification">Rettifica o Aggiornamento Dati (Art. 16)</option>
+              <option value="restriction">Limitazione od Opposizione al Trattamento (Art. 18/21)</option>
+            </select>
+          </div>
+
+          <div class="privacy-form-group">
+            <label for="gdprNotes">Note o Dettagli Specifici (Facoltativo)</label>
+            <textarea id="gdprNotes" class="privacy-textarea" placeholder="Indica eventuali numeri d'ordine o richieste specifiche..."></textarea>
+          </div>
+
+          <button type="submit" class="btn-primary" style="width: 100%; justify-content: center;" id="submitGdprBtn">
+            <i class="fa-solid fa-paper-plane"></i> Invia Richiesta Formale GDPR
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================================
+       COOKIE & TRANSPARENCY BANNER (#cookieBanner)
+       ============================================================================ -->
+  <div class="cookie-banner" id="cookieBanner" role="dialog" aria-label="Informativa Cookie e Trasparenza">
+    <div class="cookie-text">
+      <strong>Riservatezza &amp; Trasparenza EU:</strong> Utilizziamo esclusivamente memorie tecniche necessarie al funzionamento del carrello e alla protezione della transazione Stripe. Zero cookie di profilazione pubblicitaria o cessione di dati a terzi.
+    </div>
+    <div class="cookie-actions">
+      <button class="btn-primary" style="padding: 0.5rem 1.15rem; font-size: 0.8rem;" id="acceptCookiesBtn">
+        Accetta Solo Tecnici
+      </button>
+      <button class="btn-secondary" style="padding: 0.5rem 1.15rem; font-size: 0.8rem;" id="openPrivacyBannerBtn">
+        Informativa GDPR
+      </button>
+    </div>
+  </div>
 
   <!-- Application Logic -->
   <script src="app.js"></script>

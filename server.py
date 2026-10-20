@@ -130,7 +130,54 @@ def log_privacy_request(data: dict) -> str:
     with open(PRIVACY_FILE, "w", encoding="utf-8") as f:
         json.dump(requests, f, indent=2, ensure_ascii=False)
 
+    # Notifica push istantanea via Telegram al titolare per evasione entro 30 giorni (Art. 12.3 GDPR)
+    send_telegram_privacy_alert(
+        protocol=protocol,
+        full_name=record["fullName"],
+        email=record["email"],
+        request_type=record["requestType"],
+        notes=record["notes"]
+    )
+
     return protocol
+
+
+def send_telegram_privacy_alert(protocol: str, full_name: str, email: str, request_type: str, notes: str) -> bool:
+    """Invia notifica push istantanea su Telegram per una richiesta formale GDPR (Art. 15-22)."""
+    token = os.getenv("TELEGRAM_BOT_TOKEN", "").strip()
+    owner_id = os.getenv("TELEGRAM_OWNER_ID", "").strip()
+    if not token or not owner_id:
+        return False
+    try:
+        type_labels = {
+            "erasure": "Cancellazione Dati (Diritto all'Oblio - Art. 17)",
+            "access": "Accesso ai Dati Trattati (Art. 15)",
+            "rectification": "Rettifica o Aggiornamento Dati (Art. 16)",
+            "restriction": "Limitazione od Opposizione (Art. 18/21)"
+        }
+        label = type_labels.get(request_type, request_type)
+        msg = (
+            f"🛡️ <b>[RICHIESTA FORMALE GDPR REGISTRATA]</b>\n\n"
+            f"📜 <b>Protocollo:</b> <code>{protocol}</code>\n"
+            f"👤 <b>Richiedente:</b> {full_name or 'N/D'}\n"
+            f"📧 <b>Email:</b> {email}\n"
+            f"⚖️ <b>Tipo Richiesta:</b> {label}\n"
+            f"📝 <b>Note:</b> {notes or 'Nessuna nota specificata'}\n"
+            f"⏱️ <b>Termine Legale di Riscontro:</b> Entro 30 giorni (Art. 12.3 GDPR)\n\n"
+            f"✨ <i>Registro Privacy &amp; AI Act — agtechdesigne.shop</i>"
+        )
+        url = f"https://api.telegram.org/bot{token}/sendMessage"
+        payload = json.dumps({"chat_id": owner_id, "text": msg, "parse_mode": "HTML"}).encode("utf-8")
+        req = urllib.request.Request(url, data=payload, headers={"Content-Type": "application/json"})
+        ctx = ssl.create_default_context()
+        with urllib.request.urlopen(req, context=ctx, timeout=10) as r:
+            if r.status in (200, 201):
+                print(f"[Telegram Privacy Dispatch] Alert inviato per protocollo {protocol} a {owner_id}")
+                return True
+        return False
+    except Exception as e:
+        print(f"[Telegram Privacy Dispatch Notice]: {e}")
+        return False
 
 
 def log_stone_inquiry(data: dict) -> dict:
@@ -447,6 +494,25 @@ class FattoAManoHandler(SimpleHTTPRequestHandler):
 
     def do_GET(self):
         parsed = urllib.parse.urlparse(self.path)
+        path_lower = parsed.path.lower().strip()
+
+        # SECURITY GATE (GDPR Art. 32 & OWASP): Blocca l'accesso diretto a file riservati, env, log e dati interni
+        sensitive_files = ("privacy_requests.json", "orders_audit.json", "orders.json", "admin_settings.json")
+        blocked_exts = (".env", ".py", ".log", ".md", ".sh", ".yaml", ".yml", ".bak")
+        is_sensitive = any(s in path_lower for s in sensitive_files) or any(path_lower.endswith(ext) or f"{ext}?" in path_lower for ext in blocked_exts)
+        if is_sensitive and not path_lower.startswith("/api/"):
+            self.send_response(403)
+            self.send_header("Content-Type", "application/json")
+            self.end_headers()
+            self.wfile.write(b'{"error": "Forbidden: Direct access to internal data files is prohibited."}')
+            return
+
+        if path_lower.startswith("/.") or "/." in path_lower:
+            self.send_response(403)
+            self.send_header("Content-Type", "application/json")
+            self.end_headers()
+            self.wfile.write(b'{"error": "Forbidden: Hidden file access denied."}')
+            return
 
         # Clean URLs: mapping automatico verso i file .html (es. /atelier-pietre -> /atelier-pietre.html)
         clean_name = parsed.path.strip("/")
