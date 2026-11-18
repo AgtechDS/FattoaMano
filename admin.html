@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="it">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,7 +9,7 @@
   <meta name="robots" content="noindex, nofollow">
   <meta property="og:title" content="Admin Dashboard — Fatto a Mano">
   <meta property="og:type" content="website">
-  
+
   <!-- Anti-cache headers -->
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
@@ -23,6 +24,7 @@
   <!-- Font Awesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
+
 <body>
 
   <!-- ============================================================================
@@ -47,7 +49,8 @@
       <!-- Secure PIN Entry Form -->
       <form id="pinAuthForm" onsubmit="handlePinSubmit(event)">
         <div class="pin-display-group">
-          <input type="password" id="pinInput" maxlength="10" placeholder="••••" autocomplete="off" autofocus inputmode="numeric">
+          <input type="password" id="pinInput" maxlength="10" placeholder="••••" autocomplete="off" autofocus
+            inputmode="numeric">
         </div>
 
         <div class="keypad-grid">
@@ -62,7 +65,8 @@
           <button type="button" class="key-btn" onclick="appendPin('9')">9</button>
           <button type="button" class="key-btn key-clear" onclick="clearPin()">C</button>
           <button type="button" class="key-btn" onclick="appendPin('0')">0</button>
-          <button type="button" class="key-btn key-back" onclick="backspacePin()"><i class="fa-solid fa-delete-left"></i></button>
+          <button type="button" class="key-btn key-back" onclick="backspacePin()"><i
+              class="fa-solid fa-delete-left"></i></button>
         </div>
 
         <div id="authErrorMessage" class="auth-error-msg" style="display: none;"></div>
@@ -83,7 +87,7 @@
        2. ADMIN MASTER DASHBOARD (REVEALED ON VALID AUTH)
        ============================================================================ -->
   <div class="dashboard-wrapper" id="dashboardMain" style="display: none;">
-    
+
     <!-- Top Navigation Header -->
     <header class="admin-header">
       <div class="admin-header-left">
@@ -212,7 +216,8 @@
           <div class="catalog-filter-bar">
             <div class="search-box">
               <i class="fa-solid fa-magnifying-glass"></i>
-              <input type="text" id="catalogSearchInput" placeholder="Cerca opera per nome, categoria o descrizione..." oninput="filterCatalogTable()">
+              <input type="text" id="catalogSearchInput" placeholder="Cerca opera per nome, categoria o descrizione..."
+                oninput="filterCatalogTable()">
             </div>
             <div class="filter-select-group">
               <select id="catalogCategoryFilter" onchange="filterCatalogTable()">
@@ -258,7 +263,8 @@
           <div class="panel-header">
             <div>
               <h2>Controllo Banner & Avvisi Live</h2>
-              <p>Personalizza il banner superiore di spedizione, i titoli della sezione pronta consegna e le soglie carrello.</p>
+              <p>Personalizza il banner superiore di spedizione, i titoli della sezione pronta consegna e le soglie
+                carrello.</p>
             </div>
             <button class="btn-admin-primary" onclick="saveBannersSettings()">
               <i class="fa-solid fa-floppy-disk"></i> Salva Modifiche Banner
@@ -286,7 +292,8 @@
 
               <div class="form-field">
                 <label for="settingAnnouncementText">Testo dell'Annuncio (Supporta tag HTML &lt;strong&gt;):</label>
-                <textarea id="settingAnnouncementText" rows="3" class="admin-textarea" placeholder="✦ Spedizione Gratuita in tutta Italia per ordini superiori a 80€ ✦ Rame Puro 99.9% Fatto a Mano"></textarea>
+                <textarea id="settingAnnouncementText" rows="3" class="admin-textarea"
+                  placeholder="✦ Spedizione Gratuita in tutta Italia per ordini superiori a 80€ ✦ Rame Puro 99.9% Fatto a Mano"></textarea>
               </div>
             </div>
 
@@ -302,17 +309,20 @@
 
               <div class="form-field">
                 <label for="settingProntaBadge">Testo Kicker / Badge:</label>
-                <input type="text" id="settingProntaBadge" class="admin-input" placeholder="Disponibilità Immediata in Bottega">
+                <input type="text" id="settingProntaBadge" class="admin-input"
+                  placeholder="Disponibilità Immediata in Bottega">
               </div>
 
               <div class="form-field">
                 <label for="settingProntaTitle">Titolo Principale della Sezione:</label>
-                <input type="text" id="settingProntaTitle" class="admin-input" placeholder="Creazioni in Pronta Consegna">
+                <input type="text" id="settingProntaTitle" class="admin-input"
+                  placeholder="Creazioni in Pronta Consegna">
               </div>
 
               <div class="form-field">
                 <label for="settingProntaSubtitle">Sottotitolo Descrittivo:</label>
-                <textarea id="settingProntaSubtitle" rows="3" class="admin-textarea" placeholder="Pezzi unici forgiati a mano e già rifiniti in atelier, pronti per l'imballo protetto e la spedizione immediata."></textarea>
+                <textarea id="settingProntaSubtitle" rows="3" class="admin-textarea"
+                  placeholder="Pezzi unici forgiati a mano e già rifiniti in atelier, pronti per l'imballo protetto e la spedizione immediata."></textarea>
               </div>
             </div>
 
@@ -365,12 +375,120 @@
         <section class="admin-tab-panel" id="ordersTab">
           <div class="panel-header">
             <div>
-              <h2>Registro Ordini & Spedizioni</h2>
-              <p>Visualizza le richieste di acquisto, gli indirizzi di consegna dei clienti e aggiorna i tracking.</p>
+              <h2>Registro Ordini, Stripe Live Monitor & Cifratura codX+ Hemdal</h2>
+              <p>Monitoraggio transazioni in tempo reale, telemetria Stripe e decifratura autorizzata dati cliente
+                conforme GDPR/NIS2.</p>
             </div>
-            <button class="btn-admin-secondary" onclick="loadAdminOrders()">
-              <i class="fa-solid fa-arrows-rotate"></i> Aggiorna Ordini
-            </button>
+            <div style="display: flex; gap: 0.5rem;">
+              <button class="btn-admin-secondary" onclick="loadStripeReportLive()">
+                <i class="fa-brands fa-stripe"></i> Aggiorna Stripe Live
+              </button>
+              <button class="btn-admin-primary" onclick="loadAdminOrders()">
+                <i class="fa-solid fa-arrows-rotate"></i> Aggiorna Ordini
+              </button>
+            </div>
+          </div>
+
+          <!-- STRIPE LIVE & CODX+HEMDAL CIPHER MONITOR CARDS -->
+          <div class="stripe-monitor-grid"
+            style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+
+            <div class="kpi-card"
+              style="background: rgba(20, 20, 24, 0.9); border: 1px solid rgba(184, 115, 51, 0.35); border-radius: 12px; padding: 1.2rem; display: flex; flex-direction: column; gap: 0.4rem; position: relative;">
+              <div
+                style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--copper-light); display: flex; align-items: center; justify-content: space-between;">
+                <span><i class="fa-brands fa-stripe"></i> Saldo Stripe Disponibile</span>
+                <span
+                  style="display: inline-block; width: 8px; height: 8px; background: #10b981; border-radius: 50%; box-shadow: 0 0 8px #10b981;"
+                  title="Live Stripe Connection"></span>
+              </div>
+              <div id="stripeAvailableEur" style="font-size: 1.8rem; font-weight: 700; color: #fff;">€0.00</div>
+              <div style="font-size: 0.72rem; color: var(--text-muted); display: flex; justify-content: space-between;">
+                <span>In sospeso: <strong id="stripePendingEur" style="color: #cbd5e1;">€0.00</strong></span>
+                <span style="color: #10b981; font-weight: 600;">LIVE ACTIVE</span>
+              </div>
+            </div>
+
+            <div class="kpi-card"
+              style="background: rgba(20, 20, 24, 0.9); border: 1px solid rgba(184, 115, 51, 0.35); border-radius: 12px; padding: 1.2rem; display: flex; flex-direction: column; gap: 0.4rem;">
+              <div
+                style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--copper-light); display: flex; align-items: center; justify-content: space-between;">
+                <span><i class="fa-solid fa-chart-line"></i> Incassato Reale Succeeded</span>
+                <i class="fa-solid fa-arrow-trend-up" style="color: #10b981;"></i>
+              </div>
+              <div id="stripeTotalSucceededEur" style="font-size: 1.8rem; font-weight: 700; color: #10b981;">€0.00</div>
+              <div style="font-size: 0.72rem; color: var(--text-muted);">
+                Transazioni: <strong id="stripeSucceededCount" style="color: #fff;">0</strong> OK • <span
+                  id="stripeFailedCount" style="color: #f87171;">0</span> Fallite
+              </div>
+            </div>
+
+            <div class="kpi-card"
+              style="background: rgba(20, 20, 24, 0.9); border: 1px solid rgba(16, 185, 129, 0.4); border-radius: 12px; padding: 1.2rem; display: flex; flex-direction: column; gap: 0.4rem;">
+              <div
+                style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; color: #34d399; display: flex; align-items: center; justify-content: space-between;">
+                <span><i class="fa-solid fa-shield-halved"></i> codX+ Hemdal Suite</span>
+                <i class="fa-solid fa-lock" style="color: #34d399;"></i>
+              </div>
+              <div style="font-size: 1.15rem; font-weight: 700; color: #fff; margin-top: 4px;">AES-256-GCM + SHA512
+              </div>
+              <div style="font-size: 0.72rem; color: #a7f3d0; line-height: 1.3;">
+                Firma anti-manomissione • Protezione PII a riposo (GDPR Art. 32 & NIS2)
+              </div>
+            </div>
+
+            <div class="kpi-card"
+              style="background: rgba(20, 20, 24, 0.9); border: 1px solid rgba(184, 115, 51, 0.35); border-radius: 12px; padding: 1.2rem; display: flex; flex-direction: column; justify-content: space-between;">
+              <div
+                style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--copper-light);">
+                <i class="fa-solid fa-receipt"></i> Stripe Report Dettagliato
+              </div>
+              <div id="stripeReportLastUpdate" style="font-size: 0.72rem; color: var(--text-secondary);">
+                Report sincronizzato in tempo reale
+              </div>
+              <button class="btn-admin-secondary" onclick="toggleStripeReportModal()"
+                style="font-size: 0.75rem; padding: 0.4rem 0.6rem; margin-top: 6px; width: 100%;">
+                <i class="fa-solid fa-list-check"></i> Mostra Transazioni Live
+              </button>
+            </div>
+
+          </div>
+
+          <!-- Modale / Box Report Stripe Transazioni Live -->
+          <div id="stripeReportModal"
+            style="display: none; background: rgba(15, 15, 18, 0.98); border: 1px solid rgba(184, 115, 51, 0.4); border-radius: 12px; padding: 1.2rem; margin-bottom: 1.5rem; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+            <div
+              style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 0.6rem;">
+              <h3
+                style="font-size: 1rem; color: var(--copper-light); display: flex; align-items: center; gap: 0.5rem; margin: 0;">
+                <i class="fa-brands fa-stripe" style="color: #635bff; font-size: 1.4rem;"></i> Stripe Official Live
+                Audit Trail (Dati Reali da API)
+              </h3>
+              <button onclick="toggleStripeReportModal()" class="btn-admin-secondary"
+                style="padding: 0.2rem 0.6rem; font-size: 0.75rem;">
+                <i class="fa-solid fa-xmark"></i> Chiudi
+              </button>
+            </div>
+            <div class="table-responsive" style="max-height: 280px; overflow-y: auto;">
+              <table class="admin-table" style="font-size: 0.78rem;">
+                <thead>
+                  <tr>
+                    <th>Charge ID</th>
+                    <th>Data</th>
+                    <th>Importo</th>
+                    <th>Stato</th>
+                    <th>Metodo</th>
+                    <th>Email Cliente (Masked GDPR)</th>
+                  </tr>
+                </thead>
+                <tbody id="stripeChargesTableBody">
+                  <tr>
+                    <td colspan="6" style="text-align: center; color: var(--text-muted);">Caricamento transazioni live
+                      Stripe...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
 
           <div class="table-card">
@@ -379,7 +497,7 @@
                 <tr>
                   <th>ID Ordine</th>
                   <th>Data</th>
-                  <th>Cliente & Contatto</th>
+                  <th>Cliente & Cifratura</th>
                   <th>Indirizzo Spedizione</th>
                   <th>Articoli Ordinati</th>
                   <th>Totale</th>
@@ -427,7 +545,8 @@
 
           <div class="form-card" style="margin-top: 1.5rem;">
             <h3>Azioni Rapide di Sistema</h3>
-            <p>Se hai aggiunto foto manualmente tramite la cartella locale, puoi avviare una scansione completa del catalogo.</p>
+            <p>Se hai aggiunto foto manualmente tramite la cartella locale, puoi avviare una scansione completa del
+              catalogo.</p>
             <div style="display: flex; gap: 1rem; margin-top: 1rem; flex-wrap: wrap;">
               <button class="btn-admin-primary" onclick="rebuildLocalCache()">
                 <i class="fa-solid fa-rotate"></i> Ricarica e Sincronizza Catalogo Live
@@ -447,8 +566,10 @@
   <div class="admin-modal-backdrop" id="productModal" style="display: none;" onclick="handleBackdropClick(event)">
     <div class="admin-modal-card">
       <div class="modal-head">
-        <h3 id="productModalTitle"><i class="fa-solid fa-gem" style="color: var(--copper-light);"></i> Nuova Opera in Rame</h3>
-        <button type="button" class="modal-close-btn" onclick="closeProductModal()" aria-label="Chiudi finestra"><i class="fa-solid fa-xmark"></i></button>
+        <h3 id="productModalTitle"><i class="fa-solid fa-gem" style="color: var(--copper-light);"></i> Nuova Opera in
+          Rame</h3>
+        <button type="button" class="modal-close-btn" onclick="closeProductModal()" aria-label="Chiudi finestra"><i
+            class="fa-solid fa-xmark"></i></button>
       </div>
 
       <form id="productEditForm" class="modal-edit-form" onsubmit="handleProductFormSubmit(event)">
@@ -459,7 +580,9 @@
           <div class="photo-upload-section">
             <label class="field-label">Foto dell'Opera *</label>
             <label for="productImageFileInput" class="drop-zone" id="imageDropZone">
-              <input type="file" id="productImageFileInput" accept="image/jpeg,image/png,image/webp" style="position: absolute; opacity: 0; width: 1px; height: 1px; pointer-events: none;" onchange="handleFileSelect(event)">
+              <input type="file" id="productImageFileInput" accept="image/jpeg,image/png,image/webp"
+                style="position: absolute; opacity: 0; width: 1px; height: 1px; pointer-events: none;"
+                onchange="handleFileSelect(event)">
               <div id="dropZoneContent">
                 <i class="fa-solid fa-camera-retro drop-icon"></i>
                 <div class="drop-title">Scatta o carica foto</div>
@@ -468,13 +591,15 @@
               <img id="imagePreview" class="photo-preview-img" style="display: none;" alt="Anteprima">
             </label>
 
-            <button type="button" class="btn-clear-photo" id="btnClearPhoto" style="display: none;" onclick="clearSelectedPhoto()">
+            <button type="button" class="btn-clear-photo" id="btnClearPhoto" style="display: none;"
+              onclick="clearSelectedPhoto()">
               <i class="fa-solid fa-trash-can"></i> Rimuovi foto
             </button>
 
             <div class="form-field" style="margin-top: 0.75rem;">
               <label for="editImageUrl" style="font-size: 0.75rem;">Oppure inserisci URL immagine esistente:</label>
-              <input type="text" id="editImageUrl" class="admin-input" placeholder="assets/... o https://..." oninput="handleManualImageUrlInput(this.value)">
+              <input type="text" id="editImageUrl" class="admin-input" placeholder="assets/... o https://..."
+                oninput="handleManualImageUrlInput(this.value)">
             </div>
           </div>
 
@@ -482,7 +607,8 @@
           <div class="product-fields-section">
             <div class="form-field">
               <label for="editTitle">Titolo Opera *</label>
-              <input type="text" id="editTitle" class="admin-input" required placeholder="Es. Bracciale Intrecciato Rame Puro">
+              <input type="text" id="editTitle" class="admin-input" required
+                placeholder="Es. Bracciale Intrecciato Rame Puro">
             </div>
 
             <div class="form-row">
@@ -497,7 +623,8 @@
 
               <div class="form-field" style="flex: 1;">
                 <label for="editPrice">Prezzo (€) *</label>
-                <input type="number" step="0.5" min="1" id="editPrice" class="admin-input" required placeholder="30.00" inputmode="decimal">
+                <input type="number" step="0.5" min="1" id="editPrice" class="admin-input" required placeholder="30.00"
+                  inputmode="decimal">
               </div>
             </div>
 
@@ -506,7 +633,8 @@
                 <label class="toggle-label" style="margin-top: 1.5rem;">
                   <input type="checkbox" id="editProntaConsegna">
                   <span class="toggle-slider"></span>
-                  <span class="toggle-text"><i class="fa-solid fa-bolt" style="color: var(--copper-light);"></i> Pronta Consegna</span>
+                  <span class="toggle-text"><i class="fa-solid fa-bolt" style="color: var(--copper-light);"></i> Pronta
+                    Consegna</span>
                 </label>
               </div>
 
@@ -518,12 +646,14 @@
 
             <div class="form-field">
               <label for="editDescription">Descrizione Poetica dell'Opera:</label>
-              <textarea id="editDescription" rows="3" class="admin-textarea" placeholder="Forgiato a mano con puro rame 99.9% ad incudine..."></textarea>
+              <textarea id="editDescription" rows="3" class="admin-textarea"
+                placeholder="Forgiato a mano con puro rame 99.9% ad incudine..."></textarea>
             </div>
 
             <div class="form-field">
               <label for="editDetails">Dettagli Tecnici (Specifiche Atelier):</label>
-              <input type="text" id="editDetails" class="admin-input" placeholder="Spessore 4 mm • Forgiatura su misura anatomica • Finitura naturale">
+              <input type="text" id="editDetails" class="admin-input"
+                placeholder="Spessore 4 mm • Forgiatura su misura anatomica • Finitura naturale">
             </div>
           </div>
         </div>
@@ -544,4 +674,5 @@
   <!-- Scripts -->
   <script src="admin.js?v=20261001-01"></script>
 </body>
+
 </html>

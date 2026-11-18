@@ -785,9 +785,81 @@ async function saveBannersSettings() {
 }
 
 // ==============================================================================
-// 7. ORDERS & DISPATCH LOG
+// 7. ORDERS & DISPATCH LOG & STRIPE LIVE MONITOR
 // ==============================================================================
+async function loadStripeReportLive() {
+  const avEl = document.getElementById('stripeAvailableEur');
+  const peEl = document.getElementById('stripePendingEur');
+  const totEl = document.getElementById('stripeTotalSucceededEur');
+  const sucEl = document.getElementById('stripeSucceededCount');
+  const failEl = document.getElementById('stripeFailedCount');
+  const updEl = document.getElementById('stripeReportLastUpdate');
+  const chargesTbody = document.getElementById('stripeChargesTableBody');
+
+  if (avEl) avEl.textContent = '...';
+
+  try {
+    const res = await fetch('/api/admin_orders?action=stripe_report&t=' + Date.now(), {
+      headers: {
+        'Authorization': `Bearer ${adminState.token}`
+      }
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      const rep = data.report || {};
+
+      if (avEl) avEl.textContent = `€${Number(rep.available_eur || 0).toFixed(2)}`;
+      if (peEl) peEl.textContent = `€${Number(rep.pending_eur || 0).toFixed(2)}`;
+      if (totEl) totEl.textContent = `€${Number(rep.total_succeeded_eur || 0).toFixed(2)}`;
+      if (sucEl) sucEl.textContent = rep.succeeded_count || 0;
+      if (failEl) failEl.textContent = rep.failed_count || 0;
+      if (updEl) updEl.textContent = `Sincronizzato: ${rep.generated_at || 'Adesso'}`;
+
+      if (chargesTbody && rep.recent_charges) {
+        chargesTbody.innerHTML = '';
+        if (rep.recent_charges.length === 0) {
+          chargesTbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--text-muted);">Nessuna transazione recente su Stripe.</td></tr>';
+        } else {
+          rep.recent_charges.forEach(ch => {
+            const tr = document.createElement('tr');
+            const isOk = ch.status === 'succeeded';
+            tr.innerHTML = `
+              <td><code style="color: var(--copper-light);">${ch.id}</code></td>
+              <td>${ch.created}</td>
+              <td><strong style="color: ${isOk ? '#10b981' : '#f87171'};">€${Number(ch.amount_eur).toFixed(2)}</strong></td>
+              <td>
+                <span style="background: ${isOk ? 'rgba(16,185,129,0.15)' : 'rgba(239,68,68,0.15)'}; color: ${isOk ? '#10b981' : '#f87171'}; padding: 2px 6px; border-radius: 4px; font-weight: 600;">
+                  ${ch.status.toUpperCase()}
+                </span>
+              </td>
+              <td><i class="fa-solid fa-credit-card"></i> ${ch.payment_method}</td>
+              <td>${ch.customer_email_masked}</td>
+            `;
+            chargesTbody.appendChild(tr);
+          });
+        }
+      }
+    }
+  } catch (err) {
+    console.warn('Errore lettura Stripe Report Live:', err);
+  }
+}
+
+function toggleStripeReportModal() {
+  const modal = document.getElementById('stripeReportModal');
+  if (!modal) return;
+  const isHidden = modal.style.display === 'none' || modal.style.display === '';
+  modal.style.display = isHidden ? 'block' : 'none';
+  if (isHidden) {
+    loadStripeReportLive();
+  }
+}
+
 async function loadAdminOrders() {
+  // Carica contemporaneamente gli ordini decifrati e il report Stripe live
+  loadStripeReportLive();
+
   try {
     const res = await fetch('/api/admin_orders?t=' + Date.now(), {
       headers: {
@@ -799,6 +871,9 @@ async function loadAdminOrders() {
       const data = await res.json();
       adminState.orders = data.orders || [];
       renderOrdersTable();
+      if (data.security && data.security.tamper_alerts && data.security.tamper_alerts.length > 0) {
+        showToast(`ATTENZIONE: ${data.security.tamper_alerts.length} record con firma non valida!`, 'error');
+      }
     }
   } catch (err) {
     console.warn('Errore lettura ordini:', err);
@@ -831,9 +906,15 @@ function renderOrdersTable() {
     const cust = ord.customer || {};
     const itemsList = (ord.items || []).map(i => `${i.quantity || 1}x ${i.title || 'Bracciale Rame'}`).join('<br>');
     const addr = `${cust.address || ''}, ${cust.cap || ''} ${cust.city || ''} (${cust.province || ''})`;
+    const isHemdalOk = ord.hemdal_verified !== false;
 
     tr.innerHTML = `
-      <td><strong style="color: var(--copper-light);">${ord.order_id || 'FAM-000'}</strong></td>
+      <td>
+        <strong style="color: var(--copper-light);">${ord.order_id || 'FAM-000'}</strong><br>
+        <span style="display: inline-flex; align-items: center; gap: 3px; font-size: 0.65rem; background: ${isHemdalOk ? 'rgba(16,185,129,0.15)' : 'rgba(239,68,68,0.2)'}; color: ${isHemdalOk ? '#34d399' : '#f87171'}; padding: 2px 5px; border-radius: 4px; margin-top: 3px;">
+          <i class="fa-solid ${isHemdalOk ? 'fa-shield-halved' : 'fa-triangle-exclamation'}"></i> ${isHemdalOk ? 'codX+ Hemdal' : 'Tamper Alert'}
+        </span>
+      </td>
       <td style="font-size: 0.78rem; color: var(--text-muted);">${ord.timestamp || 'N/D'}</td>
       <td>
         <strong>${cust.fullName || cust.nome || 'Cliente Anonimo'}</strong><br>
@@ -941,6 +1022,8 @@ window.deleteProduct = deleteProduct;
 window.toggleProntaConsegna = toggleProntaConsegna;
 window.saveBannersSettings = saveBannersSettings;
 window.loadAdminOrders = loadAdminOrders;
+window.loadStripeReportLive = loadStripeReportLive;
+window.toggleStripeReportModal = toggleStripeReportModal;
 window.updateOrderStatus = updateOrderStatus;
 window.rebuildLocalCache = rebuildLocalCache;
 window.filterCatalogTable = filterCatalogTable;

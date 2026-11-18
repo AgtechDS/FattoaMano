@@ -1,5 +1,24 @@
 [
   {
+    "id": "prod_combo_natale_100",
+    "title": "Special Combo Natale: Doppio Bracciale + Anello Trama Gemella",
+    "description": "Edizione Esclusiva Natalizia: Due bracciali intrecciati in puro rame artigianale battuti a mano, abbinati alla fedina con la medesima trama gemella coordinata. Cofanetto regalo sartoriale con sigillo in ceralacca e certificato di garanzia orafa inclusi.",
+    "price": 100.0,
+    "original_price": 135.0,
+    "discount_label": "-26% Sconto Natale",
+    "currency": "EUR",
+    "image_url": "assets/promo_combo_natale_ad.png",
+    "purity": "99.9% Rame Puro Elettrolitico",
+    "details": "Lavorazione orafa a mano: include 2 bracciali intrecciati coordinati (misure a scelta) + 1 anello fedina a trama gemella + cofanetto di lusso in velluto nero con sigillo atelier.",
+    "category": "Intrecciati",
+    "stripe_product_id": null,
+    "stripe_price_id": null,
+    "in_stock": true,
+    "pronta_consegna": true,
+    "stock_qty": 15,
+    "shipping_note": "Spedizione Rapida Gratuita per Natale • Cofanetto Regalo Incluso"
+  },
+  {
     "id": "prod_fam_6267596",
     "title": "LUX",
     "description": "Bracciale rigido lavorato con tecnica levigatura realistica doppio punto lucie piu levigatura trama effetto rustico.",

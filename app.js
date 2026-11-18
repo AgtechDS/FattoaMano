@@ -291,8 +291,13 @@ function renderProducts() {
       ? `<span class="badge-pronta-tag"><i class="fa-solid fa-bolt"></i> Pronta Consegna</span>` 
       : '';
 
+    const discountBadgeHtml = product.discount_label 
+      ? `<span class="badge-promo-ribbon" style="position: absolute; top: 10px; right: 10px; background: linear-gradient(135deg, #b91c1c, #991b1b); color: #fff; font-size: 0.68rem; font-weight: 700; padding: 4px 8px; border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.4); z-index: 5; text-transform: uppercase; letter-spacing: 0.05em;"><i class="fa-solid fa-gift"></i> ${product.discount_label}</span>`
+      : '';
+
     card.innerHTML = `
-      <div class="card-media" onclick="openProductModal('${product.id}')">
+      <div class="card-media" onclick="openProductModal('${product.id}')" style="position: relative;">
+        ${discountBadgeHtml}
         <img src="${product.image_url}" alt="${product.title}" loading="lazy">
         <button class="quick-view-btn" aria-label="Visualizza dettagli" onclick="event.stopPropagation(); openProductModal('${product.id}')">
           <i class="fa-solid fa-magnifying-glass-plus"></i>
@@ -310,8 +315,11 @@ function renderProducts() {
         
         <div class="card-footer">
           <div class="card-price-group">
-            <span class="card-price-label">${product.pronta_consegna ? 'Pronta Consegna' : 'Valore Unico'}</span>
-            <span class="card-price">€${Number(product.price).toFixed(2)}</span>
+            <span class="card-price-label">${product.discount_label ? `<span style="color: #f87171; font-weight: 600; margin-right: 4px;">${product.discount_label}</span>` : (product.pronta_consegna ? 'Pronta Consegna' : 'Valore Unico')}</span>
+            <div style="display: flex; align-items: baseline; gap: 0.4rem;">
+              <span class="card-price">€${Number(product.price).toFixed(2)}</span>
+              ${product.original_price ? `<span style="font-size: 0.82rem; text-decoration: line-through; color: var(--text-muted);">€${Number(product.original_price).toFixed(2)}</span>` : ''}
+            </div>
           </div>
           <button class="btn-add-cart" onclick="addToCartById('${product.id}')">
             <i class="fa-solid fa-plus"></i>

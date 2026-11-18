@@ -85,24 +85,29 @@ def get_supabase_client():
 
 
 def get_products():
-    """Recupera prodotti da Supabase, con fallback immediato su products_cache.json."""
+    """Recupera prodotti da Supabase, integrando sempre i bundle speciali in evidenza da products_cache.json."""
+    cache_prods = []
+    if CACHE_FILE.exists():
+        try:
+            with open(CACHE_FILE, "r", encoding="utf-8") as f:
+                cache_prods = json.load(f)
+        except Exception:
+            pass
+
     sb = get_supabase_client()
     if sb:
         try:
             res = sb.table("fattoamano_products").select("*").eq("in_stock", True).order("created_at", desc=True).execute()
             if res.data and len(res.data) > 0:
-                return res.data
+                # Inserisci le edizioni speciali (es. Combo Natale 100€) in testa
+                sb_ids = {p.get("id") for p in res.data}
+                featured = [p for p in cache_prods if p.get("id") == "prod_combo_natale_100" or p.get("id") not in sb_ids]
+                filtered_sb = [p for p in res.data if p.get("id") != "prod_combo_natale_100"]
+                return featured + filtered_sb
         except Exception as e:
             print(f"[Supabase Query Warning, uso cache locale]: {e}")
 
-    if CACHE_FILE.exists():
-        try:
-            with open(CACHE_FILE, "r", encoding="utf-8") as f:
-                return json.load(f)
-        except Exception:
-            pass
-
-    return []
+    return cache_prods
 
 
 def log_privacy_request(data: dict) -> str:
@@ -468,6 +473,23 @@ class FattoAManoHandler(SimpleHTTPRequestHandler):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, directory=str(APP_DIR), **kwargs)
+
+    def end_headers(self):
+        """Inietta gli Header di Sicurezza Normativa EU, MIT Cybersecurity Framework & OWASP Top 10."""
+        self.send_header("X-Content-Type-Options", "nosniff")
+        self.send_header("X-Frame-Options", "DENY")
+        self.send_header("X-XSS-Protection", "1; mode=block")
+        self.send_header("Referrer-Policy", "strict-origin-when-cross-origin")
+        self.send_header("Strict-Transport-Security", "max-age=63072000; includeSubDomains; preload")
+        self.send_header("Permissions-Policy", "camera=(), microphone=(), geolocation=()")
+        self.send_header(
+            "Content-Security-Policy",
+            "default-src 'self' https: data: blob: 'unsafe-inline' 'unsafe-eval'; "
+            "connect-src 'self' https://api.stripe.com https://*.supabase.co https://api.emailjs.com https://fonts.googleapis.com https://fonts.gstatic.com; "
+            "frame-src 'self' https://js.stripe.com https://checkout.stripe.com; "
+            "frame-ancestors 'none'; object-src 'none';"
+        )
+        super().end_headers()
 
     def send_json(self, status_code: int, data_dict: dict):
         """Invia payload JSON con Content-Length per completare la risposta HTTP istantaneamente."""

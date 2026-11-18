@@ -56,12 +56,13 @@ class handler(BaseHTTPRequestHandler):
                     img_url = it.get("image_url", "")
                     images = [img_url] if (img_url.startswith("http://") or img_url.startswith("https://")) else []
 
+                    desc = it.get("description") or "Creazione orafa in puro rame 99.9% Fatto a Mano"
                     line_items.append({
                         "price_data": {
                             "currency": "eur",
                             "product_data": {
                                 "name": title,
-                                "description": "Bracciale fatto a mano in puro rame 99.9% Fatto a Mano",
+                                "description": desc,
                                 "images": images,
                             },
                             "unit_amount": price_cents,
@@ -75,6 +76,7 @@ class handler(BaseHTTPRequestHandler):
                     mode="payment",
                     success_url=success_url,
                     cancel_url=cancel_url,
+                    metadata={"store": "agtechdesigne.shop", "security": "codX+Hemdal-PCI-DSS-v4"}
                 )
 
                 self.send_json(200, {
