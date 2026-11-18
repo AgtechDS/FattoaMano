@@ -267,7 +267,7 @@
                 carrello.</p>
             </div>
             <button class="btn-admin-primary" onclick="saveBannersSettings()">
-              <i class="fa-solid fa-floppy-disk"></i> Salva Modifiche Banner
+              <i class="fa-solid fa-floppy-disk"></i> Salva Tutte le Impostazioni
             </button>
           </div>
 
@@ -339,12 +339,17 @@
               <div class="form-row">
                 <div class="form-field" style="flex: 1;">
                   <label for="settingShippingCost">Costo Spedizione Corriere Standard (€):</label>
-                  <input type="number" step="0.5" id="settingShippingCost" class="admin-input" value="6.0">
+                  <input type="number" step="0.5" id="settingShippingCost" class="admin-input" value="10.0">
                 </div>
                 <div class="form-field" style="flex: 1;">
                   <label for="settingFreeShippingThreshold">Soglia Spedizione Gratuita (€):</label>
                   <input type="number" step="5" id="settingFreeShippingThreshold" class="admin-input" value="80.0">
                 </div>
+              </div>
+              <div style="margin-top: 1.2rem; display: flex; justify-content: flex-end;">
+                <button type="button" class="btn-admin-primary" onclick="saveBannersSettings()" style="padding: 0.65rem 1.4rem; display: inline-flex; align-items: center; gap: 0.5rem;">
+                  <i class="fa-solid fa-floppy-disk"></i> Salva Spedizione (€) & Regole Carrello
+                </button>
               </div>
             </div>
 

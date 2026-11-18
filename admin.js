@@ -201,6 +201,8 @@ function switchTab(tabId) {
     loadAdminOrders();
   } else if (tabId === 'catalogTab') {
     loadAdminCatalog();
+  } else if (tabId === 'bannersTab') {
+    loadBannersSettings();
   }
 }
 
@@ -752,14 +754,17 @@ function updateBannerLivePreview() {
 }
 
 async function saveBannersSettings() {
+  const shippingVal = parseFloat(document.getElementById('settingShippingCost').value);
+  const freeVal = parseFloat(document.getElementById('settingFreeShippingThreshold').value);
+
   const payload = {
     announcement_active: document.getElementById('settingAnnouncementActive').checked,
-    announcement_text: document.getElementById('settingAnnouncementText').value.trim(),
-    pronta_consegna_badge: document.getElementById('settingProntaBadge').value.trim(),
-    pronta_consegna_banner_title: document.getElementById('settingProntaTitle').value.trim(),
-    pronta_consegna_banner_subtitle: document.getElementById('settingProntaSubtitle').value.trim(),
-    shipping_cost: parseFloat(document.getElementById('settingShippingCost').value) || 6.0,
-    free_shipping_threshold: parseFloat(document.getElementById('settingFreeShippingThreshold').value) || 80.0
+    announcement_text: (document.getElementById('settingAnnouncementText').value || '').trim(),
+    pronta_consegna_badge: (document.getElementById('settingProntaBadge').value || '').trim(),
+    pronta_consegna_banner_title: (document.getElementById('settingProntaTitle').value || '').trim(),
+    pronta_consegna_banner_subtitle: (document.getElementById('settingProntaSubtitle').value || '').trim(),
+    shipping_cost: !isNaN(shippingVal) ? shippingVal : 10.0,
+    free_shipping_threshold: !isNaN(freeVal) ? freeVal : 80.0
   };
 
   try {
@@ -774,13 +779,13 @@ async function saveBannersSettings() {
 
     const data = await res.json();
     if (res.ok && data.success) {
-      showToast('Banner e impostazioni del sito salvati con successo!');
+      showToast(`Impostazioni salvate! Spedizione: €${payload.shipping_cost.toFixed(2)} • Soglia: €${payload.free_shipping_threshold.toFixed(2)}`, 'success');
       adminState.settings = data.settings;
     } else {
       showToast(data.error || 'Errore salvataggio impostazioni', 'error');
     }
   } catch (err) {
-    showToast('Errore di comunicazione', 'error');
+    showToast('Errore di comunicazione con il server', 'error');
   }
 }
 
